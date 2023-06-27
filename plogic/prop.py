@@ -48,14 +48,14 @@ class Proposition(ABC):
         ...
 
     def __call__(self, mapping=None, /, **kwargs) -> bool:
-        pass  # TODO implement
+        return False  # TODO implement
 
     #
     # Miscellaneous special functions
     #
 
     def __bool__(self) -> NoReturn:
-        pass  # TODO implement
+        raise Exception  # TODO implement
 
 
 # TODO documentation and full implementation of the subclasses
@@ -66,7 +66,7 @@ class Atomic:
     name: str
 
     def __str__(self) -> str:
-        pass  # TODO implement
+        return ""  # TODO implement
 
 
 @dataclass(frozen=True)
@@ -76,7 +76,7 @@ class UnaryConnection(Proposition):
 
 class Not(UnaryConnection):
     def __str__(self) -> str:
-        pass  # TODO implement
+        return ""  # TODO implement
 
 
 @dataclass(frozen=True)
@@ -90,7 +90,7 @@ class And(BinaryConnection):
     right: Proposition
 
     def __str__(self) -> str:
-        pass  # TODO implement
+        return ""  # TODO implement
 
 
 @dataclass(frozen=True)
@@ -99,7 +99,7 @@ class Or(BinaryConnection):
     right: Proposition
 
     def __str__(self) -> str:
-        pass  # TODO implement
+        return ""  # TODO implement
 
 
 @dataclass(frozen=True)
@@ -108,7 +108,7 @@ class Implies(BinaryConnection):
     right: Proposition
 
     def __str__(self) -> str:
-        pass  # TODO implement
+        return ""  # TODO implement
 
 
 @dataclass(frozen=True)
@@ -117,7 +117,7 @@ class Iff(BinaryConnection):
     right: Proposition
 
     def __str__(self) -> str:
-        pass  # TODO implement
+        return ""  # TODO implement
 
 
 @overload
@@ -131,4 +131,4 @@ def atomics(name_iter: Iterable[str], /) -> tuple[Atomic, ...]:
 
 
 def atomics(arg, /):
-    pass  # TODO implement
+    return ()  # TODO implement

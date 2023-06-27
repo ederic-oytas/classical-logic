@@ -12,6 +12,7 @@ python = "^3.9"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
+tox = "^4.6.3"
 
 [build-system]
 requires = ["poetry-core"]

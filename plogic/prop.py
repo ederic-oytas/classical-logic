@@ -126,7 +126,7 @@ def atomics(names_sep_by_spaces: str, /) -> tuple[Atomic, ...]:
 
 
 @overload
-def atomics(name_iter: Iterable[str], /) -> tuple[Atomic, ...]:
+def atomics(name_iterable: Iterable[str], /) -> tuple[Atomic, ...]:
     ...
 
 

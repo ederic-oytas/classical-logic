@@ -51,7 +51,7 @@ class Proposition(ABC):
         return False  # TODO implement
 
     #
-    # Miscellaneous special functions
+    # Miscellaneous special methods
     #
 
     def __bool__(self) -> NoReturn:

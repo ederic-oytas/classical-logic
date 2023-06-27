@@ -62,7 +62,7 @@ class Proposition(ABC):
 
 
 @dataclass(frozen=True)
-class Atomic:
+class Atomic(Proposition):
     name: str
 
     def __str__(self) -> str:

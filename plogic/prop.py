@@ -13,7 +13,7 @@ class Proposition(ABC):
     """
 
     #
-    # Functions for composing compound propositions
+    # Methods for composing compound propositions
     #
 
     def __invert__(self, /) -> "Not":
@@ -36,7 +36,7 @@ class Proposition(ABC):
         return Iff(self, other)
 
     #
-    # Function for the proposition's truth value under an interpretation
+    # Method for the proposition's truth value under an interpretation
     #
 
     @overload

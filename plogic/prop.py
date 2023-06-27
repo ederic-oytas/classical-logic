@@ -57,9 +57,6 @@ class Proposition(ABC):
     def __bool__(self) -> NoReturn:
         pass  # TODO implement
 
-    def __str__(self) -> str:
-        pass  # TODO implement
-
 
 # TODO documentation and full implementation of the subclasses
 
@@ -68,6 +65,9 @@ class Proposition(ABC):
 class Atomic:
     name: str
 
+    def __str__(self) -> str:
+        pass  # TODO implement
+
 
 @dataclass(frozen=True)
 class UnaryConnection(Proposition):
@@ -75,7 +75,8 @@ class UnaryConnection(Proposition):
 
 
 class Not(UnaryConnection):
-    pass
+    def __str__(self) -> str:
+        pass  # TODO implement
 
 
 @dataclass(frozen=True)
@@ -88,11 +89,17 @@ class And(BinaryConnection):
     left: Proposition
     right: Proposition
 
+    def __str__(self) -> str:
+        pass  # TODO implement
+
 
 @dataclass(frozen=True)
 class Or(BinaryConnection):
     left: Proposition
     right: Proposition
+
+    def __str__(self) -> str:
+        pass  # TODO implement
 
 
 @dataclass(frozen=True)
@@ -100,11 +107,17 @@ class Implies(BinaryConnection):
     left: Proposition
     right: Proposition
 
+    def __str__(self) -> str:
+        pass  # TODO implement
+
 
 @dataclass(frozen=True)
 class Iff(BinaryConnection):
     left: Proposition
     right: Proposition
+
+    def __str__(self) -> str:
+        pass  # TODO implement
 
 
 @overload

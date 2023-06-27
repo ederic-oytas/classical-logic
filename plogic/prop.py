@@ -17,19 +17,23 @@ class Proposition(ABC):
     #
 
     def __invert__(self, /) -> "Not":
-        pass
+        return Not(self)
 
     def __and__(self, other: "Proposition", /) -> "And":
-        pass  # TODO implement
+        if isinstance(other, Proposition):
+            return And(self, other)
+        return NotImplemented
 
     def __or__(self, other: "Proposition", /) -> "Or":
-        pass  # TODO implement
+        if isinstance(other, Proposition):
+            return Or(self, other)
+        return NotImplemented
 
     def implies(self, other: "Proposition", /) -> "Implies":
-        pass  # TODO implement
+        return Implies(self, other)
 
     def iff(self, other: "Proposition", /) -> "Iff":
-        pass  # TODO implement
+        return Iff(self, other)
 
     #
     # Function for the proposition's truth value under an interpretation

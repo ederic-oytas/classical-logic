@@ -1,0 +1,28 @@
+name: Run tests
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{matrix.os}}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up multiple versions of Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: |
+            3.9
+            3.10
+            3.11
+      - name: Set up Poetry
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: '1.4.2'
+      - name: Update Pip and install tox
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox
+      - name: Test with tox
+        run: |
+          tox

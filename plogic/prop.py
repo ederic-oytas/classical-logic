@@ -16,19 +16,19 @@ class Proposition(ABC):
     # Functions for composing compound propositions
     #
 
-    def __invert__(self, other, /) -> "Not":
+    def __invert__(self, /) -> "Not":
+        pass
+
+    def __and__(self, other: "Proposition", /) -> "And":
         pass  # TODO implement
 
-    def __and__(self, other, /) -> "And":
+    def __or__(self, other: "Proposition", /) -> "Or":
         pass  # TODO implement
 
-    def __or__(self, other, /) -> "Or":
+    def implies(self, other: "Proposition", /) -> "Implies":
         pass  # TODO implement
 
-    def implies(self, other, /) -> "Implies":
-        pass  # TODO implement
-
-    def iff(self, other, /) -> "Iff":
+    def iff(self, other: "Proposition", /) -> "Iff":
         pass  # TODO implement
 
     #

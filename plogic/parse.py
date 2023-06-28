@@ -65,6 +65,8 @@ Operator | Precedence | Associativity
 from dataclasses import dataclass
 from enum import Enum, auto
 
+from .core import Atomic, Proposition
+
 #
 # Lexigraphical analysis
 #
@@ -101,3 +103,16 @@ class _Token:
     value: str = ""
     """Text that was lexed. If the token type is not ATOMIC, then this is an
     empty string."""
+
+
+#
+# Parsing
+#
+
+#
+# API
+#
+
+
+def prop(text: str, /) -> Proposition:
+    return Atomic("")

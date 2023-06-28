@@ -67,3 +67,11 @@ class TestPropositionCompositionMethods:
     def test_iff(self, u: Proposition, v: Proposition):
         """Tests u.iff(v) where u and v are both Proposition's"""
         assert u.iff(v) == Iff(u, v)
+
+
+class TestPropositionMiscSpecialMethods:
+    @pytest.mark.parametrize("u", simple6)
+    def test_bool(self, u):
+        """Tests that bool(p) raises TypeError"""
+        with pytest.raises(TypeError):
+            bool(u)

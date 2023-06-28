@@ -61,3 +61,43 @@ Operator | Precedence | Associativity
 `&`      | 2          | Left
 `~`      | 1          | N/A
 """
+
+from dataclasses import dataclass
+from enum import Enum, auto
+
+#
+# Lexigraphical analysis
+#
+
+
+class _TokenType(Enum):
+    ATOMIC = auto()
+    NOT = auto()
+    AND = auto()
+    OR = auto()
+    IMPLIES = auto()
+    IFF = auto()
+    LPARENS = auto()
+    RPARENS = auto()
+
+
+_TT_ATOMIC = _TokenType.ATOMIC
+_TT_NOT = _TokenType.NOT
+_TT_AND = _TokenType.AND
+_TT_OR = _TokenType.OR
+_TT_IMPLIES = _TokenType.IMPLIES
+_TT_IFF = _TokenType.IFF
+_TT_LPARENS = _TokenType.LPARENS
+_TT_RPARENS = _TokenType.RPARENS
+
+
+@dataclass(frozen=True)
+class _Token:
+    """Represents a lexical token."""
+
+    type_: _TokenType
+    """The type of this token."""
+
+    value: str = ""
+    """Text that was lexed. If the token type is not ATOMIC, then this is an
+    empty string."""

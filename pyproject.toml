@@ -22,6 +22,9 @@ black = "^23.3.0"
 [tool.poetry.group.type.dependencies]
 mypy = "^1.4.1"
 
+[tool.black]
+line-length = 80
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

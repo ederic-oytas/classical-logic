@@ -3,7 +3,7 @@
 from abc import abstractmethod, ABC
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import overload, NoReturn, Union
+from typing import overload, NoReturn
 
 
 class Proposition(ABC):

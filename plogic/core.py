@@ -135,7 +135,7 @@ class Atomic(Proposition):
         return truth_value
 
     def __str__(self) -> str:
-        return ""  # TODO implement
+        return self.name
 
 
 @dataclass(frozen=True)
@@ -148,7 +148,7 @@ class Not(UnaryConnection):
         return not self.inner._interpret(interpretation)
 
     def __str__(self) -> str:
-        return ""  # TODO implement
+        return f"~{self.inner}"
 
 
 @dataclass(frozen=True)
@@ -165,7 +165,7 @@ class And(BinaryConnection):
         )
 
     def __str__(self) -> str:
-        return ""  # TODO implement
+        return f"({self.left} & {self.right})"
 
 
 @dataclass(frozen=True)
@@ -176,7 +176,7 @@ class Or(BinaryConnection):
         )
 
     def __str__(self) -> str:
-        return ""  # TODO implement
+        return f"({self.left} | {self.right})"
 
 
 @dataclass(frozen=True)
@@ -187,7 +187,7 @@ class Implies(BinaryConnection):
         ) or self.right._interpret(interpretation)
 
     def __str__(self) -> str:
-        return ""  # TODO implement
+        return f"({self.left} -> {self.right})"
 
 
 @dataclass(frozen=True)
@@ -198,7 +198,7 @@ class Iff(BinaryConnection):
         )
 
     def __str__(self) -> str:
-        return ""  # TODO implement
+        return f"({self.left} <-> {self.right})"
 
 
 @overload

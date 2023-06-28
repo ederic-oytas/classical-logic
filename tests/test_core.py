@@ -323,3 +323,68 @@ class TestInterpretation:
                 self.expect_interpret_fail(u, interp)
             else:
                 assert self.interpret3(u, interp) is expected
+
+
+class TestStr:
+    """Test the __str__ methods of the six subclasses."""
+
+    @pytest.mark.parametrize("atomic", atomic_test_cases)
+    def test_atomic(self, atomic: Atomic):
+        assert str(atomic) == atomic.name
+
+    @pytest.mark.parametrize("atomic", atomic_test_cases)
+    def test_not(self, atomic: Atomic):
+        assert str(Not(atomic)) == f"~{atomic}"
+
+    @pytest.mark.parametrize(
+        "cls,conn",
+        [
+            (And, "&"),
+            (Or, "|"),
+            (Implies, "->"),
+            (Iff, "<->"),
+        ],
+    )
+    @pytest.mark.parametrize("a", atomic_test_cases[1:])
+    @pytest.mark.parametrize("b", atomic_test_cases[2:])
+    def test_binary_conn(self, cls: type, conn: str, a: Atomic, b: Atomic):
+        assert str(cls(a, b)) == f"({a.name} {conn} {b.name})"
+
+    @pytest.mark.parametrize(
+        "u,expected",
+        [
+            (
+                Not(Not(Not(Not(Atomic("p"))))),
+                "~~~~p",
+            ),
+            (
+                Implies(
+                    And(Implies(Atomic("p"), Atomic("q")), Atomic("p")),
+                    Atomic("q"),
+                ),
+                "(((p -> q) & p) -> q)",
+            ),
+            (
+                Iff(
+                    Iff(Atomic("p"), Atomic("q")),
+                    And(
+                        Implies(Atomic("p"), Atomic("q")),
+                        Implies(Atomic("q"), Atomic("p")),
+                    ),
+                ),
+                "((p <-> q) <-> ((p -> q) & (q -> p)))",
+            ),
+            (
+                Iff(
+                    Iff(Atomic("p"), Atomic("q")),
+                    Or(
+                        And(Atomic("p"), Atomic("q")),
+                        And(Not(Atomic("p")), Not(Atomic("q"))),
+                    ),
+                ),
+                "((p <-> q) <-> ((p & q) | (~p & ~q)))",
+            ),
+        ],
+    )
+    def test_complex(self, u: Proposition, expected: str):
+        assert str(u) == expected

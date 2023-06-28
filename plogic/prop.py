@@ -1,6 +1,6 @@
 """Contains the Proposition class, its subclasses, and a related function."""
 
-from abc import ABC
+from abc import abstractmethod, ABC
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import overload, NoReturn, Union
@@ -48,7 +48,15 @@ class Proposition(ABC):
         ...
 
     def __call__(self, mapping=None, /, **kwargs) -> bool:
-        return False  # TODO implement
+        if mapping is None:
+            return self._interpret(kwargs)
+        return self._interpret(mapping)
+
+    @abstractmethod
+    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
+        raise NotImplementedError(
+            f"'_interpret' is not implemented for '{self.__class__.__name__}'"
+        )
 
     #
     # Miscellaneous special methods
@@ -65,6 +73,9 @@ class Proposition(ABC):
 class Atomic(Proposition):
     name: str
 
+    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+        return False  # TODO implement
+
     def __str__(self) -> str:
         return ""  # TODO implement
 
@@ -75,6 +86,9 @@ class UnaryConnection(Proposition):
 
 
 class Not(UnaryConnection):
+    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+        return False  # TODO implement
+
     def __str__(self) -> str:
         return ""  # TODO implement
 
@@ -89,6 +103,9 @@ class And(BinaryConnection):
     left: Proposition
     right: Proposition
 
+    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+        return False  # TODO implement
+
     def __str__(self) -> str:
         return ""  # TODO implement
 
@@ -97,6 +114,9 @@ class And(BinaryConnection):
 class Or(BinaryConnection):
     left: Proposition
     right: Proposition
+
+    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+        return False  # TODO implement
 
     def __str__(self) -> str:
         return ""  # TODO implement
@@ -107,6 +127,9 @@ class Implies(BinaryConnection):
     left: Proposition
     right: Proposition
 
+    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+        return False  # TODO implement
+
     def __str__(self) -> str:
         return ""  # TODO implement
 
@@ -115,6 +138,9 @@ class Implies(BinaryConnection):
 class Iff(BinaryConnection):
     left: Proposition
     right: Proposition
+
+    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+        return False  # TODO implement
 
     def __str__(self) -> str:
         return ""  # TODO implement

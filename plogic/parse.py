@@ -68,7 +68,7 @@ from enum import Enum, auto
 from .core import Atomic, Proposition
 
 #
-# Lexigraphical analysis
+# Lexical analysis
 #
 
 
@@ -101,8 +101,8 @@ class _Token:
     """The type of this token."""
 
     value: str = ""
-    """Text that was lexed. If the token type is not ATOMIC, then this is an
-    empty string."""
+    """Text value of this token. If the token type is not ATOMIC,
+    then this is an empty string."""
 
 
 #

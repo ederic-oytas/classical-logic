@@ -17,22 +17,27 @@ class Proposition(ABC):
     #
 
     def __invert__(self, /) -> "Not":
+        """Returns ``Not(p)``."""
         return Not(self)
 
     def __and__(self, other: "Proposition", /) -> "And":
+        """Returns ``And(p, q)``."""
         if isinstance(other, Proposition):
             return And(self, other)
         return NotImplemented
 
     def __or__(self, other: "Proposition", /) -> "Or":
+        """Returns ``Or(p, q)``."""
         if isinstance(other, Proposition):
             return Or(self, other)
         return NotImplemented
 
     def implies(self, other: "Proposition", /) -> "Implies":
+        """Returns ``Implies(p, q)``."""
         return Implies(self, other)
 
     def iff(self, other: "Proposition", /) -> "Iff":
+        """Returns ``Iff(p, q)``,"""
         return Iff(self, other)
 
     #
@@ -41,11 +46,27 @@ class Proposition(ABC):
 
     @overload
     def __call__(self, vals: Mapping[str, bool], /) -> bool:
-        ...
+        """Returns the truth value of this proposition under the given
+        mapping from atomic names to truth values.
+
+        Args:
+            vals: Mapping from atomic names to truth values.
+
+        Returns:
+            Truth value of this proposition under the given mapping.
+        """
 
     @overload
     def __call__(self, /, **vals: bool) -> bool:
-        ...
+        """Returns the truth value of this proposition under the given
+        assignment of atomic names to truth values.
+
+        Args:
+            vals: Assignments of atomic names to truth values.
+
+        Returns:
+            Truth value of this proposition under the given assignments.
+        """
 
     def __call__(self, mapping=None, /, **kwargs) -> bool:
         if mapping is None:
@@ -54,6 +75,11 @@ class Proposition(ABC):
 
     @abstractmethod
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
+        """Returns the truth value of this proposition under the given mapping
+        from atomic names to truth values.
+
+        This is an abstract internal method which is delegated to by __call__.
+        """
         raise NotImplementedError(
             f"'_interpret' is not implemented for '{self.__class__.__name__}'"
         )
@@ -63,6 +89,8 @@ class Proposition(ABC):
     #
 
     def __bool__(self) -> NoReturn:
+        """Raises TypeError. ``bool(p)`` is not supported because the truth
+        value of an `Proposition` is ambiguous."""
         raise Exception  # TODO implement
 
 

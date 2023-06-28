@@ -2,7 +2,6 @@
 
 from itertools import product
 import pytest
-from typing import Any
 
 from plogic.prop import And, Atomic, Not, Proposition, Or, Implies, Iff
 

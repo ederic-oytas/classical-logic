@@ -72,6 +72,6 @@ class TestPropositionCompositionMethods:
 class TestPropositionMiscSpecialMethods:
     @pytest.mark.parametrize("u", simple6)
     def test_bool(self, u):
-        """Tests that bool(p) raises TypeError"""
+        """Tests that bool(u) raises TypeError"""
         with pytest.raises(TypeError):
             bool(u)

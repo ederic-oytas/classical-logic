@@ -46,3 +46,14 @@ class TestPropositionCompositionMethods:
     def test_and_incorrect_type(self, u: Proposition, x):
         """Tests u.__and__(x) where u is a Proposition, but x is not."""
         assert u.__and__(x) is NotImplemented
+
+    @pytest.mark.parametrize("u,v", binary_test_cases_with_correct_types)
+    def test_or_correct_type(self, u: Proposition, v: Proposition):
+        """Tests (u | v) where u and v are both Proposition's"""
+        assert u.__or__(v) == Or(u, v)
+        assert u | v == Or(u, v)
+
+    @pytest.mark.parametrize("u,x", binary_test_cases_with_wrong_second_type)
+    def test_or_incorrect_type(self, u: Proposition, x):
+        """Tests u.__or__(x) where u is a Proposition, but x is not."""
+        assert u.__or__(x) is NotImplemented

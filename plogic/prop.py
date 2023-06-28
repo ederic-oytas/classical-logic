@@ -54,6 +54,9 @@ class Proposition(ABC):
 
         Returns:
             Truth value of this proposition under the given mapping.
+
+        Raises:
+            ValueError: At least one atomic was left unassigned in the mapping.
         """
 
     @overload
@@ -66,6 +69,9 @@ class Proposition(ABC):
 
         Returns:
             Truth value of this proposition under the given assignments.
+
+        Raises:
+            ValueError: At least one atomic was left unassigned.
         """
 
     def __call__(self, mapping=None, /, **kwargs) -> bool:

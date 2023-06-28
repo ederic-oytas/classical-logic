@@ -153,14 +153,12 @@ class Not(UnaryConnection):
 
 @dataclass(frozen=True)
 class BinaryConnection(Proposition):
-    pass
+    left: Proposition
+    right: Proposition
 
 
 @dataclass(frozen=True)
 class And(BinaryConnection):
-    left: Proposition
-    right: Proposition
-
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return self.left._interpret(interpretation) and self.right._interpret(
             interpretation
@@ -172,9 +170,6 @@ class And(BinaryConnection):
 
 @dataclass(frozen=True)
 class Or(BinaryConnection):
-    left: Proposition
-    right: Proposition
-
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return self.left._interpret(interpretation) or self.right._interpret(
             interpretation
@@ -186,9 +181,6 @@ class Or(BinaryConnection):
 
 @dataclass(frozen=True)
 class Implies(BinaryConnection):
-    left: Proposition
-    right: Proposition
-
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return not self.left._interpret(
             interpretation
@@ -200,9 +192,6 @@ class Implies(BinaryConnection):
 
 @dataclass(frozen=True)
 class Iff(BinaryConnection):
-    left: Proposition
-    right: Proposition
-
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return self.left._interpret(interpretation) == self.right._interpret(
             interpretation

@@ -47,7 +47,16 @@ class Proposition(ABC):
     @overload
     def __call__(self, vals: Mapping[str, bool], /) -> bool:
         """Returns the truth value of this proposition under the given
-        mapping from atomic names to truth values.
+        assignment of atomic names to truth values, otherwise known as
+        interpreting.
+
+        Note: This may use "short circuiting." If the truth value of a left
+            operand in a two-place connection determines the truth value of the
+            connection to be true or false regardless of the truth value of the
+            second operand, then the second operand is not interpreted. This
+            matters in the case of missing atomics. If the second operand
+            happens to contain an atomic which isn't included in the given
+            truth value mapping, then it wouldn't raise a ValueError.
 
         Args:
             vals: Mapping from atomic names to truth values.
@@ -62,7 +71,16 @@ class Proposition(ABC):
     @overload
     def __call__(self, /, **vals: bool) -> bool:
         """Returns the truth value of this proposition under the given
-        assignment of atomic names to truth values.
+        assignment of atomic names to truth values, otherwise known as
+        interpreting.
+
+        Note: This may use "short circuiting." If the truth value of a left
+            operand in a two-place connection determines the truth value of the
+            connection to be true or false regardless of the truth value of the
+            second operand, then the second operand is not interpreted. This
+            matters in the case of missing atomics. If the second operand
+            happens to contain an atomic which isn't included in the given
+            truth value mapping, then it wouldn't raise a ValueError.
 
         Args:
             vals: Assignments of atomic names to truth values.

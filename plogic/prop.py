@@ -111,7 +111,10 @@ class Atomic(Proposition):
     name: str
 
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return False  # TODO implement
+        truth_value = interpretation.get(self.name)
+        if truth_value is None:
+            raise ValueError(f"Atomic '{self.name}' was left unassigned")
+        return truth_value
 
     def __str__(self) -> str:
         return ""  # TODO implement
@@ -124,7 +127,7 @@ class UnaryConnection(Proposition):
 
 class Not(UnaryConnection):
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return False  # TODO implement
+        return not self.inner._interpret(interpretation)
 
     def __str__(self) -> str:
         return ""  # TODO implement
@@ -141,7 +144,9 @@ class And(BinaryConnection):
     right: Proposition
 
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return False  # TODO implement
+        return self.left._interpret(interpretation) and self.right._interpret(
+            interpretation
+        )
 
     def __str__(self) -> str:
         return ""  # TODO implement
@@ -153,7 +158,9 @@ class Or(BinaryConnection):
     right: Proposition
 
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return False  # TODO implement
+        return self.left._interpret(interpretation) or self.right._interpret(
+            interpretation
+        )
 
     def __str__(self) -> str:
         return ""  # TODO implement
@@ -165,7 +172,9 @@ class Implies(BinaryConnection):
     right: Proposition
 
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return False  # TODO implement
+        return not self.left._interpret(
+            interpretation
+        ) or self.right._interpret(interpretation)
 
     def __str__(self) -> str:
         return ""  # TODO implement
@@ -177,7 +186,9 @@ class Iff(BinaryConnection):
     right: Proposition
 
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return False  # TODO implement
+        return self.left._interpret(interpretation) == self.right._interpret(
+            interpretation
+        )
 
     def __str__(self) -> str:
         return ""  # TODO implement

@@ -2,6 +2,7 @@
 
 from itertools import product
 import pytest
+from typing import Optional
 
 from plogic.prop import And, Atomic, Not, Proposition, Or, Implies, Iff
 
@@ -75,3 +76,250 @@ class TestPropositionMiscSpecialMethods:
         """Tests that bool(u) raises TypeError"""
         with pytest.raises(TypeError):
             bool(u)
+
+
+atomic_test_cases: list[Atomic] = [
+    Atomic("p"),
+    Atomic("ANY_NamE"),
+    Atomic(""),
+    Atomic("\\'\"\n\t\uFFFF"),
+]
+
+
+class TestInterpretation:
+    """Tests the _interpret methods in the subclasses and __call__ method of
+    the Proposition class."""
+
+    Interp = dict[str, bool]
+
+    def interpret3(self, u: Proposition, interp: Interp) -> bool:
+        """Interprets in all three ways and asserts that all values are equal,
+        and then returns the value.
+
+        The three ways:
+            u(mapping)
+            u(**vals)
+            u._interpret(mapping)
+        """
+        a = u(interp)
+        b = u(**interp)
+        c = u._interpret(interp)
+        assert a == b == c
+        return a
+
+    def expect_interpret_fail(self, u: Proposition, interp: Interp) -> None:
+        """Asserts that all interpret will raise a ValueError in all three
+        ways."""
+        with pytest.raises(ValueError):
+            u(interp)
+        with pytest.raises(ValueError):
+            u(**interp)
+        with pytest.raises(ValueError):
+            u._interpret(interp)
+
+    @pytest.mark.parametrize("atomic", atomic_test_cases)
+    def test_atomic_name_found(self, atomic: Atomic):
+        """Tests Atomic._interpret"""
+        assert self.interpret3(atomic, {atomic.name: True}) is True
+        assert self.interpret3(atomic, {atomic.name: False}) is False
+
+    @pytest.mark.parametrize("atomic", [Atomic("p"), Atomic("q")])
+    def test_atomic_name_not_found(self, atomic: Atomic):
+        """Tests Atomic._interpret"""
+        self.expect_interpret_fail(atomic, {atomic.name + "2": True})
+        self.expect_interpret_fail(atomic, {atomic.name + "2": False})
+
+    def test_not_truth_table(self):
+        """Tests truth table of ~p"""
+        not_p = Not(Atomic("p"))
+        assert self.interpret3(not_p, {"p": True}) is False
+        assert self.interpret3(not_p, {"p": False}) is True
+
+    def test_and_truth_table(self):
+        """Tests truth table of p&q"""
+        p_and_q = And(Atomic("p"), Atomic("q"))
+        assert self.interpret3(p_and_q, {"p": True, "q": True}) is True
+        assert self.interpret3(p_and_q, {"p": True, "q": False}) is False
+        assert self.interpret3(p_and_q, {"p": False, "q": True}) is False
+        assert self.interpret3(p_and_q, {"p": False, "q": False}) is False
+
+    def test_or_truth_table(self):
+        """Tests truth table of p|q"""
+        p_or_q = Or(Atomic("p"), Atomic("q"))
+        assert self.interpret3(p_or_q, {"p": True, "q": True}) is True
+        assert self.interpret3(p_or_q, {"p": True, "q": False}) is True
+        assert self.interpret3(p_or_q, {"p": False, "q": True}) is True
+        assert self.interpret3(p_or_q, {"p": False, "q": False}) is False
+
+    def test_implies_truth_table(self):
+        """Tests truth table of p->q"""
+        p_implies_q = Implies(Atomic("p"), Atomic("q"))
+        assert self.interpret3(p_implies_q, {"p": True, "q": True}) is True
+        assert self.interpret3(p_implies_q, {"p": True, "q": False}) is False
+        assert self.interpret3(p_implies_q, {"p": False, "q": True}) is True
+        assert self.interpret3(p_implies_q, {"p": False, "q": False}) is True
+
+    def test_iff_truth_table(self):
+        """Tests truth table of p<->q"""
+        p_iff_q = Iff(Atomic("p"), Atomic("q"))
+        assert self.interpret3(p_iff_q, {"p": True, "q": True}) is True
+        assert self.interpret3(p_iff_q, {"p": True, "q": False}) is False
+        assert self.interpret3(p_iff_q, {"p": False, "q": True}) is False
+        assert self.interpret3(p_iff_q, {"p": False, "q": False}) is True
+
+    @pytest.mark.parametrize(
+        "u,interp_expected_pairs",
+        [
+            (
+                Not(Not(Not(Not(Atomic("p"))))),  # ~~~~p  (quadruple negation)
+                [
+                    ({"p": True}, True),
+                    ({"p": False}, False),
+                ],
+            ),
+            (
+                Or(Atomic("p"), Not(Atomic("p"))),  # p | ~p  (tautology)
+                [
+                    ({"p": True}, True),
+                    ({"p": False}, True),
+                ],
+            ),
+            (
+                And(Atomic("p"), Not(Atomic("p"))),  # p & ~p  (contradiction)
+                [
+                    ({"p": True}, False),
+                    ({"p": False}, False),
+                ],
+            ),
+            (
+                Implies(
+                    And(Implies(Atomic("p"), Atomic("q")), Atomic("p")),
+                    Atomic("q"),
+                ),  # ((p->q)&q) -> q  (Modens Ponens, so a tautology)
+                [
+                    ({"p": True, "q": True}, True),
+                    ({"p": True, "q": False}, True),
+                    ({"p": False, "q": True}, True),
+                    ({"p": False, "q": False}, True),
+                ],
+            ),
+            (
+                Iff(
+                    Iff(Atomic("p"), Atomic("q")),
+                    And(
+                        Implies(Atomic("p"), Atomic("q")),
+                        Implies(Atomic("q"), Atomic("p")),
+                    ),
+                ),  # (p <-> q) <-> ((p -> q) & (q -> p))  (tautology)
+                [
+                    ({"p": True, "q": True}, True),
+                    ({"p": True, "q": False}, True),
+                    ({"p": False, "q": True}, True),
+                    ({"p": False, "q": False}, True),
+                ],
+            ),
+            (
+                Iff(
+                    Iff(Atomic("p"), Atomic("q")),
+                    Or(
+                        And(Atomic("p"), Atomic("q")),
+                        And(Not(Atomic("p")), Not(Atomic("q"))),
+                    ),
+                ),  # (p <-> q) <-> ((p & q) | (~p & ~q))  (tautology)
+                [
+                    ({"p": True, "q": True}, True),
+                    ({"p": True, "q": False}, True),
+                    ({"p": False, "q": True}, True),
+                    ({"p": False, "q": False}, True),
+                ],
+            ),
+        ],
+    )
+    def test_complex_cases(
+        self,
+        u: Proposition,
+        interp_expected_pairs: list[tuple[Interp, bool]],
+    ):
+        """Test cases with some nesting."""
+        for interp, expected in interp_expected_pairs:
+            assert self.interpret3(u, interp) is expected
+
+    @pytest.mark.parametrize(
+        "u,interp_expected_pairs",
+        [
+            (
+                And(
+                    Or(
+                        Implies(Atomic("p"), Atomic("p")),
+                        Iff(Atomic("p"), Atomic("p")),
+                    ),
+                    Not(Atomic("p")),
+                ),  # ((p -> p) | (p <-> p)) & ~p
+                [
+                    ({}, None),
+                    ({"x": True}, None),
+                ],
+            ),
+            # The following tests also try to test the "short circuiting"
+            # nature of interpreting.
+            (
+                Not(Atomic("p")),
+                [  # ~p
+                    ({}, None),
+                    ({"x": True}, None),
+                    ({"x": False}, None),
+                ],
+            ),
+            (
+                And(Atomic("p"), Atomic("q")),  # p & q
+                [
+                    ({}, None),
+                    ({"p": True}, None),
+                    ({"p": False}, False),
+                    ({"q": True}, None),
+                    ({"q": False}, None),
+                ],
+            ),
+            (
+                Or(Atomic("p"), Atomic("q")),  # p | q
+                [
+                    ({}, None),
+                    ({"p": True}, True),
+                    ({"p": False}, None),
+                    ({"q": True}, None),
+                    ({"q": False}, None),
+                ],
+            ),
+            (
+                Implies(Atomic("p"), Atomic("q")),  # p -> q (== ~p | q)
+                [
+                    ({}, None),
+                    ({"p": True}, None),
+                    ({"p": False}, True),
+                    ({"q": True}, None),
+                    ({"q": False}, None),
+                ],
+            ),
+            (
+                Iff(Atomic("p"), Atomic("q")),  # p <-> q
+                [
+                    ({}, None),
+                    ({"p": True}, None),
+                    ({"p": False}, None),
+                    ({"q": True}, None),
+                    ({"q": False}, None),
+                ],
+            ),
+        ],
+    )
+    def test_complex_atomic_missing(
+        self,
+        u: Proposition,
+        interp_expected_pairs: list[tuple[Interp, Optional[bool]]],
+    ):
+        """Test cases with some nesting when an atomic value is not assigned"""
+        for interp, expected in interp_expected_pairs:
+            if expected is None:
+                self.expect_interpret_fail(u, interp)
+            else:
+                assert self.interpret3(u, interp) is expected

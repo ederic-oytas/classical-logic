@@ -2,6 +2,7 @@
 
 from itertools import product
 import pytest
+from typing import Any
 
 from plogic.prop import And, Atomic, Not, Proposition, Or, Implies, Iff
 
@@ -22,10 +23,10 @@ simple6: list[Proposition] = [Atomic("p"), *simple5]
 class TestPropositionCompositionMethods:
     """Tests for the five composition methods in the Proposition class."""
 
-    @pytest.mark.parametrize("p", simple6)
-    def test_invert(self, p: Proposition):
-        assert p.__invert__() == Not(p)
-        assert ~p == Not(p)
+    @pytest.mark.parametrize("u", simple6)
+    def test_invert(self, u: Proposition):
+        assert u.__invert__() == Not(u)
+        assert ~u == Not(u)
 
     binary_test_cases_with_correct_types = [
         (Atomic("p"), Atomic("q")),  # (p, q)
@@ -36,13 +37,13 @@ class TestPropositionCompositionMethods:
         *product(simple6, [object(), True, False])
     ]
 
-    @pytest.mark.parametrize("t,u", binary_test_cases_with_correct_types)
-    def test_and_correct_type(self, t: Proposition, u: Proposition):
-        """Tests (t & u) where t and u are both Proposition's"""
-        assert t.__and__(u) == And(t, u)
-        assert t & u == And(t, u)
+    @pytest.mark.parametrize("u,v", binary_test_cases_with_correct_types)
+    def test_and_correct_type(self, u: Proposition, v: Proposition):
+        """Tests (u & v) where u and v are both Proposition's"""
+        assert u.__and__(v) == And(u, v)
+        assert u & v == And(u, v)
 
-    @pytest.mark.parametrize("t,x", binary_test_cases_with_wrong_second_type)
-    def test_and_incorrect_type(self, t: Proposition, x):
-        """Tests t.__and__(x) where t is a Proposition, but x is not."""
-        assert t.__and__(x) is NotImplemented
+    @pytest.mark.parametrize("u,x", binary_test_cases_with_wrong_second_type)
+    def test_and_incorrect_type(self, u: Proposition, x):
+        """Tests u.__and__(x) where u is a Proposition, but x is not."""
+        assert u.__and__(x) is NotImplemented

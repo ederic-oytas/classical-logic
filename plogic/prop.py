@@ -91,7 +91,10 @@ class Proposition(ABC):
     def __bool__(self) -> NoReturn:
         """Raises TypeError. ``bool(p)`` is not supported because the truth
         value of an `Proposition` is ambiguous."""
-        raise Exception  # TODO implement
+        raise TypeError(
+            "The truth value of a Proposition is ambiguous. Consider using "
+            "interpretation through p(**vals)"
+        )
 
 
 # TODO documentation and full implementation of the subclasses

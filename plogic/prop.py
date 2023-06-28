@@ -110,7 +110,7 @@ class Proposition(ABC):
 class Atomic(Proposition):
     name: str
 
-    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return False  # TODO implement
 
     def __str__(self) -> str:
@@ -123,7 +123,7 @@ class UnaryConnection(Proposition):
 
 
 class Not(UnaryConnection):
-    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return False  # TODO implement
 
     def __str__(self) -> str:
@@ -140,7 +140,7 @@ class And(BinaryConnection):
     left: Proposition
     right: Proposition
 
-    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return False  # TODO implement
 
     def __str__(self) -> str:
@@ -152,7 +152,7 @@ class Or(BinaryConnection):
     left: Proposition
     right: Proposition
 
-    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return False  # TODO implement
 
     def __str__(self) -> str:
@@ -164,7 +164,7 @@ class Implies(BinaryConnection):
     left: Proposition
     right: Proposition
 
-    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return False  # TODO implement
 
     def __str__(self) -> str:
@@ -176,7 +176,7 @@ class Iff(BinaryConnection):
     left: Proposition
     right: Proposition
 
-    def _interpret(self, interpretation: Mapping[str, bool]) -> bool:
+    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return False  # TODO implement
 
     def __str__(self) -> str:

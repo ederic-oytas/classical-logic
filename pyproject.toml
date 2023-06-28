@@ -15,8 +15,9 @@ pytest = "^7.4.0"
 tox = "^4.6.3"
 
 
-[tool.poetry.group.format.dependencies]
+[tool.poetry.group.style.dependencies]
 black = "^23.3.0"
+flake8 = "^6.0.0"
 
 
 [tool.poetry.group.type.dependencies]

@@ -61,10 +61,29 @@ Operator | Precedence | Associativity
 `&`      | 2          | Left
 `~`      | 1          | N/A
 """
+from string import Template
 from typing import Generator, Iterator, Optional
 from enum import Enum, auto
 
 from .core import Atomic, Proposition
+
+#
+# Messages
+#
+
+_MESSAGE_UNEXPECTED_END_OF_STRING: str = "unexpected end of string"
+"""Error message for when the end of the string is encountered
+unexpectedly."""
+
+_TEMPLATE_UNEXPECTED_CHARACTER: Template = Template(
+    "unexpected character: '$c'"
+)
+"""Error message template for when an unexpected character is encountered.
+
+Arguments:
+    `c`: The unexpected character
+"""
+
 
 #
 # Lexical analysis
@@ -130,7 +149,7 @@ def _lex(text: str) -> Generator[tuple[_TokenType, str], None, None]:
             continue  # to skip advancing the iterator
 
         else:
-            raise ValueError(f"unexpected character '{c}'")
+            raise ValueError(_TEMPLATE_UNEXPECTED_CHARACTER.substitute(c=c))
 
         c = next(it, None)
 
@@ -142,9 +161,9 @@ def _lex_accept(it: Iterator[str], expected: str) -> None:
 
     c = next(it, None)
     if c is None:
-        raise ValueError("unexpected end of string")
+        raise ValueError(_MESSAGE_UNEXPECTED_END_OF_STRING)
     if c != expected:
-        raise ValueError(f"unexpected character '{c}'")
+        raise ValueError(_TEMPLATE_UNEXPECTED_CHARACTER.substitute(c=c))
 
 
 #

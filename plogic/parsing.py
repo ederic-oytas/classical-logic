@@ -157,7 +157,13 @@ def _lex(text: str) -> Generator[tuple[_TokenType, str], None, None]:
 def _lex_accept(it: Iterator[str], expected: str) -> None:
     """Takes the next item from `it` and compares it to `expected`. If `it` has
     no more items or the item is not equal to `expected`, a `ValueError` is
-    raised."""
+    raised.
+
+    The messages of the `ValueError` raised is as follows:
+    - If end of string, then `_MESSAGE_UNEXPECTED_END_OF_STRING`
+    - If unexpected char, then `_TEMPLATE_UNEXPECTED_CHARACTER` with `c`
+      substituted for the unexpected character.
+    """
 
     c = next(it, None)
     if c is None:

@@ -62,9 +62,7 @@ Operator | Precedence | Associativity
 `~`      | 1          | N/A
 """
 from typing import Generator, Iterator, Optional
-from dataclasses import dataclass
 from enum import Enum, auto
-from itertools import chain
 
 from .core import Atomic, Proposition
 

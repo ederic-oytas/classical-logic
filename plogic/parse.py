@@ -82,82 +82,63 @@ class _TokenType(Enum):
     IFF = auto()
     LPARENS = auto()
     RPARENS = auto()
+    END = auto()
 
 
-_TT_ATOMIC = _TokenType.ATOMIC
-_TT_NOT = _TokenType.NOT
-_TT_AND = _TokenType.AND
-_TT_OR = _TokenType.OR
-_TT_IMPLIES = _TokenType.IMPLIES
-_TT_IFF = _TokenType.IFF
-_TT_LPARENS = _TokenType.LPARENS
-_TT_RPARENS = _TokenType.RPARENS
-
-
-@dataclass(frozen=True)
-class _Token:
-    """Represents a lexical token."""
-
-    type_: _TokenType
-    """The type of this token."""
-
-    value: str = ""
-    """Text value of this token. If the token type is not ATOMIC,
-    then this is an empty string."""
-
-
-def _lex(text: str) -> Generator[_Token, None, None]:
-    it = iter(text)
-
-    put_back: str = ""
+def _lex(text: str) -> Generator[tuple[_TokenType, str], None, None]:
+    it: Iterator[str] = iter(text)
+    c: Optional[str] = next(it, None)
 
     while True:
-        c: Optional[str]
-        if put_back:
-            c = put_back
-            put_back = ""
-        else:
-            c = next(it, None)
-
         if c is None:
+            yield (_TokenType.END, "")
             return
+
+        elif c == "~":
+            yield (_TokenType.NOT, "~")
+
+        elif c == "&":
+            yield (_TokenType.AND, "&")
+
+        elif c == "|":
+            yield (_TokenType.OR, "|")
+
+        elif c == "-":
+            _lex_accept(it, ">")
+            yield (_TokenType.IMPLIES, "->")
+
+        elif c == "<":
+            _lex_accept(it, "-")
+            _lex_accept(it, ">")
+            yield (_TokenType.IFF, "<->")
+
+        elif c == "(":
+            yield (_TokenType.LPARENS, "(")
+
+        elif c == ")":
+            yield (_TokenType.RPARENS, ")")
+
+        elif c in " \t\f\r\n":  # whitespace
+            pass
+
         elif c.isalpha() or c == "_":
             parts = [c]
-            while True:
-                c = next(it, None)
-                if c is None:
-                    yield _Token(_TT_ATOMIC, "".join(parts))
-                    return
-                if not (c.isalnum() or c == "_"):
-                    yield _Token(_TT_ATOMIC, "".join(parts))
-                    put_back = c
+            while c := next(it, None):
+                if c.isalnum() or c == "_":
+                    parts.append(c)
+                else:
                     break
-                parts.append(c)
-        elif c == "~":
-            yield _Token(_TT_NOT)
-        elif c == "&":
-            yield _Token(_TT_AND)
-        elif c == "|":
-            yield _Token(_TT_OR)
-        elif c == "-":
-            _expect(it, ">")
-            yield _Token(_TT_IMPLIES)
-        elif c == "<":
-            _expect(it, "-")
-            _expect(it, ">")
-            yield _Token(_TT_IFF)
-        elif c == "(":
-            yield _Token(_TT_LPARENS)
-        elif c == ")":
-            yield _Token(_TT_RPARENS)
-        elif c in " \t\f\r\n":
-            continue
+            yield (_TokenType.ATOMIC, "".join(parts))
+            continue  # to skip advancing the iterator
+
         else:
-            raise ValueError(f"unexpected character: {c}")
+            raise ValueError(f"unexpected character '{c}'")
+
+        c = next(it, None)
 
 
-def _expect(it: Iterator, expected: str) -> None:
-    c = next(it)
+def _lex_accept(it: Iterator[str], expected: str) -> None:
+    c = next(it, None)
     if c is None:
         raise ValueError("unexpected end of string")
     if c != expected:

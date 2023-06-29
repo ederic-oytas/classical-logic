@@ -3,7 +3,9 @@ import pytest
 import re
 
 from plogic.parsing import (
+    _lex,
     _lex_accept,
+    _TokenType,
     _MESSAGE_UNEXPECTED_END_OF_STRING,
     _TEMPLATE_UNEXPECTED_CHARACTER,
 )
@@ -64,3 +66,26 @@ class TestLex:
             mes: str = _MESSAGE_UNEXPECTED_END_OF_STRING
             with pytest.raises(ValueError, match=re.escape(mes)):
                 _lex_accept(it, c)
+
+    @pytest.mark.parametrize(
+        "s,expected_token",
+        [
+            ("~", (_TokenType.NOT, "~")),
+            ("&", (_TokenType.AND, "&")),
+            ("|", (_TokenType.OR, "|")),
+            ("->", (_TokenType.IMPLIES, "->")),
+            ("<->", (_TokenType.IFF, "<->")),
+            ("(", (_TokenType.LPARENS, "(")),
+            (")", (_TokenType.RPARENS, ")")),
+        ],
+    )
+    def test_individual_operator_and_separator_tokens(
+        self, s: str, expected_token: tuple[_TokenType, str]
+    ):
+        stream = _lex(s)
+        assert next(stream) == expected_token
+        assert next(stream) == (_TokenType.END, "")
+        assert next(stream, None) is None
+
+    # TODO test ignoring whitespace
+    # TODO test atomics

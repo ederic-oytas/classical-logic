@@ -61,9 +61,10 @@ Operator | Precedence | Associativity
 `&`      | 2          | Left
 `~`      | 1          | N/A
 """
-
+from typing import Generator, Iterator, Optional
 from dataclasses import dataclass
 from enum import Enum, auto
+from itertools import chain
 
 from .core import Atomic, Proposition
 
@@ -103,6 +104,64 @@ class _Token:
     value: str = ""
     """Text value of this token. If the token type is not ATOMIC,
     then this is an empty string."""
+
+
+def _lex(text: str) -> Generator[_Token, None, None]:
+    it = iter(text)
+
+    put_back: str = ""
+
+    while True:
+        c: Optional[str]
+        if put_back:
+            c = put_back
+            put_back = ""
+        else:
+            c = next(it, None)
+
+        if c is None:
+            return
+        elif c.isalpha() or c == "_":
+            parts = [c]
+            while True:
+                c = next(it, None)
+                if c is None:
+                    yield _Token(_TT_ATOMIC, "".join(parts))
+                    return
+                if not (c.isalnum() or c == "_"):
+                    yield _Token(_TT_ATOMIC, "".join(parts))
+                    put_back = c
+                    break
+                parts.append(c)
+        elif c == "~":
+            yield _Token(_TT_NOT)
+        elif c == "&":
+            yield _Token(_TT_AND)
+        elif c == "|":
+            yield _Token(_TT_OR)
+        elif c == "-":
+            _expect(it, ">")
+            yield _Token(_TT_IMPLIES)
+        elif c == "<":
+            _expect(it, "-")
+            _expect(it, ">")
+            yield _Token(_TT_IFF)
+        elif c == "(":
+            yield _Token(_TT_LPARENS)
+        elif c == ")":
+            yield _Token(_TT_RPARENS)
+        elif c in " \t\f\r\n":
+            continue
+        else:
+            raise ValueError(f"unexpected character: {c}")
+
+
+def _expect(it: Iterator, expected: str) -> None:
+    c = next(it)
+    if c is None:
+        raise ValueError("unexpected end of string")
+    if c != expected:
+        raise ValueError(f"unexpected character: {c}")
 
 
 #

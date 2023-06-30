@@ -100,6 +100,16 @@ class _TokenType(Enum):
 
 
 def _lex(text: str) -> Generator[tuple[_TokenType, str], None, None]:
+    """Yields tokens from lexing the given string (according to the grammar
+    specified in the module docstring.)
+
+    If an unexpected character is encountered, then ``ValueError(mes)`` is
+    raised where `mes` is ``_unexp_char(c)`` with `c` as the unexpected char.
+
+    If the end of the string is encountered unexpectedly then
+    ``ValueError(mes)`` is raised where `mes` is `_UNEXP_END_OF_STR`.
+    """
+
     it: Iterator[str] = iter(text)
     c: Optional[str] = next(it, None)
 

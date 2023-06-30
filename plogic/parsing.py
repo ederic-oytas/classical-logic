@@ -157,9 +157,9 @@ def _lex_accept(it: Iterator[str], expected: str) -> None:
     raised.
 
     The messages of the `ValueError` raised is as follows:
-    - If end of string, then `_MESSAGE_UNEXPECTED_END_OF_STRING`
-    - If unexpected char, then `_TEMPLATE_UNEXPECTED_CHARACTER` with `c`
-      substituted for the unexpected character.
+    - If end of string, then `_UNEXP_END_OF_STR` is used.
+    - If unexpected char, then `_unexp_char(c)` where c is the unexpected char,
+      is used.
     """
 
     c = next(it, None)

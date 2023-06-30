@@ -1,6 +1,7 @@
 """Tests for plogic/parsing.py."""
 import pytest
 import re
+import string
 
 from plogic.parsing import (
     _lex,
@@ -11,6 +12,8 @@ from plogic.parsing import (
 )
 
 # TODO finish testing for _lex, _lex_expect
+
+TOKEN_END = (_TokenType.END, "")
 
 
 class TestLex:
@@ -87,5 +90,60 @@ class TestLex:
         assert next(stream) == (_TokenType.END, "")
         assert next(stream, None) is None
 
-    # TODO test ignoring whitespace
-    # TODO test atomics
+    @pytest.mark.parametrize(
+        "atomic_name",
+        [
+            "P",
+            string.ascii_letters + string.digits + "_",
+            "_" * 20 + string.ascii_letters + string.digits,
+            string.ascii_uppercase + string.ascii_lowercase,
+        ],
+    )
+    def test_atomic_name_success(self, atomic_name: str):
+        assert list(_lex(atomic_name)) == [
+            (_TokenType.ATOMIC, atomic_name),
+            TOKEN_END,
+        ]
+
+    @pytest.mark.parametrize("d", string.digits)
+    def test_atomic_name_starting_digit_fail(self, d: str):
+        mes = _TEMPLATE_UNEXPECTED_CHARACTER.substitute(c=d)
+        with pytest.raises(ValueError, match=re.escape(mes)):
+            list(_lex(f"{d}abc"))
+
+    @pytest.mark.parametrize(
+        "s,expected_tokens",
+        [
+            (" ", [TOKEN_END]),
+            (" \t\f\r\n", [TOKEN_END]),
+            (
+                " \t\f\r\n-> \t\f\r\n",
+                [
+                    (_TokenType.IMPLIES, "->"),
+                    TOKEN_END,
+                ],
+            ),
+            (
+                "P \t\f\r\n-> \t\f\r\n Q",
+                [
+                    (_TokenType.ATOMIC, "P"),
+                    (_TokenType.IMPLIES, "->"),
+                    (_TokenType.ATOMIC, "Q"),
+                    TOKEN_END,
+                ],
+            ),
+            (
+                "P \t\f\r\n Q R     S",
+                [
+                    (_TokenType.ATOMIC, "P"),
+                    (_TokenType.ATOMIC, "Q"),
+                    (_TokenType.ATOMIC, "R"),
+                    (_TokenType.ATOMIC, "S"),
+                    TOKEN_END,
+                ],
+            ),
+        ],
+    )
+    def test_ignore_whitespace(self, s: str, expected_tokens: list[str]):
+        """Tests that all whitespace is ignored."""
+        assert list(_lex(s)) == expected_tokens

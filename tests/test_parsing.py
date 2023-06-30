@@ -147,3 +147,43 @@ class TestLex:
     def test_ignore_whitespace(self, s: str, expected_tokens: list[str]):
         """Tests that all whitespace is ignored."""
         assert list(_lex(s)) == expected_tokens
+
+    @pytest.mark.parametrize("c", "0123456789!@#$%^*[]{}\\=")
+    def test_individual_unexpected_characters(self, c: str):
+        """Test for single unexpected characters"""
+        mes = _unexp_char(c)
+        with pytest.raises(ValueError, match=re.escape(mes)):
+            list(_lex(c))
+
+    @pytest.mark.parametrize(
+        "s",
+        [
+            "-<",
+            "--",
+            "-P",
+            "<<",
+            "<=",
+            "<P",
+            "<--",
+            "<-<",
+            "<-=",
+            "<-P",
+        ],
+    )
+    def test_non_first_unexpected_characters(self, s: str):
+        mes = _unexp_char(s[-1])
+        with pytest.raises(ValueError, match=re.escape(mes)):
+            list(_lex(s))
+
+    @pytest.mark.parametrize(
+        "s",
+        [
+            "-",
+            "<",
+            "<-",
+        ],
+    )
+    def test_unexpected_end_of_string(self, s: str):
+        mes = _UNEXP_END_OF_STR
+        with pytest.raises(ValueError, match=re.escape(mes)):
+            list(_lex(s))

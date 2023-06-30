@@ -71,18 +71,15 @@ from .core import Atomic, Proposition
 # Messages
 #
 
-_MESSAGE_UNEXPECTED_END_OF_STRING: str = "unexpected end of string"
+_UNEXP_END_OF_STR: str = "unexpected end of string"
 """Error message for when the end of the string is encountered
 unexpectedly."""
 
-_TEMPLATE_UNEXPECTED_CHARACTER: Template = Template(
-    "unexpected character: '$c'"
-)
-"""Error message template for when an unexpected character is encountered.
 
-Arguments:
-    `c`: The unexpected character
-"""
+def _unexp_char(c: str) -> str:
+    """Returns an error message saying that an unexpected character `c` was
+    encountered."""
+    return f"unexpected character '{c}'"
 
 
 #
@@ -149,7 +146,7 @@ def _lex(text: str) -> Generator[tuple[_TokenType, str], None, None]:
             continue  # to skip advancing the iterator
 
         else:
-            raise ValueError(_TEMPLATE_UNEXPECTED_CHARACTER.substitute(c=c))
+            raise ValueError(_unexp_char(c))
 
         c = next(it, None)
 
@@ -167,9 +164,9 @@ def _lex_accept(it: Iterator[str], expected: str) -> None:
 
     c = next(it, None)
     if c is None:
-        raise ValueError(_MESSAGE_UNEXPECTED_END_OF_STRING)
+        raise ValueError(_UNEXP_END_OF_STR)
     if c != expected:
-        raise ValueError(_TEMPLATE_UNEXPECTED_CHARACTER.substitute(c=c))
+        raise ValueError(_unexp_char(c))
 
 
 #

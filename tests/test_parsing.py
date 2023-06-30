@@ -7,8 +7,8 @@ from plogic.parsing import (
     _lex,
     _lex_accept,
     _TokenType,
-    _MESSAGE_UNEXPECTED_END_OF_STRING,
-    _TEMPLATE_UNEXPECTED_CHARACTER,
+    _UNEXP_END_OF_STR,
+    _unexp_char,
 )
 
 # TODO finish testing for _lex, _lex_expect
@@ -35,7 +35,7 @@ class TestLex:
             _lex_accept(it, c)
 
         # Assert that any more characters will not be accepted
-        mes: str = _MESSAGE_UNEXPECTED_END_OF_STRING
+        mes: str = _UNEXP_END_OF_STR
         with pytest.raises(ValueError, match=re.escape(mes)):
             _lex_accept(it, "a")
         with pytest.raises(ValueError, match=re.escape(mes)):
@@ -58,7 +58,7 @@ class TestLex:
 
         # Expect that every corresponding character in t is wrong.
         for c, d in zip(s, t):
-            mes: str = _TEMPLATE_UNEXPECTED_CHARACTER.substitute(c=c)
+            mes: str = _unexp_char(c)
             print(mes)
             with pytest.raises(ValueError, match=re.escape(mes)):
                 _lex_accept(it, d)
@@ -66,7 +66,7 @@ class TestLex:
         # Since the iterator is exhausted, expect we get the end of string
         # error now.
         for c in s:
-            mes: str = _MESSAGE_UNEXPECTED_END_OF_STRING
+            mes: str = _UNEXP_END_OF_STR
             with pytest.raises(ValueError, match=re.escape(mes)):
                 _lex_accept(it, c)
 
@@ -107,7 +107,7 @@ class TestLex:
 
     @pytest.mark.parametrize("d", string.digits)
     def test_atomic_name_starting_digit_fail(self, d: str):
-        mes = _TEMPLATE_UNEXPECTED_CHARACTER.substitute(c=d)
+        mes = _unexp_char(d)
         with pytest.raises(ValueError, match=re.escape(mes)):
             list(_lex(f"{d}abc"))
 

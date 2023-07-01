@@ -193,7 +193,7 @@ class _Parser:
         self._token_stream: Iterator[tuple[_TokenType, str]] = _lex(text)
         """Iterator over the tokens to parse."""
 
-        self._current_token_type: _TokenType
+        self._current_token_type: Optional[_TokenType]
         self._current_token_value: str
 
         self._current_token_type, self._current_token_value = next(
@@ -203,7 +203,7 @@ class _Parser:
     def _advance(self) -> None:
         """Advances to the next token."""
         self._current_token_type, self._current_token_value = next(
-            self._token_stream
+            self._token_stream, (None, "")
         )
 
     def bic(self) -> Proposition:
@@ -257,10 +257,13 @@ class _Parser:
             prop = self.bic()
             if self._current_token_type is _TokenType.RPARENS:
                 return prop
-            # falls through to raise unexpected token
+            # falls through to raise end of string unexpected token
 
-        mes = _unexp_token(self._current_token_value)
-        raise ValueError(mes)
+        if self._current_token_type is None:
+            raise ValueError(_UNEXP_END_OF_STR)
+
+        else:
+            raise ValueError(_unexp_token(self._current_token_value))
 
 
 #

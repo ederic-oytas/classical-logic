@@ -58,7 +58,7 @@ class TestLex:
 
         # Expect that every corresponding character in t is wrong.
         for c, d in zip(s, t):
-            mes: str = _unexp_char(c)
+            mes = _unexp_char(c)
             print(mes)
             with pytest.raises(ValueError, match=re.escape(mes)):
                 _lex_accept(it, d)
@@ -66,7 +66,7 @@ class TestLex:
         # Since the iterator is exhausted, expect we get the end of string
         # error now.
         for c in s:
-            mes: str = _UNEXP_END_OF_STR
+            mes = _UNEXP_END_OF_STR
             with pytest.raises(ValueError, match=re.escape(mes)):
                 _lex_accept(it, c)
 

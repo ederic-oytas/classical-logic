@@ -256,6 +256,7 @@ class _Parser:
             self._advance()
             prop = self.bic()
             if self._current_token_type is _TokenType.RPARENS:
+                self._advance()
                 return prop
             # falls through to raise end of string unexpected token
 

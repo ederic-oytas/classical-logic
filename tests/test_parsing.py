@@ -2,6 +2,7 @@
 import pytest
 import re
 import string
+from plogic.core import And, Atomic, Iff, Implies, Not, Or, Proposition
 
 from plogic.parsing import (
     _lex,
@@ -9,6 +10,7 @@ from plogic.parsing import (
     _TokenType,
     _UNEXP_END_OF_STR,
     _unexp_char,
+    prop,
 )
 
 # TODO finish testing for _lex, _lex_expect
@@ -176,3 +178,133 @@ class TestLex:
         mes = _UNEXP_END_OF_STR
         with pytest.raises(ValueError, match=re.escape(mes)):
             list(_lex(s))
+
+
+P = Atomic("P")
+Q = Atomic("Q")
+R = Atomic("R")
+S = Atomic("S")
+T = Atomic("T")
+
+
+prop_test_cases: list[tuple[str, Proposition]] = [
+    # Atomic cases:
+    ("P", Atomic("P")),
+    ("_abcdefghi", Atomic("_abcdefghi")),
+    # Simple connection cases:
+    ("~P", Not(P)),
+    ("P & Q", And(P, Q)),
+    ("P | Q", Or(P, Q)),
+    ("P -> Q", Implies(P, Q)),
+    ("P <-> Q", Iff(P, Q)),
+    # Repeated negation cases:
+    ("~~P", Not(Not(P))),
+    ("~~~~~P", Not(Not(Not(Not(Not(P)))))),
+    # Left associativity cases:
+    ("P & Q & R", And(And(P, Q), R)),
+    ("P & Q & R & S", And(And(And(P, Q), R), S)),
+    ("P | Q | R", Or(Or(P, Q), R)),
+    ("P | Q | R | S", Or(Or(Or(P, Q), R), S)),
+    # Right associativity cases
+    ("P -> Q -> R", Implies(P, Implies(Q, R))),
+    ("P -> Q -> R -> S", Implies(P, Implies(Q, Implies(R, S)))),
+    ("P <-> Q <-> R", Iff(P, Iff(Q, R))),
+    ("P <-> Q <-> R <-> S", Iff(P, Iff(Q, Iff(R, S)))),
+    # Precedence cases:
+    ("~P & ~Q", And(Not(P), Not(Q))),
+    ("~P | ~Q", Or(Not(P), Not(Q))),
+    ("~P -> ~Q", Implies(Not(P), Not(Q))),
+    ("~P <-> ~Q", Iff(Not(P), Not(Q))),
+    (
+        "P <-> Q -> R | S & ~T",
+        Iff(
+            P,
+            Implies(
+                Q,
+                Or(
+                    R,
+                    And(
+                        S,
+                        Not(T),
+                    ),
+                ),
+            ),
+        ),
+    ),
+    (
+        "~P & Q | R -> S <-> T",
+        Iff(
+            Implies(
+                Or(And(Not(P), Q), R),
+                S,
+            ),
+            T,
+        ),
+    ),
+    (
+        "P&Q -> P|Q <-> P|Q -> P&Q",
+        Iff(
+            Implies(And(P, Q), Or(P, Q)),
+            Implies(Or(P, Q), And(P, Q)),
+        ),
+    ),
+    (
+        "P&Q | P&~Q -> ~P&Q | ~P&~Q <-> R",
+        Iff(
+            Implies(
+                Or(And(P, Q), And(P, Not(Q))),
+                Or(And(Not(P), Q), And(Not(P), Not(Q))),
+            ),
+            R,
+        ),
+    ),
+    # Precedence and associativity cases:
+    (
+        "P&Q&R | P&Q&R | P&Q&R",
+        Or(
+            Or(
+                And(And(P, Q), R),
+                And(And(P, Q), R),
+            ),
+            And(And(P, Q), R),
+        ),
+    ),
+    (
+        "P|Q|R -> P|Q|R -> P|Q|R",
+        Implies(
+            Or(Or(P, Q), R),
+            Implies(
+                Or(Or(P, Q), R),
+                Or(Or(P, Q), R),
+            ),
+        ),
+    ),
+    (
+        "P->Q->R <-> P->Q->R <-> P->Q->R",
+        Iff(
+            Implies(P, Implies(Q, R)),
+            Iff(
+                Implies(P, Implies(Q, R)),
+                Implies(P, Implies(Q, R)),
+            ),
+        ),
+    ),
+    # Parentheses cases:
+    ("P & (Q & R)", And(P, And(Q, R))),
+    ("(P & Q) & R", And(And(P, Q), R)),
+    ("P | (Q | R)", Or(P, Or(Q, R))),
+    ("(P | Q) | R", Or(Or(P, Q), R)),
+    ("P -> (Q -> R)", Implies(P, Implies(Q, R))),
+    ("(P -> Q) -> R", Implies(Implies(P, Q), R)),
+    ("P <-> (Q <-> R)", Iff(P, Iff(Q, R))),
+    ("(P <-> Q) <-> R", Iff(Iff(P, Q), R)),
+    ("P <-> (((((Q <-> R)))))", Iff(P, Iff(Q, R))),
+    ("P <-> ((((( (((((Q <-> R))))) )))))", Iff(P, Iff(Q, R))),
+]
+
+
+class TestProp:
+    @pytest.mark.parametrize("text,expected", prop_test_cases)
+    def test_prop(self, text, expected):
+        """Tests `prop`"""
+        assert prop(text) == expected

@@ -272,4 +272,4 @@ class _Parser:
 
 
 def prop(text: str, /) -> Proposition:
-    return Atomic("")
+    return _Parser(text).bic()

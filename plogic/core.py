@@ -112,6 +112,10 @@ class Proposition(ABC):
     # Miscellaneous special methods
     #
 
+    def __repr__(self) -> str:
+        """Returns a string representation of this proposition."""
+        return f"prop('{self!s}')"
+
     def __bool__(self) -> NoReturn:
         """Raises TypeError. ``bool(p)`` is not supported because the truth
         value of an `Proposition` is ambiguous."""
@@ -124,7 +128,7 @@ class Proposition(ABC):
 # TODO documentation and full implementation of the subclasses
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, repr=False)
 class Atomic(Proposition):
     name: str
 
@@ -138,7 +142,7 @@ class Atomic(Proposition):
         return self.name
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, repr=False)
 class UnaryConnection(Proposition):
     inner: Proposition
 
@@ -151,13 +155,12 @@ class Not(UnaryConnection):
         return f"~{self.inner}"
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, repr=False)
 class BinaryConnection(Proposition):
     left: Proposition
     right: Proposition
 
 
-@dataclass(frozen=True)
 class And(BinaryConnection):
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return self.left._interpret(interpretation) and self.right._interpret(
@@ -168,7 +171,6 @@ class And(BinaryConnection):
         return f"({self.left} & {self.right})"
 
 
-@dataclass(frozen=True)
 class Or(BinaryConnection):
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return self.left._interpret(interpretation) or self.right._interpret(
@@ -179,7 +181,6 @@ class Or(BinaryConnection):
         return f"({self.left} | {self.right})"
 
 
-@dataclass(frozen=True)
 class Implies(BinaryConnection):
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return not self.left._interpret(
@@ -190,7 +191,6 @@ class Implies(BinaryConnection):
         return f"({self.left} -> {self.right})"
 
 
-@dataclass(frozen=True)
 class Iff(BinaryConnection):
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return self.left._interpret(interpretation) == self.right._interpret(

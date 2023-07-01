@@ -3,7 +3,7 @@
 from abc import abstractmethod, ABC
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import overload, NoReturn
+from typing import overload, NoReturn, Union
 
 
 class Proposition(ABC):
@@ -211,5 +211,7 @@ def atomics(name_iterable: Iterable[str], /) -> tuple[Atomic, ...]:
     ...
 
 
-def atomics(arg, /):
-    return ()  # TODO implement
+def atomics(arg: Union[str, Iterable[str]], /) -> tuple[Atomic, ...]:
+    if isinstance(arg, str):
+        arg = arg.split()
+    return tuple(Atomic(name) for name in arg)

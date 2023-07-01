@@ -4,7 +4,7 @@ from itertools import product
 import pytest
 from typing import Optional
 
-from plogic.core import And, Atomic, Not, Proposition, Or, Implies, Iff
+from plogic.core import And, Atomic, Not, Proposition, Or, Implies, Iff, atomics
 
 
 simple5: list[Proposition] = [
@@ -388,3 +388,35 @@ class TestStr:
     )
     def test_complex(self, u: Proposition, expected: str):
         assert str(u) == expected
+
+
+class TestMisc:
+    @pytest.mark.parametrize(
+        "text,expected",
+        [
+            ("", ()),
+            (" \t\f\r\n", ()),
+            ("P", (Atomic("P"),)),
+            ("P Q R", (Atomic("P"), Atomic("Q"), Atomic("R"))),
+            ("1234 %()$&", (Atomic("1234"), Atomic("%()$&"))),
+            (
+                "apple pear banana",
+                (Atomic("apple"), Atomic("pear"), Atomic("banana")),
+            ),
+            (
+                ("apple", "pear", "banana"),
+                (Atomic("apple"), Atomic("pear"), Atomic("banana")),
+            ),
+            (
+                ["apple", "pear", "banana", " \t\f\r\n"],
+                (
+                    Atomic("apple"),
+                    Atomic("pear"),
+                    Atomic("banana"),
+                    Atomic(" \t\f\r\n"),
+                ),
+            ),
+        ],
+    )
+    def test_atomics_function(self, text: str, expected: tuple[Atomic, ...]):
+        assert atomics(text) == expected

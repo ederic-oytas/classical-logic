@@ -57,6 +57,13 @@ flake8 = "^6.0.0"
 [tool.poetry.group.type.dependencies]
 mypy = "^1.4.1"
 
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "^1.4.3"
+mkdocs-material = "^9.1.17"
+mkdocstrings = {extras = ["python"], version = "^0.22.0"}
+
+
 [tool.black]
 line-length = 79
 

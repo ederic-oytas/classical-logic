@@ -13,8 +13,6 @@ from plogic.parsing import (
 
 # TODO finish testing for _lex, _lex_expect
 
-TOKEN_END = (_TokenType.END, "")
-
 
 class TestLex:
     @pytest.mark.parametrize(
@@ -87,7 +85,6 @@ class TestLex:
     ):
         stream = _lex(s)
         assert next(stream) == expected_token
-        assert next(stream) == (_TokenType.END, "")
         assert next(stream, None) is None
 
     @pytest.mark.parametrize(
@@ -100,10 +97,7 @@ class TestLex:
         ],
     )
     def test_atomic_name_success(self, atomic_name: str):
-        assert list(_lex(atomic_name)) == [
-            (_TokenType.ATOMIC, atomic_name),
-            TOKEN_END,
-        ]
+        assert list(_lex(atomic_name)) == [(_TokenType.ATOMIC, atomic_name)]
 
     @pytest.mark.parametrize("d", string.digits)
     def test_atomic_name_starting_digit_fail(self, d: str):
@@ -114,14 +108,11 @@ class TestLex:
     @pytest.mark.parametrize(
         "s,expected_tokens",
         [
-            (" ", [TOKEN_END]),
-            (" \t\f\r\n", [TOKEN_END]),
+            (" ", []),
+            (" \t\f\r\n", []),
             (
                 " \t\f\r\n-> \t\f\r\n",
-                [
-                    (_TokenType.IMPLIES, "->"),
-                    TOKEN_END,
-                ],
+                [(_TokenType.IMPLIES, "->")],
             ),
             (
                 "P \t\f\r\n-> \t\f\r\n Q",
@@ -129,7 +120,6 @@ class TestLex:
                     (_TokenType.ATOMIC, "P"),
                     (_TokenType.IMPLIES, "->"),
                     (_TokenType.ATOMIC, "Q"),
-                    TOKEN_END,
                 ],
             ),
             (
@@ -139,7 +129,6 @@ class TestLex:
                     (_TokenType.ATOMIC, "Q"),
                     (_TokenType.ATOMIC, "R"),
                     (_TokenType.ATOMIC, "S"),
-                    TOKEN_END,
                 ],
             ),
         ],

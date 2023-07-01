@@ -102,7 +102,6 @@ class _TokenType(Enum):
     IFF = auto()
     LPARENS = auto()
     RPARENS = auto()
-    END = auto()
 
 
 def _lex(text: str) -> Generator[tuple[_TokenType, str], None, None]:
@@ -121,7 +120,6 @@ def _lex(text: str) -> Generator[tuple[_TokenType, str], None, None]:
 
     while True:
         if c is None:
-            yield (_TokenType.END, "")
             return
 
         elif c == "~":

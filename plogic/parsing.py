@@ -61,7 +61,6 @@ Operator | Precedence | Associativity
 `&`      | 2          | Left
 `~`      | 1          | N/A
 """
-from string import Template
 from typing import Generator, Iterator, Optional
 from enum import Enum, auto
 

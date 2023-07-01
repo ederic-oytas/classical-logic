@@ -65,7 +65,7 @@ from string import Template
 from typing import Generator, Iterator, Optional
 from enum import Enum, auto
 
-from .core import Atomic, Proposition
+from .core import And, Atomic, Iff, Implies, Not, Or, Proposition
 
 #
 # Messages
@@ -80,6 +80,12 @@ def _unexp_char(c: str) -> str:
     """Returns an error message saying that an unexpected character `c` was
     encountered."""
     return f"unexpected character '{c}'"
+
+
+def _unexp_token(token_value: str) -> str:
+    """Returns an error message saying that an unexpected token `token_value`
+    was encountered, where `token_value` is the value of the token."""
+    return f"unexpected token '{token_value}'"
 
 
 #
@@ -182,6 +188,82 @@ def _lex_accept(it: Iterator[str], expected: str) -> None:
 #
 # Parsing
 #
+
+
+class _Parser:
+    def __init__(self, text: str, /):
+        self._token_stream: Iterator[tuple[_TokenType, str]] = _lex(text)
+        """Iterator over the tokens to parse."""
+
+        self._current_token_type: _TokenType
+        self._current_token_value: str
+
+        self._current_token_type, self._current_token_value = next(
+            self._token_stream
+        )
+
+    def _advance(self) -> None:
+        """Advances to the next token."""
+        self._current_token_type, self._current_token_value = next(
+            self._token_stream
+        )
+
+    def bic(self) -> Proposition:
+        """Parses rule `bic`."""
+        left = self.cond()
+        if self._current_token_type is _TokenType.IFF:
+            self._advance()
+            return Iff(left, self.bic())
+        return left
+
+    def cond(self) -> Proposition:
+        """Parses rule `cond`."""
+        left = self.disj()
+        if self._current_token_type is _TokenType.IMPLIES:
+            self._advance()
+            return Implies(left, self.cond())
+        return left
+
+    def disj(self) -> Proposition:
+        """Parses rule `disj`."""
+        current_prop = self.conj()
+        while self._current_token_type is _TokenType.OR:
+            self._advance()
+            current_prop = Or(current_prop, self.conj())
+        return current_prop
+
+    def conj(self) -> Proposition:
+        """Parses rule `conj`."""
+        current_prop = self.neg()
+        while self._current_token_type is _TokenType.AND:
+            self._advance()
+            current_prop = And(current_prop, self.neg())
+        return current_prop
+
+    def neg(self) -> Proposition:
+        """Parses rule `neg`"""
+        if self._current_token_type is _TokenType.NOT:
+            self._advance()
+            return Not(self.neg())
+        return self.unit()
+
+    def unit(self) -> Proposition:
+        """Parses rule `unit`"""
+        if self._current_token_type is _TokenType.ATOMIC:
+            atomic = Atomic(self._current_token_value)
+            self._advance()
+            return atomic
+
+        elif self._current_token_type is _TokenType.LPARENS:
+            self._advance()
+            prop = self.bic()
+            if self._current_token_type is _TokenType.RPARENS:
+                return prop
+            # falls through to raise unexpected token
+
+        mes = _unexp_token(self._current_token_value)
+        raise ValueError(mes)
+
 
 #
 # API

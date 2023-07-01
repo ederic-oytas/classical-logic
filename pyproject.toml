@@ -24,7 +24,7 @@ flake8 = "^6.0.0"
 mypy = "^1.4.1"
 
 [tool.black]
-line-length = 80
+line-length = 79
 
 [build-system]
 requires = ["poetry-core"]

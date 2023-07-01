@@ -4,7 +4,16 @@ from itertools import product
 import pytest
 from typing import Optional
 
-from plogic.core import And, Atomic, Not, Proposition, Or, Implies, Iff, atomics
+from plogic.core import (
+    And,
+    Atomic,
+    Not,
+    Proposition,
+    Or,
+    Implies,
+    Iff,
+    atomics,
+)
 
 
 simple5: list[Proposition] = [

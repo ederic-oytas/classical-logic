@@ -273,3 +273,7 @@ class _Parser:
 
 def prop(text: str, /) -> Proposition:
     return _Parser(text).bic()
+
+
+def props(text: str, /) -> tuple[Proposition, ...]:
+    return tuple(prop(s) for s in text.split(","))

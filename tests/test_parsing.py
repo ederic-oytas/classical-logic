@@ -11,6 +11,7 @@ from plogic.parsing import (
     _UNEXP_END_OF_STR,
     _unexp_char,
     prop,
+    props,
 )
 
 # TODO finish testing for _lex, _lex_expect
@@ -308,3 +309,18 @@ class TestProp:
     def test_prop(self, text, expected):
         """Tests `prop`"""
         assert prop(text) == expected
+
+    @pytest.mark.parametrize(
+        "text,expected",
+        [
+            ("P", (P,)),
+            ("P, Q, R", (P, Q, R)),
+            (
+                "~P, P|Q, P&Q, P->Q, P<->Q",
+                (Not(P), Or(P, Q), And(P, Q), Implies(P, Q), Iff(P, Q)),
+            ),
+        ],
+    )
+    def test_props(self, text, expected):
+        """Tests `props`"""
+        assert props(text) == expected

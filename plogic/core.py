@@ -15,15 +15,61 @@ class Proposition(ABC):
     This class provides five operations/methods to compose compound
     propositions:
 
-    - `~p`: Same as [`Not(p)`](./#plogic.Not)
-    - `p & q`: Same as [`And(p, q)`](./#plogic.And)
-    - `p | q`: Same as [`Or(p, q)`](./#plogic.Or)
-    - `p.implies(q)`: Same as [`Implies(p, q)`](./#plogic.Implies)
-    - `p.iff(q)`: Same as [`Iff(p, q)`](./#plogic.Iff)
+    ## `~p`
+
+    Returns [`Not(p)`](./#plogic.Not).
+
+    ## `p & q`
+
+    Returns [`And(p, q)`](./#plogic.And).
+
+    ## `p | q`
+
+    Returns [`Or(p, q)`](./#plogic.Or).
+
+    ## `p.implies(q)`
+
+    Returns [`Implies(p, q)`](./#plogic.Implies).
+
+    ## `p.iff(q)`
+
+    Returns [`Iff(p, q)`](./#plogic.Iff).
+
+    # Accessing Component Propositions
+
+    ## `p.inner`
+
+    First operand of a unary operation.
+
+    ## `p.left`, `p.right`
+
+    If a proposition is composed of two propositions, you can get it using the
+    attributes `left` and `right` for the left and right propositions,
+    respectively.
+
+    Example:
+
+        ```python
+        import plogic as pl
+
+        s = pl.prop('~P')
+        assert t.inner == pl.prop('P')
+
+        t = pl.prop('P | Q')
+        assert t.left == pl.prop('P')
+        assert t.right == pl.prop('Q')
+        ```
+
 
     # Interpretation: Assigning Truth Values
 
-    To interpret a truth value, you can call the proposition with assignments
+    If you try to use `bool(p)`, you'll see that you'll get a `TypeError`.
+    Without assigning truth values to the atomics of the proposition, the
+    truth value is ambiguous.
+
+    ## `p(mapping)`, `p(**kwargs)`
+
+    To interpret a proposition, you can call the proposition with assignments
     to its atomics. Here is an example:
 
     ```python

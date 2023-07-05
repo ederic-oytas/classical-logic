@@ -7,9 +7,20 @@ from typing import overload, NoReturn, Union
 
 
 class Proposition(ABC):
-    """Represents a proposition in logic.
+    """Represents a logical proposition. Base class for all proposition types
+    in the `plogic` package.
 
-    This is an abstract base class for all proposition classes.
+    # Composition
+
+    This class provides five operations/methods to compose compound
+    propositions:
+
+    - `~p`: Same as [`Not(p)`](#plogic.Not)
+    - `p & q`: Same as `And(p, q)`
+    - `p | q`: Same as `Or(p, q)`
+    - `p.implies(q)`: Same as `Implies(p, q)`
+    - `p.iff(q)`: Same as `Iff(p, q)`
+
     """
 
     #

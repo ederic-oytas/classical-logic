@@ -10,16 +10,48 @@ class Proposition(ABC):
     """Represents a logical proposition. Base class for all proposition types
     in the `plogic` package.
 
-    # Composition
+    # Composing Compound Propositions
 
     This class provides five operations/methods to compose compound
     propositions:
 
-    - `~p`: Same as [`Not(p)`](#plogic.Not)
-    - `p & q`: Same as `And(p, q)`
-    - `p | q`: Same as `Or(p, q)`
-    - `p.implies(q)`: Same as `Implies(p, q)`
-    - `p.iff(q)`: Same as `Iff(p, q)`
+    - `~p`: Same as [`Not(p)`](./#plogic.Not)
+    - `p & q`: Same as [`And(p, q)`](./#plogic.And)
+    - `p | q`: Same as [`Or(p, q)`](./#plogic.Or)
+    - `p.implies(q)`: Same as [`Implies(p, q)`](./#plogic.Implies)
+    - `p.iff(q)`: Same as [`Iff(p, q)`](./#plogic.Iff)
+
+    # Interpretation: Assigning Truth Values
+
+    To interpret a truth value, you can call the proposition with assignments
+    to its atomics. Here is an example:
+
+    ```python
+    import plogic as pl
+
+    u = pl.prop("p | q")
+    assert u(p=True, q=True) is True
+    assert u(p=True, q=False) is True
+    assert u(p=False, q=True) is True
+    assert u(p=True, q=False) is False
+    ```
+
+    If you don't assign every atomic to a truth value, you may encounter an
+    `ValueError`.
+
+    Note:
+        Interpreting uses "short circuiting" for efficiency, meaning that the
+        second operand may not always need to be interpreted. This matters when
+        not all atomics in the proposition are assigned a truth value.
+        Normally, it would raise a `ValueError`, but due to short circuiting,
+        it may return a boolean instead. Example:
+
+        ```python
+        import plogic as pl
+
+        u = pl.prop("p | q")
+        assert u(p=True) is True  # No error because `q` was never interpreted
+        ```
 
     """
 

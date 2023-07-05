@@ -3,10 +3,25 @@
 
 ::: plogic.Proposition
     options:
-      members:
-      - iff
-      - implies
+      members: false
+
 
 ----
 
 ::: plogic.Not
+
+----
+
+::: plogic.And
+
+----
+
+::: plogic.Or
+
+----
+
+::: plogic.Implies
+
+----
+
+::: plogic.Iff

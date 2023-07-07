@@ -7,8 +7,40 @@ from typing import overload, NoReturn, Union
 
 
 class Proposition(ABC):
-    """Represents a logical proposition. Base class for all proposition types
-    in the `plogic` package.
+    """A `Proposition` object represents a logical proposition. This type
+    serves as the base class for all proposition types in the `plogic` package.
+
+    # Class Hierarchy
+
+    The following is the class hierarchy for the `plogic` package:
+
+    ```txt
+    Proposition
+        UnaryConnection
+            Not
+        BinaryConnection
+            And
+            Or
+            Implies
+            Iff
+    ```
+
+    The [`Not`](./#plogic.Not), [`And`](./#plogic.And), [`Or`](./#plogic.Or),
+    [`Implies`](./#plogic.Implies), and [`Iff`](./#plogic.Iff) classes are all
+    data classes, whose instances are composed of propositions.
+
+    A `Not` object represents a logical negation and can be created using a
+    single proposition: `Not(inner)`.
+
+    `And`, `Or`, `Implies`, and `Iff` objects represent binary logical
+    operations and can be created using two propositions. For example:
+    `And(left, right)`.
+
+    The [`UnaryConnection`](./#plogic.UnaryConnection) and
+    [`BinaryConnection`](./#plogic.BinaryConnection) classes act as the
+    abstract base classes for propositions constructed using unary and binary
+    [logical connectives](https://en.wikipedia.org/wiki/Logical_connective).
+
 
     # Composing Compound Propositions
 
@@ -35,17 +67,29 @@ class Proposition(ABC):
 
     Returns [`Iff(p, q)`](./#plogic.Iff).
 
+    Example:
+        ```python
+        p, q = props('P, Q')
+        assert ~p == prop('~P')
+        assert p & q == prop('P & Q')
+        assert p | q == prop('P | Q')
+        assert p.implies(q) == prop('P -> Q')
+        assert p.iff(q) == prop('P <-> Q')
+        ```
+
     # Accessing Component Propositions
+
+    If a proposition is a compound proposition, you can use its fields to
+    access the component propositions. **These fields are only present if the
+    proposition is the correct type.**
 
     ## `p.inner`
 
-    First operand of a unary operation.
+    Inner operand of a unary operation.
 
     ## `p.left`, `p.right`
 
-    If a proposition is composed of two propositions, you can get it using the
-    attributes `left` and `right` for the left and right propositions,
-    respectively.
+    Left and right operands of a binary operation.
 
     Example:
 
@@ -53,44 +97,56 @@ class Proposition(ABC):
         import plogic as pl
 
         s = pl.prop('~P')
-        assert t.inner == pl.prop('P')
+        assert s.inner == pl.prop('P')
 
         t = pl.prop('P | Q')
         assert t.left == pl.prop('P')
         assert t.right == pl.prop('Q')
         ```
 
+    # Interpreting: Assigning Truth Values
 
-    # Interpretation: Assigning Truth Values
-
-    If you try to use `bool(p)`, you'll see that you'll get a `TypeError`.
-    Without assigning truth values to the atomics of the proposition, the
-    truth value is ambiguous.
+    To get the truth value of a proposition with respect to an interpretation,
+    you can call the proposition with a mapping from atomic names to booleans.
 
     ## `p(mapping)`, `p(**kwargs)`
 
-    To interpret a proposition, you can call the proposition with assignments
-    to its atomics. Here is an example:
+    Returns the truth value of the proposition given assignments from atomic
+    names to truth values. Raises a `ValueError` if an atomic is interpreted
+    but is not assigned a truth value.
 
-    ```python
-    import plogic as pl
+    Example:
+        ```python
+        import plogic as pl
 
-    u = pl.prop("p | q")
-    assert u(p=True, q=True) is True
-    assert u(p=True, q=False) is True
-    assert u(p=False, q=True) is True
-    assert u(p=True, q=False) is False
-    ```
+        u = pl.prop("p | q")
 
-    If you don't assign every atomic to a truth value, you may encounter an
-    `ValueError`.
+        # To interpret, call the proposition, assigning each atomic to a
+        # boolean.
+        assert u(p=True, q=True) is True
+        assert u(p=True, q=False) is True
+        assert u(p=False, q=True) is True
+        assert u(p=True, q=False) is False
 
-    Note:
-        Interpreting uses "short circuiting" for efficiency, meaning that the
-        second operand may not always need to be interpreted. This matters when
-        not all atomics in the proposition are assigned a truth value.
-        Normally, it would raise a `ValueError`, but due to short circuiting,
-        it may return a boolean instead. Example:
+        # Map-like objects work too.
+        assert u({'p': True, 'q': True}) is True
+        assert u({'p': True, 'q': False}) is True
+        assert u({'p': False, 'q': True}) is True
+        assert u({'p': False, 'q': False}) is False
+        ```
+
+    Note: Note: Short Circuiting
+        Interpreting a proposition uses "short circuiting" for efficiency.
+        This means that the second operand will not be interpreted if the
+        truth value of the first operand already determines the value of the
+        connective.
+
+        Short circuiting matters when not every atomic in the proposition is
+        assigned a truth value. Normally, this would raise a `ValueError`, but
+        if we never need to interpret the missing atomic, it may return a
+        boolean instead.
+
+        Example:
 
         ```python
         import plogic as pl
@@ -98,6 +154,34 @@ class Proposition(ABC):
         u = pl.prop("p | q")
         assert u(p=True) is True  # No error because `q` was never interpreted
         ```
+
+    # Comparing Propositions
+
+    Propositions may be compared for structural equality using the `==` and
+    `!=` operators. Inequality operators such as `>=`, `>`, `<`, and `<=`
+    are not defined for this class.
+
+    ## `p == q`
+
+    Returns `True` if the two propositions are *structurally equal*, `False`
+    otherwise.
+
+    ## `p != q`
+
+    Returns `True` if the two propositions are *NOT structurally equal*,
+    `False` otherwise.
+
+    Note:
+        The `==` and `!=` operator **check for structural equivalence, not
+        logical equivalence**.
+
+    # Unsupported operations
+
+    ## `bool(p)`
+
+    Not supported. This raises a `TypeError`. See the
+    [Interpreting](./#plogic.Proposition--interpreting-assigning-truth-values)
+    section to learn how to assign truth values.
 
     """
 
@@ -110,7 +194,7 @@ class Proposition(ABC):
         return Not(self)
 
     def __and__(self, other: "Proposition", /) -> "And":
-        """Returns ``And(p, q)``."""
+        """Returns ``And(self, other)``."""
         if isinstance(other, Proposition):
             return And(self, other)
         return NotImplemented

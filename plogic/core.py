@@ -289,6 +289,11 @@ class Proposition(ABC):
         """Returns a string representation of this proposition."""
         return f"prop('{self!s}')"
 
+    # TODO remove later, then replace put __str__ in subclass with new default
+    # string formatting implementation
+    def __str__(self) -> str:
+        return self.formal()
+
     @abstractmethod
     def formal(self) -> str:
         """Returns the formal representation of this proposition.
@@ -326,7 +331,7 @@ class Atomic(Proposition):
             raise ValueError(f"Atomic '{self.name}' was left unassigned")
         return truth_value
 
-    def __str__(self) -> str:
+    def formal(self) -> str:
         return self.name
 
 
@@ -339,7 +344,7 @@ class Not(UnaryConnection):
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return not self.inner._interpret(interpretation)
 
-    def __str__(self) -> str:
+    def formal(self) -> str:
         return f"~{self.inner}"
 
 
@@ -355,7 +360,7 @@ class And(BinaryConnection):
             interpretation
         )
 
-    def __str__(self) -> str:
+    def formal(self) -> str:
         return f"({self.left} & {self.right})"
 
 
@@ -365,7 +370,7 @@ class Or(BinaryConnection):
             interpretation
         )
 
-    def __str__(self) -> str:
+    def formal(self) -> str:
         return f"({self.left} | {self.right})"
 
 
@@ -375,7 +380,7 @@ class Implies(BinaryConnection):
             interpretation
         ) or self.right._interpret(interpretation)
 
-    def __str__(self) -> str:
+    def formal(self) -> str:
         return f"({self.left} -> {self.right})"
 
 
@@ -385,7 +390,7 @@ class Iff(BinaryConnection):
             interpretation
         )
 
-    def __str__(self) -> str:
+    def formal(self) -> str:
         return f"({self.left} <-> {self.right})"
 
 

@@ -282,12 +282,27 @@ class Proposition(ABC):
         )
 
     #
-    # Miscellaneous special methods
+    # String Formatting
     #
 
     def __repr__(self) -> str:
         """Returns a string representation of this proposition."""
         return f"prop('{self!s}')"
+
+    @abstractmethod
+    def formal(self) -> str:
+        """Returns the formal representation of this proposition.
+
+        Returns:
+            Formal representation of this proposition.
+        """
+        raise NotImplementedError(
+            f"formal() is not implemented for '{self.__class__.__name__}'"
+        )
+
+    #
+    # Miscellaneous special methods
+    #
 
     def __bool__(self) -> NoReturn:
         """Raises TypeError. ``bool(p)`` is not supported because the truth

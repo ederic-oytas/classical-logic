@@ -2,9 +2,6 @@
 # API Reference
 
 ::: plogic.Proposition
-    options:
-      members: false
-
 
 ----
 
@@ -25,3 +22,11 @@
 ----
 
 ::: plogic.Iff
+
+----
+
+::: plogic.UnaryConnection
+
+----
+
+::: plogic.BinaryConnection

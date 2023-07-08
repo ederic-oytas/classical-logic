@@ -1,10 +1,10 @@
-"""Unit Tests for plogic/prop.py"""
+"""Unit Tests for flogic/prop.py"""
 
 from itertools import product
 import pytest
 from typing import Optional
 
-from plogic.core import (
+from flogic.core import (
     And,
     Atomic,
     Not,

@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "plogic"
+name = "flogic"
 version = "0.1.0"
 description = "Python package for propositional logic."
 authors = ["Ederic <edericoytas@gmail.com>"]
 license = "MIT"
-homepage = "https://github.com/ederic-oytas/plogic"
-repository = "https://github.com/ederic-oytas/plogic"
+homepage = "https://github.com/ederic-oytas/flogic"
+repository = "https://github.com/ederic-oytas/flogic"
 keywords = [
     "and",
     "biconditional",
@@ -22,7 +22,7 @@ keywords = [
     "negation",
     "not",
     "or",
-    "plogic",
+    "flogic",
     "proposition",
     "propositional calculus",
     "propositional logic",

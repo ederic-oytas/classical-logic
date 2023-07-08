@@ -1,8 +1,8 @@
 # Some site and repo information
-site_name: Plogic Docs
-repo_url: https://github.com/ederic-oytas/plogic
-repo_name: ederic-oytas/plogic
-site_description: Documentation for the `plogic` Python package.
+site_name: Flogic Docs
+repo_url: https://github.com/ederic-oytas/flogic
+repo_name: ederic-oytas/flogic
+site_description: Documentation for the `flogic` Python package.
 site_author: Ederic Oytas
 
 # Uses material theme
@@ -60,4 +60,4 @@ markdown_extensions:
 # If these extra files/folders are updated, then the website created by
 # `mkdocs serve` will be reloaded.
 watch:
-  - plogic
+  - flogic

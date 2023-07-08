@@ -1,10 +1,10 @@
-"""Tests for plogic/parsing.py."""
+"""Tests for flogic/parsing.py."""
 import pytest
 import re
 import string
-from plogic.core import And, Atomic, Iff, Implies, Not, Or, Proposition
+from flogic.core import And, Atomic, Iff, Implies, Not, Or, Proposition
 
-from plogic.parsing import (
+from flogic.parsing import (
     _lex,
     _lex_accept,
     _TokenType,

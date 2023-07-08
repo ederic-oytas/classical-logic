@@ -8,17 +8,17 @@ from typing import overload, NoReturn, Union
 
 class Proposition(ABC):
     """A `Proposition` object represents a logical proposition. This type
-    serves as the base class for all proposition types in the `plogic` package.
+    serves as the base class for all proposition types in the `flogic` package.
 
-    `#!py3 import plogic` what
+    `#!py3 import flogic` what
 
     Operation Summary:
 
     Operation     | Description
     --------------|--------------------------------------
-    `~p`          | Returns [`Not(p)`](./#plogic.Not).
-    `p & q`       | Returns [`And(p, q)`](./#plogic.And).
-    `p | q`       | Returns [`Or(p, q)`](./#plogic.Or).
+    `~p`          | Returns [`Not(p)`](./#flogic.Not).
+    `p & q`       | Returns [`And(p, q)`](./#flogic.And).
+    `p | q`       | Returns [`Or(p, q)`](./#flogic.Or).
     `p(mapping)`  | [Interprets][1] `p`.
     `p(**kwargs)` | [Interprets][1] `p`.
     `p == q`      | Checks if `p` and `q` are structurally equal.
@@ -28,7 +28,7 @@ class Proposition(ABC):
     Note that `bool(p)` is not supported.
 
 
-    [1]: ./#plogic.Proposition--interpreting-assigning-truth-values
+    [1]: ./#flogic.Proposition--interpreting-assigning-truth-values
     """
 
     """
@@ -37,7 +37,7 @@ class Proposition(ABC):
 
     # Class Hierarchy
 
-    The following is the class hierarchy for the `plogic` package:
+    The following is the class hierarchy for the `flogic` package:
 
     ```txt
     Proposition
@@ -50,8 +50,8 @@ class Proposition(ABC):
             Iff
     ```
 
-    The [`Not`](./#plogic.Not), [`And`](./#plogic.And), [`Or`](./#plogic.Or),
-    [`Implies`](./#plogic.Implies), and [`Iff`](./#plogic.Iff) classes are all
+    The [`Not`](./#flogic.Not), [`And`](./#flogic.And), [`Or`](./#flogic.Or),
+    [`Implies`](./#flogic.Implies), and [`Iff`](./#flogic.Iff) classes are all
     data classes, whose instances are composed of propositions.
 
     A `Not` object represents a logical negation and can be created using a
@@ -61,8 +61,8 @@ class Proposition(ABC):
     operations and can be created using two propositions. For example:
     `And(left, right)`.
 
-    The [`UnaryConnection`](./#plogic.UnaryConnection) and
-    [`BinaryConnection`](./#plogic.BinaryConnection) classes act as the
+    The [`UnaryConnection`](./#flogic.UnaryConnection) and
+    [`BinaryConnection`](./#flogic.BinaryConnection) classes act as the
     abstract base classes for propositions constructed using unary and binary
     [logical connectives](https://en.wikipedia.org/wiki/Logical_connective).
 
@@ -74,23 +74,23 @@ class Proposition(ABC):
 
     ## `~p`
 
-    Returns [`Not(p)`](./#plogic.Not).
+    Returns [`Not(p)`](./#flogic.Not).
 
     ## `p & q`
 
-    Returns [`And(p, q)`](./#plogic.And).
+    Returns [`And(p, q)`](./#flogic.And).
 
     ## `p | q`
 
-    Returns [`Or(p, q)`](./#plogic.Or).
+    Returns [`Or(p, q)`](./#flogic.Or).
 
     ## `p.implies(q)`
 
-    Returns [`Implies(p, q)`](./#plogic.Implies).
+    Returns [`Implies(p, q)`](./#flogic.Implies).
 
     ## `p.iff(q)`
 
-    Returns [`Iff(p, q)`](./#plogic.Iff).
+    Returns [`Iff(p, q)`](./#flogic.Iff).
 
     Example:
         ```python
@@ -119,7 +119,7 @@ class Proposition(ABC):
     Example:
 
         ```python
-        import plogic as pl
+        import flogic as pl
 
         s = pl.prop('~P')
         assert s.inner == pl.prop('P')
@@ -142,7 +142,7 @@ class Proposition(ABC):
 
     Example:
         ```python
-        import plogic as pl
+        import flogic as pl
 
         u = pl.prop("p | q")
 
@@ -174,7 +174,7 @@ class Proposition(ABC):
         Example:
 
         ```python
-        import plogic as pl
+        import flogic as pl
 
         u = pl.prop("p | q")
         assert u(p=True) is True  # No error because `q` was never interpreted
@@ -205,7 +205,7 @@ class Proposition(ABC):
     ## `bool(p)`
 
     Not supported. This raises a `TypeError`. See the
-    [Interpreting](./#plogic.Proposition--interpreting-assigning-truth-values)
+    [Interpreting](./#flogic.Proposition--interpreting-assigning-truth-values)
     section to learn how to assign truth values.
 
     """
@@ -215,11 +215,11 @@ class Proposition(ABC):
     #
 
     def __invert__(self, /) -> "Not":
-        """Returns [`Not(self)`](./#plogic.Not)."""
+        """Returns [`Not(self)`](./#flogic.Not)."""
         return Not(self)
 
     def __and__(self, other: "Proposition", /) -> "And":
-        """Returns [`And(self, other)`](./#plogic.And) if the other operand is
+        """Returns [`And(self, other)`](./#flogic.And) if the other operand is
         a Proposition, else [`NotImplemented`](
         https://docs.python.org/3/library/constants.html#NotImplemented).
         """
@@ -228,7 +228,7 @@ class Proposition(ABC):
         return NotImplemented
 
     def __or__(self, other: "Proposition", /) -> "Or":
-        """Returns [`Or(self, other)`](./#plogic.Or) if the other operand is
+        """Returns [`Or(self, other)`](./#flogic.Or) if the other operand is
         a Proposition, else [`NotImplemented`](
         https://docs.python.org/3/library/constants.html#NotImplemented).
         """
@@ -237,11 +237,11 @@ class Proposition(ABC):
         return NotImplemented
 
     def implies(self, other: "Proposition", /) -> "Implies":
-        """Returns [`Implies(self, other)`](./#plogic.Implies)."""
+        """Returns [`Implies(self, other)`](./#flogic.Implies)."""
         return Implies(self, other)
 
     def iff(self, other: "Proposition", /) -> "Iff":
-        """Returns [`Iff(self, other)`](./#plogic.Iff)."""
+        """Returns [`Iff(self, other)`](./#flogic.Iff)."""
         return Iff(self, other)
 
     #
@@ -322,7 +322,7 @@ class Proposition(ABC):
 
         Example:
             ```python
-            import plogic as pl
+            import flogic as pl
 
 
             s = pl.And(pl.Atomic('P'), pl.Atomic('Q'))
@@ -344,7 +344,7 @@ class Proposition(ABC):
 
         Example:
             ```python
-            import plogic as pl
+            import flogic as pl
 
             s = pl.prop('P & Q & R')
             assert s.formal() == '((P & Q) & R)'
@@ -364,7 +364,7 @@ class Proposition(ABC):
         ambiguous. Please use [interpreting][2] instead.
 
         [1]: https://docs.python.org/3/library/exceptions.html#TypeError
-        [2]: ./#plogic.Proposition--interpreting-assigning-truth-values
+        [2]: ./#flogic.Proposition--interpreting-assigning-truth-values
 
         """
         raise TypeError(

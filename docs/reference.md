@@ -1,32 +1,32 @@
 
 # API Reference
 
-::: plogic.Proposition
+::: flogic.Proposition
 
 ----
 
-::: plogic.Not
+::: flogic.Not
 
 ----
 
-::: plogic.And
+::: flogic.And
 
 ----
 
-::: plogic.Or
+::: flogic.Or
 
 ----
 
-::: plogic.Implies
+::: flogic.Implies
 
 ----
 
-::: plogic.Iff
+::: flogic.Iff
 
 ----
 
-::: plogic.UnaryConnection
+::: flogic.UnaryConnection
 
 ----
 
-::: plogic.BinaryConnection
+::: flogic.BinaryConnection

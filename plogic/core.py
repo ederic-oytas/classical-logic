@@ -10,6 +10,31 @@ class Proposition(ABC):
     """A `Proposition` object represents a logical proposition. This type
     serves as the base class for all proposition types in the `plogic` package.
 
+    `#!py3 import plogic` what
+
+    Operation Summary:
+
+    Operation     | Description
+    --------------|--------------------------------------
+    `~p`          | Returns [`Not(p)`](./#plogic.Not).
+    `p & q`       | Returns [`And(p, q)`](./#plogic.And).
+    `p | q`       | Returns [`Or(p, q)`](./#plogic.Or).
+    `p(mapping)`  | [Interprets][1] `p`.
+    `p(**kwargs)` | [Interprets][1] `p`.
+    `p == q`      | Checks if `p` and `q` are structurally equal.
+    `p != q`      | Checks if `p` and `q` are not structurally equal.
+    `hash(p)`     | Returns the hash value of `p`.
+
+    Note that `bool(p)` is not supported.
+
+
+    [1]: ./#plogic.Proposition--interpreting-assigning-truth-values
+    """
+
+    """
+
+    OLD DOCUMENTATION; MAYBE MOVE TO USER GUIDE
+
     # Class Hierarchy
 
     The following is the class hierarchy for the `plogic` package:
@@ -190,27 +215,33 @@ class Proposition(ABC):
     #
 
     def __invert__(self, /) -> "Not":
-        """Returns ``Not(p)``."""
+        """Returns [`Not(self)`](./#plogic.Not)."""
         return Not(self)
 
     def __and__(self, other: "Proposition", /) -> "And":
-        """Returns ``And(self, other)``."""
+        """Returns [`And(self, other)`](./#plogic.And) if the other operand is
+        a Proposition, else [`NotImplemented`](
+        https://docs.python.org/3/library/constants.html#NotImplemented).
+        """
         if isinstance(other, Proposition):
             return And(self, other)
         return NotImplemented
 
     def __or__(self, other: "Proposition", /) -> "Or":
-        """Returns ``Or(p, q)``."""
+        """Returns [`Or(self, other)`](./#plogic.Or) if the other operand is
+        a Proposition, else [`NotImplemented`](
+        https://docs.python.org/3/library/constants.html#NotImplemented).
+        """
         if isinstance(other, Proposition):
             return Or(self, other)
         return NotImplemented
 
     def implies(self, other: "Proposition", /) -> "Implies":
-        """Returns ``Implies(p, q)``."""
+        """Returns [`Implies(self, other)`](./#plogic.Implies)."""
         return Implies(self, other)
 
     def iff(self, other: "Proposition", /) -> "Iff":
-        """Returns ``Iff(p, q)``,"""
+        """Returns [`Iff(self, other)`](./#plogic.Iff)."""
         return Iff(self, other)
 
     #
@@ -286,7 +317,19 @@ class Proposition(ABC):
     #
 
     def __repr__(self) -> str:
-        """Returns a string representation of this proposition."""
+        """Returns a string representation of this proposition in the form
+        of `prop(<str(self)>)`.
+
+        Example:
+            ```python
+            import plogic as pl
+
+
+            s = pl.And(pl.Atomic('P'), pl.Atomic('Q'))
+
+            assert repr(s) == "prop('P & Q')"
+            ```
+        """
         return f"prop('{self!s}')"
 
     # TODO remove later, then replace put __str__ in subclass with new default
@@ -296,10 +339,17 @@ class Proposition(ABC):
 
     @abstractmethod
     def formal(self) -> str:
-        """Returns the formal representation of this proposition.
+        """Returns the "formal" representation of this proposition. Unlike
+        `str(p)`, every binary operation is surrounded with parentheses.
 
-        Returns:
-            Formal representation of this proposition.
+        Example:
+            ```python
+            import plogic as pl
+
+            s = pl.prop('P & Q & R')
+            assert s.formal() == '((P & Q) & R)'
+            assert str(s) == 'P & Q & R'
+            ```
         """
         raise NotImplementedError(
             f"formal() is not implemented for '{self.__class__.__name__}'"
@@ -310,19 +360,29 @@ class Proposition(ABC):
     #
 
     def __bool__(self) -> NoReturn:
-        """Raises TypeError. ``bool(p)`` is not supported because the truth
-        value of an `Proposition` is ambiguous."""
+        """Raises [`TypeError`][1] because the truth value of a proposition is
+        ambiguous. Please use [interpreting][2] instead.
+
+        [1]: https://docs.python.org/3/library/exceptions.html#TypeError
+        [2]: ./#plogic.Proposition--interpreting-assigning-truth-values
+
+        """
         raise TypeError(
             "The truth value of a Proposition is ambiguous. Consider using "
             "interpretation through p(**vals)"
         )
 
 
-# TODO documentation and full implementation of the subclasses
-
-
 @dataclass(frozen=True, repr=False)
-class Atomic(Proposition):
+class Atomic(Proposition):  # TODO rename to PVar
+    """Represents an [propositional variable][1]
+
+    [1]: https://en.wikipedia.org/wiki/Propositional_variable
+
+    Attributes:
+        name (str): The name of the formula.
+    """
+
     name: str
 
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
@@ -334,27 +394,68 @@ class Atomic(Proposition):
     def formal(self) -> str:
         return self.name
 
+    __str__ = formal
+
 
 @dataclass(frozen=True, repr=False)
 class UnaryConnection(Proposition):
+    """Represents a unary (one-place) operation using a
+    [logical connective][1].
+
+    [1]: https://en.wikipedia.org/wiki/Logical_connective
+
+    Attributes:
+        inner (Proposition): Inner operand.
+    """
+
     inner: Proposition
 
 
 class Not(UnaryConnection):
+    """Represents a [logical negation][1].
+
+    [1]: https://en.wikipedia.org/wiki/Negation
+
+    Attributes:
+        inner (Proposition): Inner operand.
+    """
+
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return not self.inner._interpret(interpretation)
 
     def formal(self) -> str:
         return f"~{self.inner}"
 
+    __str__ = formal
+
 
 @dataclass(frozen=True, repr=False)
 class BinaryConnection(Proposition):
+    """Represents a binary (two-place) operation using a
+    [logical connective][1].
+
+    [1]: https://en.wikipedia.org/wiki/Logical_connective
+
+    Attributes:
+        left (Proposition): Left operand.
+        right (Proposition): Right operand.
+    """
+
     left: Proposition
     right: Proposition
 
 
+@dataclass(frozen=True, repr=False)
 class And(BinaryConnection):
+    """Represents a [logical conjunction][1].
+
+    [1]: https://en.wikipedia.org/wiki/Logical_conjunction
+
+    Attributes:
+        left (Proposition): Left conjunct.
+        right (Proposition): Right conjunct.
+    """
+
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return self.left._interpret(interpretation) and self.right._interpret(
             interpretation
@@ -363,8 +464,20 @@ class And(BinaryConnection):
     def formal(self) -> str:
         return f"({self.left} & {self.right})"
 
+    __str__ = formal
 
+
+@dataclass(frozen=True, repr=False)
 class Or(BinaryConnection):
+    """Represents a [logical disjunction][1].
+
+    [1]: https://en.wikipedia.org/wiki/Disjunction_(logical_connective)
+
+    Attributes:
+        left (Proposition): Left disjunct.
+        right (Proposition): Right disjunct.
+    """
+
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return self.left._interpret(interpretation) or self.right._interpret(
             interpretation
@@ -373,8 +486,19 @@ class Or(BinaryConnection):
     def formal(self) -> str:
         return f"({self.left} | {self.right})"
 
+    __str__ = formal
+
 
 class Implies(BinaryConnection):
+    """Represents a [logical material conditional][1].
+
+    [1]: https://en.wikipedia.org/wiki/Material_conditional
+
+    Attributes:
+        left (Proposition): Antecedent.
+        right (Proposition): Consequent.
+    """
+
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return not self.left._interpret(
             interpretation
@@ -383,8 +507,19 @@ class Implies(BinaryConnection):
     def formal(self) -> str:
         return f"({self.left} -> {self.right})"
 
+    __str__ = formal
+
 
 class Iff(BinaryConnection):
+    """Represents a [logical biconditional][1].
+
+    [1]: https://en.wikipedia.org/wiki/Logical_biconditional
+
+    Attributes:
+        left (Proposition): Left operand.
+        right (Proposition): Right operand.
+    """
+
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return self.left._interpret(interpretation) == self.right._interpret(
             interpretation

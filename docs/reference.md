@@ -22,11 +22,3 @@
 ----
 
 ::: flogic.Iff
-
-----
-
-::: flogic.UnaryConnection
-
-----
-
-::: flogic.BinaryConnection

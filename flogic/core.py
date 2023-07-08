@@ -1,4 +1,20 @@
-"""Contains the Proposition class, its subclasses, and a related function."""
+"""Contains the Proposition class, its subclasses, and a related function.
+
+
+Class Hierarchy:
+
+```
+Proposition
+    Predicate
+    _Operation1
+        Not
+    _Operation2
+        And
+        Or
+        Implies
+        Iff
+```
+"""
 
 from abc import abstractmethod, ABC
 from collections.abc import Iterable, Mapping
@@ -374,7 +390,7 @@ class Proposition(ABC):
 
 
 @dataclass(frozen=True, repr=False)
-class Atomic(Proposition):  # TODO rename to PVar
+class Predicate(Proposition):  # TODO rework docs and rename it
     """Represents an [propositional variable][1]
 
     [1]: https://en.wikipedia.org/wiki/Propositional_variable
@@ -398,7 +414,7 @@ class Atomic(Proposition):  # TODO rename to PVar
 
 
 @dataclass(frozen=True, repr=False)
-class UnaryConnection(Proposition):
+class _Operation1(Proposition):
     """Represents a unary (one-place) operation using a
     [logical connective][1].
 
@@ -411,7 +427,7 @@ class UnaryConnection(Proposition):
     inner: Proposition
 
 
-class Not(UnaryConnection):
+class Not(_Operation1):
     """Represents a [logical negation][1].
 
     [1]: https://en.wikipedia.org/wiki/Negation
@@ -430,7 +446,7 @@ class Not(UnaryConnection):
 
 
 @dataclass(frozen=True, repr=False)
-class BinaryConnection(Proposition):
+class _Operation2(Proposition):
     """Represents a binary (two-place) operation using a
     [logical connective][1].
 
@@ -446,7 +462,7 @@ class BinaryConnection(Proposition):
 
 
 @dataclass(frozen=True, repr=False)
-class And(BinaryConnection):
+class And(_Operation2):
     """Represents a [logical conjunction][1].
 
     [1]: https://en.wikipedia.org/wiki/Logical_conjunction
@@ -468,7 +484,7 @@ class And(BinaryConnection):
 
 
 @dataclass(frozen=True, repr=False)
-class Or(BinaryConnection):
+class Or(_Operation2):
     """Represents a [logical disjunction][1].
 
     [1]: https://en.wikipedia.org/wiki/Disjunction_(logical_connective)
@@ -489,7 +505,7 @@ class Or(BinaryConnection):
     __str__ = formal
 
 
-class Implies(BinaryConnection):
+class Implies(_Operation2):
     """Represents a [logical material conditional][1].
 
     [1]: https://en.wikipedia.org/wiki/Material_conditional
@@ -510,7 +526,7 @@ class Implies(BinaryConnection):
     __str__ = formal
 
 
-class Iff(BinaryConnection):
+class Iff(_Operation2):
     """Represents a [logical biconditional][1].
 
     [1]: https://en.wikipedia.org/wiki/Logical_biconditional
@@ -530,16 +546,16 @@ class Iff(BinaryConnection):
 
 
 @overload
-def atomics(names_sep_by_spaces: str, /) -> tuple[Atomic, ...]:
+def atomics(names_sep_by_spaces: str, /) -> tuple[Predicate, ...]:
     ...
 
 
 @overload
-def atomics(name_iterable: Iterable[str], /) -> tuple[Atomic, ...]:
+def atomics(name_iterable: Iterable[str], /) -> tuple[Predicate, ...]:
     ...
 
 
-def atomics(arg: Union[str, Iterable[str]], /) -> tuple[Atomic, ...]:
+def atomics(arg: Union[str, Iterable[str]], /) -> tuple[Predicate, ...]:
     if isinstance(arg, str):
         arg = arg.split()
-    return tuple(Atomic(name) for name in arg)
+    return tuple(Predicate(name) for name in arg)

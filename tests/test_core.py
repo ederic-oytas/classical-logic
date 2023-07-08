@@ -6,7 +6,7 @@ from typing import Optional
 
 from flogic.core import (
     And,
-    Atomic,
+    Predicate,
     Not,
     Proposition,
     Or,
@@ -17,15 +17,15 @@ from flogic.core import (
 
 
 simple5: list[Proposition] = [
-    Not(Atomic("p")),
-    And(Atomic("p"), Atomic("q")),
-    Or(Atomic("p"), Atomic("q")),
-    Implies(Atomic("p"), Atomic("q")),
-    Iff(Atomic("p"), Atomic("q")),
+    Not(Predicate("p")),
+    And(Predicate("p"), Predicate("q")),
+    Or(Predicate("p"), Predicate("q")),
+    Implies(Predicate("p"), Predicate("q")),
+    Iff(Predicate("p"), Predicate("q")),
 ]
 # [~p, p&q, p|q, p->q, p<->q]
 
-simple6: list[Proposition] = [Atomic("p"), *simple5]
+simple6: list[Proposition] = [Predicate("p"), *simple5]
 # [p, ~p, p&q, p|q, p->q, p<->q]
 
 
@@ -38,9 +38,9 @@ class TestPropositionCompositionMethods:
         assert ~u == Not(u)
 
     binary_test_cases_with_correct_types = [
-        (Atomic("p"), Atomic("q")),  # (p, q)
-        *product(simple5, [Atomic("r")]),  # (~p, r), (p&q, r), ...
-        *product([Atomic("r")], simple5),  # (r, ~p), (r, p&q), ...
+        (Predicate("p"), Predicate("q")),  # (p, q)
+        *product(simple5, [Predicate("r")]),  # (~p, r), (p&q, r), ...
+        *product([Predicate("r")], simple5),  # (r, ~p), (r, p&q), ...
     ]
     binary_test_cases_with_wrong_second_type = [
         *product(simple6, [object(), True, False])
@@ -87,11 +87,11 @@ class TestPropositionMiscSpecialMethods:
             bool(u)
 
 
-atomic_test_cases: list[Atomic] = [
-    Atomic("p"),
-    Atomic("ANY_NamE"),
-    Atomic(""),
-    Atomic("\\'\"\n\t\uFFFF"),
+atomic_test_cases: list[Predicate] = [
+    Predicate("p"),
+    Predicate("ANY_NamE"),
+    Predicate(""),
+    Predicate("\\'\"\n\t\uFFFF"),
 ]
 
 
@@ -127,26 +127,26 @@ class TestInterpretation:
             u._interpret(interp)
 
     @pytest.mark.parametrize("atomic", atomic_test_cases)
-    def test_atomic_name_found(self, atomic: Atomic):
+    def test_atomic_name_found(self, atomic: Predicate):
         """Tests Atomic._interpret"""
         assert self.interpret3(atomic, {atomic.name: True}) is True
         assert self.interpret3(atomic, {atomic.name: False}) is False
 
-    @pytest.mark.parametrize("atomic", [Atomic("p"), Atomic("q")])
-    def test_atomic_name_not_found(self, atomic: Atomic):
+    @pytest.mark.parametrize("atomic", [Predicate("p"), Predicate("q")])
+    def test_atomic_name_not_found(self, atomic: Predicate):
         """Tests Atomic._interpret"""
         self.expect_interpret_fail(atomic, {atomic.name + "2": True})
         self.expect_interpret_fail(atomic, {atomic.name + "2": False})
 
     def test_not_truth_table(self):
         """Tests truth table of ~p"""
-        not_p = Not(Atomic("p"))
+        not_p = Not(Predicate("p"))
         assert self.interpret3(not_p, {"p": True}) is False
         assert self.interpret3(not_p, {"p": False}) is True
 
     def test_and_truth_table(self):
         """Tests truth table of p&q"""
-        p_and_q = And(Atomic("p"), Atomic("q"))
+        p_and_q = And(Predicate("p"), Predicate("q"))
         assert self.interpret3(p_and_q, {"p": True, "q": True}) is True
         assert self.interpret3(p_and_q, {"p": True, "q": False}) is False
         assert self.interpret3(p_and_q, {"p": False, "q": True}) is False
@@ -154,7 +154,7 @@ class TestInterpretation:
 
     def test_or_truth_table(self):
         """Tests truth table of p|q"""
-        p_or_q = Or(Atomic("p"), Atomic("q"))
+        p_or_q = Or(Predicate("p"), Predicate("q"))
         assert self.interpret3(p_or_q, {"p": True, "q": True}) is True
         assert self.interpret3(p_or_q, {"p": True, "q": False}) is True
         assert self.interpret3(p_or_q, {"p": False, "q": True}) is True
@@ -162,7 +162,7 @@ class TestInterpretation:
 
     def test_implies_truth_table(self):
         """Tests truth table of p->q"""
-        p_implies_q = Implies(Atomic("p"), Atomic("q"))
+        p_implies_q = Implies(Predicate("p"), Predicate("q"))
         assert self.interpret3(p_implies_q, {"p": True, "q": True}) is True
         assert self.interpret3(p_implies_q, {"p": True, "q": False}) is False
         assert self.interpret3(p_implies_q, {"p": False, "q": True}) is True
@@ -170,7 +170,7 @@ class TestInterpretation:
 
     def test_iff_truth_table(self):
         """Tests truth table of p<->q"""
-        p_iff_q = Iff(Atomic("p"), Atomic("q"))
+        p_iff_q = Iff(Predicate("p"), Predicate("q"))
         assert self.interpret3(p_iff_q, {"p": True, "q": True}) is True
         assert self.interpret3(p_iff_q, {"p": True, "q": False}) is False
         assert self.interpret3(p_iff_q, {"p": False, "q": True}) is False
@@ -180,21 +180,25 @@ class TestInterpretation:
         "u,interp_expected_pairs",
         [
             (
-                Not(Not(Not(Not(Atomic("p"))))),  # ~~~~p  (quadruple negation)
+                Not(
+                    Not(Not(Not(Predicate("p"))))
+                ),  # ~~~~p  (quadruple negation)
                 [
                     ({"p": True}, True),
                     ({"p": False}, False),
                 ],
             ),
             (
-                Or(Atomic("p"), Not(Atomic("p"))),  # p | ~p  (tautology)
+                Or(Predicate("p"), Not(Predicate("p"))),  # p | ~p  (tautology)
                 [
                     ({"p": True}, True),
                     ({"p": False}, True),
                 ],
             ),
             (
-                And(Atomic("p"), Not(Atomic("p"))),  # p & ~p  (contradiction)
+                And(
+                    Predicate("p"), Not(Predicate("p"))
+                ),  # p & ~p  (contradiction)
                 [
                     ({"p": True}, False),
                     ({"p": False}, False),
@@ -202,8 +206,10 @@ class TestInterpretation:
             ),
             (
                 Implies(
-                    And(Implies(Atomic("p"), Atomic("q")), Atomic("p")),
-                    Atomic("q"),
+                    And(
+                        Implies(Predicate("p"), Predicate("q")), Predicate("p")
+                    ),
+                    Predicate("q"),
                 ),  # ((p->q)&q) -> q  (Modens Ponens, so a tautology)
                 [
                     ({"p": True, "q": True}, True),
@@ -214,10 +220,10 @@ class TestInterpretation:
             ),
             (
                 Iff(
-                    Iff(Atomic("p"), Atomic("q")),
+                    Iff(Predicate("p"), Predicate("q")),
                     And(
-                        Implies(Atomic("p"), Atomic("q")),
-                        Implies(Atomic("q"), Atomic("p")),
+                        Implies(Predicate("p"), Predicate("q")),
+                        Implies(Predicate("q"), Predicate("p")),
                     ),
                 ),  # (p <-> q) <-> ((p -> q) & (q -> p))  (tautology)
                 [
@@ -229,10 +235,10 @@ class TestInterpretation:
             ),
             (
                 Iff(
-                    Iff(Atomic("p"), Atomic("q")),
+                    Iff(Predicate("p"), Predicate("q")),
                     Or(
-                        And(Atomic("p"), Atomic("q")),
-                        And(Not(Atomic("p")), Not(Atomic("q"))),
+                        And(Predicate("p"), Predicate("q")),
+                        And(Not(Predicate("p")), Not(Predicate("q"))),
                     ),
                 ),  # (p <-> q) <-> ((p & q) | (~p & ~q))  (tautology)
                 [
@@ -259,10 +265,10 @@ class TestInterpretation:
             (
                 And(
                     Or(
-                        Implies(Atomic("p"), Atomic("p")),
-                        Iff(Atomic("p"), Atomic("p")),
+                        Implies(Predicate("p"), Predicate("p")),
+                        Iff(Predicate("p"), Predicate("p")),
                     ),
-                    Not(Atomic("p")),
+                    Not(Predicate("p")),
                 ),  # ((p -> p) | (p <-> p)) & ~p
                 [
                     ({}, None),
@@ -272,7 +278,7 @@ class TestInterpretation:
             # The following tests also try to test the "short circuiting"
             # nature of interpreting.
             (
-                Not(Atomic("p")),
+                Not(Predicate("p")),
                 [  # ~p
                     ({}, None),
                     ({"x": True}, None),
@@ -280,7 +286,7 @@ class TestInterpretation:
                 ],
             ),
             (
-                And(Atomic("p"), Atomic("q")),  # p & q
+                And(Predicate("p"), Predicate("q")),  # p & q
                 [
                     ({}, None),
                     ({"p": True}, None),
@@ -290,7 +296,7 @@ class TestInterpretation:
                 ],
             ),
             (
-                Or(Atomic("p"), Atomic("q")),  # p | q
+                Or(Predicate("p"), Predicate("q")),  # p | q
                 [
                     ({}, None),
                     ({"p": True}, True),
@@ -300,7 +306,7 @@ class TestInterpretation:
                 ],
             ),
             (
-                Implies(Atomic("p"), Atomic("q")),  # p -> q (== ~p | q)
+                Implies(Predicate("p"), Predicate("q")),  # p -> q (== ~p | q)
                 [
                     ({}, None),
                     ({"p": True}, None),
@@ -310,7 +316,7 @@ class TestInterpretation:
                 ],
             ),
             (
-                Iff(Atomic("p"), Atomic("q")),  # p <-> q
+                Iff(Predicate("p"), Predicate("q")),  # p <-> q
                 [
                     ({}, None),
                     ({"p": True}, None),
@@ -338,11 +344,11 @@ class TestStr:
     """Test the __str__ methods of the six subclasses."""
 
     @pytest.mark.parametrize("atomic", atomic_test_cases)
-    def test_atomic(self, atomic: Atomic):
+    def test_atomic(self, atomic: Predicate):
         assert str(atomic) == atomic.name
 
     @pytest.mark.parametrize("atomic", atomic_test_cases)
-    def test_not(self, atomic: Atomic):
+    def test_not(self, atomic: Predicate):
         assert str(Not(atomic)) == f"~{atomic}"
 
     @pytest.mark.parametrize(
@@ -356,39 +362,43 @@ class TestStr:
     )
     @pytest.mark.parametrize("a", atomic_test_cases[1:])
     @pytest.mark.parametrize("b", atomic_test_cases[2:])
-    def test_binary_conn(self, cls: type, conn: str, a: Atomic, b: Atomic):
+    def test_binary_conn(
+        self, cls: type, conn: str, a: Predicate, b: Predicate
+    ):
         assert str(cls(a, b)) == f"({a.name} {conn} {b.name})"
 
     @pytest.mark.parametrize(
         "u,expected",
         [
             (
-                Not(Not(Not(Not(Atomic("p"))))),
+                Not(Not(Not(Not(Predicate("p"))))),
                 "~~~~p",
             ),
             (
                 Implies(
-                    And(Implies(Atomic("p"), Atomic("q")), Atomic("p")),
-                    Atomic("q"),
+                    And(
+                        Implies(Predicate("p"), Predicate("q")), Predicate("p")
+                    ),
+                    Predicate("q"),
                 ),
                 "(((p -> q) & p) -> q)",
             ),
             (
                 Iff(
-                    Iff(Atomic("p"), Atomic("q")),
+                    Iff(Predicate("p"), Predicate("q")),
                     And(
-                        Implies(Atomic("p"), Atomic("q")),
-                        Implies(Atomic("q"), Atomic("p")),
+                        Implies(Predicate("p"), Predicate("q")),
+                        Implies(Predicate("q"), Predicate("p")),
                     ),
                 ),
                 "((p <-> q) <-> ((p -> q) & (q -> p)))",
             ),
             (
                 Iff(
-                    Iff(Atomic("p"), Atomic("q")),
+                    Iff(Predicate("p"), Predicate("q")),
                     Or(
-                        And(Atomic("p"), Atomic("q")),
-                        And(Not(Atomic("p")), Not(Atomic("q"))),
+                        And(Predicate("p"), Predicate("q")),
+                        And(Not(Predicate("p")), Not(Predicate("q"))),
                     ),
                 ),
                 "((p <-> q) <-> ((p & q) | (~p & ~q)))",
@@ -405,27 +415,29 @@ class TestMisc:
         [
             ("", ()),
             (" \t\f\r\n", ()),
-            ("P", (Atomic("P"),)),
-            ("P Q R", (Atomic("P"), Atomic("Q"), Atomic("R"))),
-            ("1234 %()$&", (Atomic("1234"), Atomic("%()$&"))),
+            ("P", (Predicate("P"),)),
+            ("P Q R", (Predicate("P"), Predicate("Q"), Predicate("R"))),
+            ("1234 %()$&", (Predicate("1234"), Predicate("%()$&"))),
             (
                 "apple pear banana",
-                (Atomic("apple"), Atomic("pear"), Atomic("banana")),
+                (Predicate("apple"), Predicate("pear"), Predicate("banana")),
             ),
             (
                 ("apple", "pear", "banana"),
-                (Atomic("apple"), Atomic("pear"), Atomic("banana")),
+                (Predicate("apple"), Predicate("pear"), Predicate("banana")),
             ),
             (
                 ["apple", "pear", "banana", " \t\f\r\n"],
                 (
-                    Atomic("apple"),
-                    Atomic("pear"),
-                    Atomic("banana"),
-                    Atomic(" \t\f\r\n"),
+                    Predicate("apple"),
+                    Predicate("pear"),
+                    Predicate("banana"),
+                    Predicate(" \t\f\r\n"),
                 ),
             ),
         ],
     )
-    def test_atomics_function(self, text: str, expected: tuple[Atomic, ...]):
+    def test_atomics_function(
+        self, text: str, expected: tuple[Predicate, ...]
+    ):
         assert atomics(text) == expected

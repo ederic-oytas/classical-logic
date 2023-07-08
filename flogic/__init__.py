@@ -1,14 +1,14 @@
 """Python package for propositional logic."""
 from .core import (
     And,
-    Atomic,
+    Predicate,
     Not,
     Proposition,
     Or,
     Implies,
     Iff,
-    UnaryConnection,
-    BinaryConnection,
+    _Operation1,
+    _Operation2,
     atomics,
 )
 from .parsing import prop, props

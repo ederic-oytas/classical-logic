@@ -64,7 +64,7 @@ Operator | Precedence | Associativity
 from typing import Generator, Iterator, Optional
 from enum import Enum, auto
 
-from .core import And, Atomic, Iff, Implies, Not, Or, Proposition
+from .core import And, Predicate, Iff, Implies, Not, Or, Proposition
 
 #
 # Messages
@@ -247,7 +247,7 @@ class _Parser:
     def unit(self) -> Proposition:
         """Parses rule `unit`"""
         if self._current_token_type is _TokenType.ATOMIC:
-            atomic = Atomic(self._current_token_value)
+            atomic = Predicate(self._current_token_value)
             self._advance()
             return atomic
 

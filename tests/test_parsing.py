@@ -2,7 +2,7 @@
 import pytest
 import re
 import string
-from flogic.core import And, Atomic, Iff, Implies, Not, Or, Proposition
+from flogic.core import And, Predicate, Iff, Implies, Not, Or, Proposition
 
 from flogic.parsing import (
     _lex,
@@ -181,17 +181,17 @@ class TestLex:
             list(_lex(s))
 
 
-P = Atomic("P")
-Q = Atomic("Q")
-R = Atomic("R")
-S = Atomic("S")
-T = Atomic("T")
+P = Predicate("P")
+Q = Predicate("Q")
+R = Predicate("R")
+S = Predicate("S")
+T = Predicate("T")
 
 
 prop_test_cases: list[tuple[str, Proposition]] = [
     # Atomic cases:
-    ("P", Atomic("P")),
-    ("_abcdefghi", Atomic("_abcdefghi")),
+    ("P", Predicate("P")),
+    ("_abcdefghi", Predicate("_abcdefghi")),
     # Simple connection cases:
     ("~P", Not(P)),
     ("P & Q", And(P, Q)),

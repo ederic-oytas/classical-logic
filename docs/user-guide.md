@@ -11,6 +11,8 @@ Install the package using Pip:
 pip install plogic
 ```
 
+
+
 ## What is Propositional Logic?
 
 `plogic` is a Python package based on [Propositional Logic](1), which is the

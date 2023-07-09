@@ -227,7 +227,7 @@ class Proposition(ABC):
     """
 
     #
-    # Methods for composing compound propositions
+    # Proposition Composition Methods
     #
 
     def __invert__(self, /) -> "Not":
@@ -263,7 +263,7 @@ class Proposition(ABC):
         return Iff(self, other)
 
     #
-    # Method for the proposition's truth value under an interpretation
+    # Interpretation Methods
     #
 
     @overload
@@ -331,7 +331,7 @@ class Proposition(ABC):
         )
 
     #
-    # String Formatting
+    # String Formatting Methods
     #
 
     def __repr__(self) -> str:

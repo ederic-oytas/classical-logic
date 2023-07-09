@@ -23,12 +23,12 @@ from typing import overload, NoReturn, Union
 
 
 class Proposition(ABC):
-    """A `Proposition` object represents a logical proposition. This type
-    serves as the base class for all proposition types in the `flogic` package.
+    """Represents a logical proposition. This type serves as the base class
+    for all proposition types in the `flogic` package.
 
-    `#!py3 import flogic` what
+    ## Operation Summary
 
-    Operation Summary:
+    The following table summarizes the special operations on this class:
 
     Operation     | Description
     --------------|--------------------------------------
@@ -41,8 +41,8 @@ class Proposition(ABC):
     `p != q`      | Checks if `p` and `q` are not structurally equal.
     `hash(p)`     | Returns the hash value of `p`.
 
-    Note that `bool(p)` is not supported.
-
+    **Note:** `bool(p)` is not supported as the truth value of a proposition is
+    ambiguous.
 
     [1]: ./#flogic.Proposition--interpreting-assigning-truth-values
     """
@@ -236,8 +236,9 @@ class Proposition(ABC):
 
     def __and__(self, other: "Proposition", /) -> "And":
         """Returns [`And(self, other)`](./#flogic.And) if the other operand is
-        a Proposition, else [`NotImplemented`](
-        https://docs.python.org/3/library/constants.html#NotImplemented).
+        a Proposition; otherwise [`NotImplemented`][1].
+
+        [1]: https://docs.python.org/3/library/constants.html#NotImplemented
         """
         if isinstance(other, Proposition):
             return And(self, other)
@@ -245,8 +246,9 @@ class Proposition(ABC):
 
     def __or__(self, other: "Proposition", /) -> "Or":
         """Returns [`Or(self, other)`](./#flogic.Or) if the other operand is
-        a Proposition, else [`NotImplemented`](
-        https://docs.python.org/3/library/constants.html#NotImplemented).
+        a Proposition; otherwise [`NotImplemented`][1].
+
+        [1]: https://docs.python.org/3/library/constants.html#NotImplemented
         """
         if isinstance(other, Proposition):
             return Or(self, other)

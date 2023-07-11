@@ -70,3 +70,11 @@ corresponds to:
 ----
 
 ::: flogic.Or
+
+----
+
+::: flogic.prop
+
+----
+
+::: flogic.props

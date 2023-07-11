@@ -148,11 +148,10 @@ def _lex(text: str) -> Generator[tuple[_TokenType, str], None, None]:
 
         elif c.isalpha() or c == "_":
             parts = [c]
-            while c := next(it, None):
-                if c.isalnum() or c == "_":
-                    parts.append(c)
-                else:
-                    break
+            c = next(it, None)
+            while c is not None and (c.isalnum() or c == "_"):
+                parts.append(c)
+                c = next(it, None)
             yield (_TokenType.ATOMIC, "".join(parts))
             continue  # to skip advancing the iterator
 

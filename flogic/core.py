@@ -391,10 +391,11 @@ class Predicate(Proposition):  # TODO rework docs and rename it
     name: str
 
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        truth_value = interpretation.get(self.name)
-        if truth_value is None:
-            raise ValueError(f"Atomic '{self.name}' was left unassigned")
-        return truth_value
+        if (truth_value := interpretation.get(self.name)) is not None:
+            return truth_value
+        raise ValueError(
+            f"Predicate '{self.name}' not unassigned when interpreting"
+        )
 
     def formal(self) -> str:
         return self.name
@@ -462,7 +463,7 @@ class And(_Operation2):
     """
 
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return self.left._interpret(interpretation) and self.right._interpret(
+        return self.left._interpret(interpretation) & self.right._interpret(
             interpretation
         )
 
@@ -484,7 +485,7 @@ class Or(_Operation2):
     """
 
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return self.left._interpret(interpretation) or self.right._interpret(
+        return self.left._interpret(interpretation) | self.right._interpret(
             interpretation
         )
 
@@ -507,7 +508,7 @@ class Implies(_Operation2):
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         return not self.left._interpret(
             interpretation
-        ) or self.right._interpret(interpretation)
+        ) | self.right._interpret(interpretation)
 
     def formal(self) -> str:
         return f"({self.left} -> {self.right})"
@@ -526,7 +527,7 @@ class Iff(_Operation2):
     """
 
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return self.left._interpret(interpretation) == self.right._interpret(
+        return self.left._interpret(interpretation) is self.right._interpret(
             interpretation
         )
 

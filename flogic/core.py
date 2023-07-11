@@ -38,8 +38,8 @@ class Proposition(ABC):
     `~p`          | Returns [`Not(p)`][flogic.Not].
     `p & q`       | Returns [`And(p, q)`][flogic.And].
     `p | q`       | Returns [`Or(p, q)`][flogic.Or].
-    `p(mapping)`  | [Interprets][1] `p`.
-    `p(**kwargs)` | [Interprets][1] `p`.
+    `p(mapping)`  | [Interprets]() `p`.  TODO link interpreting section
+    `p(**kwargs)` | [Interprets]() `p`.  TODO link interpreting section
     `p == q`      | Checks if `p` and `q` are structurally equal.
     `p != q`      | Checks if `p` and `q` are not structurally equal.
     `hash(p)`     | Returns the hash value of `p`.
@@ -48,8 +48,6 @@ class Proposition(ABC):
 
     **Note:** `bool(p)` is not supported as the truth value of a proposition is
     ambiguous.
-
-    [1]: ./#flogic.Proposition--interpreting-assigning-truth-values
     """
 
     """

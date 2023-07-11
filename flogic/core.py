@@ -303,6 +303,15 @@ class Proposition(ABC):
         This is an abstract internal method which is delegated to by
         `__call__`. Subclasses must implement this method in order to fully
         implement `__call__`.
+
+        If the interpretation does not assign every (nullary) predicate in this
+        proposition to a boolean, then a `ValueError` is raised. This also
+        applies in "short circuiting" cases where the second operand doesn't
+        need to be interpreted.
+
+        For example, if a interpretation assigns `P` to `True` and does not
+        assign `Q` to anything, then interpreting `P | Q` would still raise a
+        `ValueError` despite `Q` not needing to be evaluated.
         """
         raise NotImplementedError(
             f"'_interpret' is not implemented for '{self.__class__.__name__}'"

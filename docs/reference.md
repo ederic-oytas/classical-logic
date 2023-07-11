@@ -2,6 +2,10 @@
 # API Reference
 
 ::: flogic.Proposition
+    options:
+      filters:
+        - "!^_[^_]"
+        - "!__.+__"
 
 ----
 

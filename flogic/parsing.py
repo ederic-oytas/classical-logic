@@ -1,19 +1,27 @@
 """Module for parsing.
 
-# Syntax Specification (DRAFT)
+# Grammar Specification (DRAFT)
+
+This section specifies the grammar used to parse strings which represent
+propositions for `flogic`. This will cover both the lexical and syntactical
+analysis of the grammar.
+
+This grammar may be extended in the future.
 
 ## Lexical Analysis
 
-In sum, the grammar specifies one identifier token (`ATOMIC`), five operator
-tokens (`~`, `&`, `|`, `->`, and `<->`), and two separator tokens (`(`, `)`).
+In the lexical analysis, the given string is split up into tokens. In this
+grammar, there are nine (9) tokens in total:
+- One (1) identifier token: `ATOMIC`
+- Five (5) operator tokens: `~`, `&`, `|`, `->`, and `<->`
+- Two (2) separator tokens: `(` and `)`
+- One (1) whitespace token: `WS`
 
-In addition, all whitespace is ignored by the grammar. We consider whitespace
-to be any character in `/[ \\t\\f\\r\\n]/`.
-
-We define the tokens as follows:
+Using a modified BNF grammar notation [similar to that in the Python Docs][1],
+the tokens are defined as follows:
 
 ```
-ATOMIC  ::= /[a-zA-Z_][a-zA-Z0-9_]*/
+IDENT   ::= /[a-zA-Z_][a-zA-Z0-9_]*/
 NOT     ::= "~"
 AND     ::= "&"
 OR      ::= "|"
@@ -21,45 +29,35 @@ IMPLIES ::= "->"
 IFF     ::= "<->"
 LPARENS ::= "("
 RPARENS ::= ")"
+WS      ::= /[ \\t\\f\\r\\n]+/
 ```
+
+[1]: https://docs.python.org/3/reference/introduction.html#notation
+
+Whitespace tokens (`WS`) are ignored, so they are not considered in the
+syntactical analysis.
 
 For the purpose of clarity, the operator and separator tokens will be notated
 by their quoted counterparts (e.g. `"&"` instead of `AND`).
 
-## Parsing and Transformation
+## Syntactical Analysis
 
-The grammar is parsed using a top-down process.
-
-We define a context-free grammar which can be parsed by a recursive descent
-parser. In total, the grammar has six rules.
-
-The grammar is defined as follows:
+The grammar is an LL(1) grammar and defines five (5) rules in total. It is
+defined as follows:
 
 ```
-bic  ::= cond ("<->" bic)?
-cond ::= disj ("->" cond)?
+bic  ::= cond ("<->" cond)*
+cond ::= disj ("->" disj)?
 disj ::= conj ("|" conj)*
-conj ::= neg  ("&" neg)*
-neg  ::= unit | "~" neg
-unit ::= ATOMIC | "(" bic ")"
+conj ::= unit ("&" unit)*
+unit ::= IDENT
+         | "~" unit
+         | "(" bic ")"
 ```
 
-For efficiency, the tokens are immediately parsed into Proposition objects. If
-any of the above rules contain two children, then they are grouped using the
-corresponding class. For rules `disj` and `conj`, in cases of three or more
-children, the propositions grouped such that it associates to the left. For
-example, `"(P & Q & R)"` is transformed to
-`And(And(Atomic('P'), Atomic('Q')), Atomic('R'))`.
+Note that this grammar does not reflect the associativity of the operators.
 
-The precedence and associativity of operators is shown in the table below:
-
-Operator | Precedence | Associativity
----------|------------|---------------
-`<->`    | 5          | Right
-`->`     | 4          | Right
-`|`      | 3          | Left
-`&`      | 2          | Left
-`~`      | 1          | N/A
+This concludes the grammar specification.
 """
 from typing import Generator, Iterator, Optional
 from enum import Enum, auto

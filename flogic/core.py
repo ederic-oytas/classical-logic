@@ -48,7 +48,7 @@ class Proposition(ABC):
 
     **Note:** `bool(p)` is not supported as the truth value of a proposition is
     ambiguous.
-    """
+    """  # noqa: E501
 
     """
 

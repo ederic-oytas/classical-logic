@@ -34,7 +34,7 @@ class Proposition(ABC):
     Operation     | Description
     --------------|---------------------------------------------------
     `p[i]`        | Gets the `i`th immediate component of `p`.
-    `iter(p)`     | Returns an iterator over the immediate components of `p`
+    `iter(p)`     | Returns an iterator over the immediate components of `p`.
     `~p`          | Returns [`Not(p)`](./#flogic.Not).
     `p & q`       | Returns [`And(p, q)`](./#flogic.And).
     `p | q`       | Returns [`Or(p, q)`](./#flogic.Or).

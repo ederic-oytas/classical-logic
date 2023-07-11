@@ -1,6 +1,7 @@
 """Unit Tests for flogic/prop.py"""
 
 import pytest
+import string
 from typing import Optional
 
 from flogic.core import (
@@ -340,6 +341,38 @@ class TestInterpretation:
                 self.expect_interpret_fail(u, interp)
             else:
                 assert self.interpret3(u, interp) is expected
+
+
+class TestPredicateCreation:
+    """Tests the creation of `Predicate` objects."""
+
+    @pytest.mark.parametrize(
+        "name",
+        [
+            "aName",
+            f"{string.ascii_letters}{string.digits}_",
+            "_____",
+        ],
+    )
+    def test_valid(self, name: str):
+        predicate = Predicate(name)
+        assert predicate.name == name
+
+    @pytest.mark.parametrize(
+        "name",
+        [
+            "",
+            "another-name",
+            "~P",
+            "P&Q|R->S<->T",
+            "123Cats",
+            "Has  Spaces",
+            "\uFFFF",
+        ],
+    )
+    def test_invalid(self, name: str):
+        with pytest.raises(ValueError):
+            Predicate(name)
 
 
 class TestStr:

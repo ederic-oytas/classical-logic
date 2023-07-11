@@ -41,8 +41,8 @@ class Proposition(ABC):
     `p == q`      | Checks if `p` and `q` are structurally equal.
     `p != q`      | Checks if `p` and `q` are not structurally equal.
     `hash(p)`     | Returns the hash value of `p`.
-    `str(p)`      | Returns a string repr. of `p`. (Ex: `P & Q`)
-    `repr(p)`     | Returns a string repr. of `p`. (Ex: `prop('P & Q')`)
+    `str(p)`      | Returns a text representation of `p` (Ex: `P & Q`).
+    `repr(p)`     | Returns a text representation of `p` (Ex: `prop('P & Q')`).
 
     **Note:** `bool(p)` is not supported as the truth value of a proposition is
     ambiguous.
@@ -324,17 +324,7 @@ class Proposition(ABC):
 
     def __repr__(self) -> str:
         """Returns a string representation of this proposition in the form
-        of `prop(<str(self)>)`.
-
-        Example:
-            ```python
-            import flogic as pl
-
-
-            s = pl.And(pl.Atomic('P'), pl.Atomic('Q'))
-
-            assert repr(s) == "prop('P & Q')"
-            ```
+        of `'prop(<str(self)>)'`.
         """
         return f"prop('{self!s}')"
 

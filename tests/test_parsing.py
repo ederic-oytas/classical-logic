@@ -8,7 +8,6 @@ from flogic.parsing import (
     _lex,
     _lex_accept,
     _TokenType,
-    _UNEXP_END_OF_STR,
     _unexp_char,
     prop,
     props,

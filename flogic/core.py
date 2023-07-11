@@ -17,7 +17,7 @@ Proposition
 """
 
 from abc import abstractmethod, ABC
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass
 import re
 from typing import overload, NoReturn, Union
@@ -230,6 +230,32 @@ class Proposition(ABC):
     """
 
     #
+    # Accessing Methods
+    #
+
+    @abstractmethod
+    def __getitem__(self, index: int, /) -> "Proposition":
+        raise NotImplementedError(
+            f"__getitem__ is not implemented for '{self.__class__.__name__}'"
+        )
+
+    @abstractmethod
+    def __iter__(self, /) -> Iterator["Proposition"]:
+        raise NotImplementedError(
+            f"__iter__ is not implemented for '{self.__class__.__name__}'"
+        )
+
+    #
+    # Degree method
+    #
+
+    @abstractmethod
+    def degree(self) -> int:
+        raise NotImplementedError(
+            f"__iter__ is not implemented for '{self.__class__.__name__}'"
+        )
+
+    #
     # Proposition Composition Methods
     #
 
@@ -392,6 +418,17 @@ class Predicate(Proposition):
         if not _ident_pattern.fullmatch(self.name):
             raise ValueError(f"Invalid predicate name: {self.name!r}")
 
+    def __getitem__(self, index: int, /) -> NoReturn:
+        raise IndexError(
+            f"Predicate has no component propositions; got {index}"
+        )
+
+    def __iter__(self, /) -> Iterator[Proposition]:
+        return iter(())
+
+    def degree(self, /) -> int:
+        return 0
+
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         if (truth_value := interpretation.get(self.name)) is not None:
             return truth_value
@@ -417,6 +454,17 @@ class _LogicOp1(Proposition):
     """
 
     inner: Proposition
+
+    def __getitem__(self, index: int, /) -> "Proposition":
+        if index == 0:
+            return self.inner
+        raise IndexError(f"Expected 0; got {index}")
+
+    def __iter__(self, /) -> Iterator["Proposition"]:
+        return iter((self.inner,))
+
+    def degree(self) -> int:
+        return 1
 
 
 @dataclass(frozen=True, repr=False)
@@ -452,6 +500,19 @@ class _LogicOp2(Proposition):
 
     left: Proposition
     right: Proposition
+
+    def __getitem__(self, index: int, /) -> "Proposition":
+        if index == 0:
+            return self.left
+        elif index == 1:
+            return self.right
+        raise IndexError(f"Expected 0 or 1; got {index}")
+
+    def __iter__(self, /) -> Iterator["Proposition"]:
+        return iter((self.left, self.right))
+
+    def degree(self) -> int:
+        return 2
 
 
 @dataclass(frozen=True, repr=False)

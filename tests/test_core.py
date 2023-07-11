@@ -31,12 +31,75 @@ simple6: list[Proposition] = [Predicate("p"), *simple5]
 
 P = Predicate("P")
 Q = Predicate("Q")
+R = Predicate("R")
 ALL_CHARS_PRED = Predicate(f"_{string.ascii_letters}{string.digits}")
 
 atomic_test_cases: list[Predicate] = [
     Predicate("p"),
     Predicate("ANY_NamE"),
 ]
+
+
+class TestAccessing:
+    """Tests for the accessing methods."""
+
+    def test_getitem_success(self):
+        """Tests p[index]"""
+        assert Not(P)[0] is P
+        assert And(P, Q)[0] is P
+        assert And(P, Q)[1] is Q
+        assert Or(P, Q)[0] is P
+        assert Or(P, Q)[1] is Q
+        assert Implies(P, Q)[0] is P
+        assert Implies(P, Q)[1] is Q
+        assert Iff(P, Q)[0] is P
+        assert Iff(P, Q)[1] is Q
+
+    def test_getitem_index_errors(self):
+        with pytest.raises(IndexError):
+            P[0]
+        with pytest.raises(IndexError):
+            P[1]
+        with pytest.raises(IndexError):
+            P[-1]
+        with pytest.raises(IndexError):
+            Not(P)[1]
+        with pytest.raises(IndexError):
+            Not(P)[2]
+        with pytest.raises(IndexError):
+            Not(P)[-1]
+        for cls in [And, Or, Implies, Iff]:
+            with pytest.raises(IndexError):
+                cls(P, Q)[2]
+            with pytest.raises(IndexError):
+                cls(P, Q)[3]
+            with pytest.raises(IndexError):
+                cls(P, Q)[-1]
+
+    def test_iter(self):
+        assert list(P) == []
+        assert list(Q) == []
+        assert list(Not(P)) == [P]
+        assert list(Not(Not(P))) == [Not(P)]
+        for cls in [And, Or, Implies, Iff]:
+            assert list(cls(P, Q)) == [P, Q]
+            assert list(cls(cls(P, Q), R)) == [cls(P, Q), R]
+            assert list(cls(cls(P, Q), Not(R))) == [cls(P, Q), Not(R)]
+
+
+class TestDegree:
+    """Tests .degree()"""
+
+    def test_degree(self):
+        assert P.degree() == 0
+        assert Q.degree() == 0
+        assert Not(P).degree() == 1
+        assert Not(Not(P)).degree() == 1
+        assert Not(Not(Not(P))).degree() == 1
+        for cls in [And, Or, Implies, Iff]:
+            assert cls(P, Q).degree() == 2
+            assert cls(cls(P, Q), R).degree() == 2
+            assert cls(cls(P, Q), Not(R)).degree() == 2
 
 
 class TestPropositionComposition:

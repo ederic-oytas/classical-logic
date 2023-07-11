@@ -1,8 +1,7 @@
 """Unit Tests for flogic/prop.py"""
 
-from itertools import product
 import pytest
-from typing import Any, Optional
+from typing import Optional
 
 from flogic.core import (
     And,

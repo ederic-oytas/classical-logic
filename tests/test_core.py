@@ -32,45 +32,55 @@ P = Predicate("P")
 Q = Predicate("Q")
 
 
-class TestPropositionCompositionMethods:
+class TestPropositionComposition:
     """Tests for the five composition methods in the Proposition class."""
 
-    test_cases: list[Proposition] = [P, Not(P), And(P, Q)]
+    samples: list[Proposition] = [P, Not(P), And(P, Q)]
 
-    @pytest.mark.parametrize("u", test_cases)
+    @pytest.mark.parametrize("u", samples)
     def test_invert(self, u: Proposition):
         assert u.__invert__() == Not(u)
         assert ~u == Not(u)
 
-    @pytest.mark.parametrize("u", test_cases)
+    @pytest.mark.parametrize("u", samples)
     def test_and(self, u: Proposition):
-        for v in self.test_cases:
+        for v in self.samples:
             assert u.__and__(v) == And(u, v)
             assert u & v == And(u, v)
+            assert v.__and__(u) == And(v, u)
+            assert v & u == And(v, u)
         for x in [object(), True, False]:
             assert u.__and__(x) == NotImplemented
             with pytest.raises(TypeError):
                 r = u & x
+            with pytest.raises(TypeError):
+                r = x & u
 
-    @pytest.mark.parametrize("u", test_cases)
+    @pytest.mark.parametrize("u", samples)
     def test_or(self, u: Proposition):
-        for v in self.test_cases:
-            assert u.__or__(v) == Or(u, v)
-            assert u | v == Or(u, v)
+        for v in self.samples:
+            assert u.__or__(v) == And(u, v)
+            assert u | v == And(u, v)
+            assert v.__or__(u) == And(v, u)
+            assert v | u == And(v, u)
         for x in [object(), True, False]:
             assert u.__or__(x) == NotImplemented
             with pytest.raises(TypeError):
                 r = u | x
+            with pytest.raises(TypeError):
+                r = x | u
 
-    @pytest.mark.parametrize("u", test_cases)
+    @pytest.mark.parametrize("u", samples)
     def test_implies(self, u: Proposition):
-        for v in self.test_cases:
+        for v in self.samples:
             assert u.implies(v) == Implies(u, v)
+            assert v.implies(u) == Implies(v, u)
 
-    @pytest.mark.parametrize("u", test_cases)
+    @pytest.mark.parametrize("u", samples)
     def test_iff(self, u: Proposition):
-        for v in self.test_cases:
+        for v in self.samples:
             assert u.iff(v) == Iff(u, v)
+            assert v.iff(u) == Iff(v, u)
 
 
 class TestPropositionMiscSpecialMethods:

@@ -1,8 +1,10 @@
 """Unit Tests for flogic/prop.py"""
 
+from collections.abc import Mapping
+from itertools import product
 import pytest
 import string
-from typing import Optional
+from typing import Iterator, Optional
 
 from flogic.core import (
     And,
@@ -30,6 +32,7 @@ simple6: list[Proposition] = [Predicate("p"), *simple5]
 
 P = Predicate("P")
 Q = Predicate("Q")
+ALL_CHARS_PRED = Predicate(f"_{string.ascii_letters}{string.digits}")
 
 atomic_test_cases: list[Predicate] = [
     Predicate("p"),
@@ -88,250 +91,230 @@ class TestPropositionComposition:
             assert v.iff(u) == Iff(v, u)
 
 
-class TestInterpretation:
-    """Tests the _interpret methods in the subclasses and __call__ method of
-    the Proposition class."""
+class TestInterpreting:
+    """Tests for _interpret() and __call__()."""
 
-    Interp = dict[str, bool]
+    class SampleMapping(Mapping[str, bool]):
+        """Sample custom mapping class."""
 
-    def interpret3(self, u: Proposition, interp: Interp) -> bool:
-        """Interprets in all three ways and asserts that all values are equal,
+        def __init__(self, data: dict[str, bool]):
+            self.data: dict[str, bool] = data
+
+        def __getitem__(self, name: str) -> bool:
+            return self.data[name]
+
+        def __iter__(self) -> Iterator[str]:
+            return iter(self.keys())
+
+        def __len__(self) -> int:
+            return len(self.data)
+
+    def interpret(self, u: Proposition, interp: dict[str, bool]) -> bool:
+        """Interprets in all four ways and asserts that all values are equal,
         and then returns the value.
-
-        The three ways:
-            u(mapping)
-            u(**vals)
-            u._interpret(mapping)
         """
         a = u(interp)
-        b = u(**interp)
-        c = u._interpret(interp)
-        assert a == b == c
+        b = u(self.SampleMapping(interp))
+        c = u(**interp)
+        d = u._interpret(interp)
+        assert a is b is c is d
         return a
 
-    def expect_interpret_fail(self, u: Proposition, interp: Interp) -> None:
+    def expect_interpret_value_error(
+        self, u: Proposition, interp: dict[str, bool]
+    ) -> None:
         """Asserts that all interpret will raise a ValueError in all three
         ways."""
         with pytest.raises(ValueError):
             u(interp)
         with pytest.raises(ValueError):
+            u(self.SampleMapping(interp))
+        with pytest.raises(ValueError):
             u(**interp)
         with pytest.raises(ValueError):
             u._interpret(interp)
 
-    @pytest.mark.parametrize("atomic", atomic_test_cases)
-    def test_atomic_name_found(self, atomic: Predicate):
-        """Tests Atomic._interpret"""
-        assert self.interpret3(atomic, {atomic.name: True}) is True
-        assert self.interpret3(atomic, {atomic.name: False}) is False
+    @pytest.mark.parametrize("p", [P, ALL_CHARS_PRED])
+    def test_predicate_name_present(self, p: Predicate):
+        """Tests single predicate cases, when the predicate name is PRESENT in
+        the interpretation."""
+        assert self.interpret(p, {p.name: True}) is True
+        assert self.interpret(p, {p.name: False}) is False
 
-    @pytest.mark.parametrize("atomic", [Predicate("p"), Predicate("q")])
-    def test_atomic_name_not_found(self, atomic: Predicate):
-        """Tests Atomic._interpret"""
-        self.expect_interpret_fail(atomic, {atomic.name + "2": True})
-        self.expect_interpret_fail(atomic, {atomic.name + "2": False})
+    @pytest.mark.parametrize("p", [P, ALL_CHARS_PRED])
+    def test_predicate_name_missing(self, p: Predicate):
+        """Tests single predicate cases, when the predicate name is MISSING in
+        the interpretation."""
+        self.expect_interpret_value_error(p, {})
+        self.expect_interpret_value_error(p, {p.name + "2": True})
+        self.expect_interpret_value_error(p, {p.name + "2": False})
 
     def test_not_truth_table(self):
-        """Tests truth table of ~p"""
-        not_p = Not(Predicate("p"))
-        assert self.interpret3(not_p, {"p": True}) is False
-        assert self.interpret3(not_p, {"p": False}) is True
+        """Tests truth table of ~P"""
+        u = Not(P)
+        assert self.interpret(u, {"P": True}) is False
+        assert self.interpret(u, {"P": False}) is True
 
     def test_and_truth_table(self):
-        """Tests truth table of p&q"""
-        p_and_q = And(Predicate("p"), Predicate("q"))
-        assert self.interpret3(p_and_q, {"p": True, "q": True}) is True
-        assert self.interpret3(p_and_q, {"p": True, "q": False}) is False
-        assert self.interpret3(p_and_q, {"p": False, "q": True}) is False
-        assert self.interpret3(p_and_q, {"p": False, "q": False}) is False
+        """Tests truth table of P&Q"""
+        u = And(P, Q)
+        assert self.interpret(u, {"P": True, "Q": True}) is True
+        assert self.interpret(u, {"P": True, "Q": False}) is False
+        assert self.interpret(u, {"P": False, "Q": True}) is False
+        assert self.interpret(u, {"P": False, "Q": False}) is False
 
     def test_or_truth_table(self):
         """Tests truth table of p|q"""
-        p_or_q = Or(Predicate("p"), Predicate("q"))
-        assert self.interpret3(p_or_q, {"p": True, "q": True}) is True
-        assert self.interpret3(p_or_q, {"p": True, "q": False}) is True
-        assert self.interpret3(p_or_q, {"p": False, "q": True}) is True
-        assert self.interpret3(p_or_q, {"p": False, "q": False}) is False
+        u = Or(P, Q)
+        assert self.interpret(u, {"P": True, "Q": True}) is True
+        assert self.interpret(u, {"P": True, "Q": False}) is True
+        assert self.interpret(u, {"P": False, "Q": True}) is True
+        assert self.interpret(u, {"P": False, "Q": False}) is False
 
     def test_implies_truth_table(self):
         """Tests truth table of p->q"""
-        p_implies_q = Implies(Predicate("p"), Predicate("q"))
-        assert self.interpret3(p_implies_q, {"p": True, "q": True}) is True
-        assert self.interpret3(p_implies_q, {"p": True, "q": False}) is False
-        assert self.interpret3(p_implies_q, {"p": False, "q": True}) is True
-        assert self.interpret3(p_implies_q, {"p": False, "q": False}) is True
+        u = Implies(P, Q)
+        assert self.interpret(u, {"P": True, "Q": True}) is True
+        assert self.interpret(u, {"P": True, "Q": False}) is False
+        assert self.interpret(u, {"P": False, "Q": True}) is True
+        assert self.interpret(u, {"P": False, "Q": False}) is True
 
     def test_iff_truth_table(self):
         """Tests truth table of p<->q"""
-        p_iff_q = Iff(Predicate("p"), Predicate("q"))
-        assert self.interpret3(p_iff_q, {"p": True, "q": True}) is True
-        assert self.interpret3(p_iff_q, {"p": True, "q": False}) is False
-        assert self.interpret3(p_iff_q, {"p": False, "q": True}) is False
-        assert self.interpret3(p_iff_q, {"p": False, "q": False}) is True
+        u = Iff(P, Q)
+        assert self.interpret(u, {"P": True, "Q": True}) is True
+        assert self.interpret(u, {"P": True, "Q": False}) is False
+        assert self.interpret(u, {"P": False, "Q": True}) is False
+        assert self.interpret(u, {"P": False, "Q": False}) is True
 
     @pytest.mark.parametrize(
-        "u,interp_expected_pairs",
+        "u",
+        [
+            Or(P, Not(P)),  # P | ~P
+            Implies(P, P),  # P -> P
+            Implies(And(Implies(P, Q), P), Q),  # ((P -> Q) & P) -> Q
+            Implies(Implies(Implies(P, Q), P), P),  # ((P -> Q) -> P) -> P
+            Iff(
+                Iff(P, Q),
+                And(Implies(P, Q), Implies(Q, P)),
+            ),  # (P <-> Q) <-> ((P -> Q) & (Q -> P))
+            Iff(
+                Iff(P, Q),
+                Or(And(P, Q), And(Not(P), Not(Q))),
+            ),  # (P <-> Q) <-> ((P & Q) | (~P & ~Q))
+            Implies(
+                And(Implies(P, Q), Implies(Not(P), Q)),
+                Q,
+            ),  # ((P -> Q) & (~P -> Q)) -> Q
+        ],
+    )
+    def test_tautology(self, u: Proposition):
+        """Tests if the tautology holds true always."""
+        for p in [True, False]:
+            for q in [True, False]:
+                i = {"P": p, "Q": q}
+                assert self.interpret(u, i) is True
+
+    @pytest.mark.parametrize(
+        "u",
+        [
+            And(P, Not(P)),  # P & ~P
+            Not(Or(P, Not(P))),  # ~(P | ~P)
+            Not(Implies(P, P)),  # ~(P -> P)
+            Not(
+                Iff(
+                    Iff(P, Q),
+                    And(Implies(P, Q), Implies(Q, P)),
+                )
+            ),  # ~( (P <-> Q) <-> ((P -> Q) & (Q -> P)) )
+            Not(
+                Iff(
+                    Iff(P, Q),
+                    Or(And(P, Q), And(Not(P), Not(Q))),
+                )
+            ),  # ~( (P <-> Q) <-> ((P & Q) | (~P & ~Q)) )
+        ],
+    )
+    def test_contradiction(self, u: Proposition):
+        """Tests if the contradiction holds false always."""
+        for p in [True, False]:
+            for q in [True, False]:
+                i = {"P": p, "Q": q}
+                assert self.interpret(u, i) is False
+
+    @pytest.mark.parametrize(
+        "u,interps",
         [
             (
-                Not(
-                    Not(Not(Not(Predicate("p"))))
-                ),  # ~~~~p  (quadruple negation)
+                P,  # Q
                 [
-                    ({"p": True}, True),
-                    ({"p": False}, False),
+                    {},
+                    {"Q": True},
+                    {"Q": False, "R": True},
                 ],
             ),
             (
-                Or(Predicate("p"), Not(Predicate("p"))),  # p | ~p  (tautology)
+                Not(P),  # ~P
                 [
-                    ({"p": True}, True),
-                    ({"p": False}, True),
+                    {},
+                    {"Q": True},
                 ],
             ),
             (
-                And(
-                    Predicate("p"), Not(Predicate("p"))
-                ),  # p & ~p  (contradiction)
+                And(P, Q),  # P & Q
                 [
-                    ({"p": True}, False),
-                    ({"p": False}, False),
+                    {},
+                    {"R": True},
+                    {"P": False},  # tests short circuiting doesn't work
+                    {"Q": False},
                 ],
             ),
             (
-                Implies(
-                    And(
-                        Implies(Predicate("p"), Predicate("q")), Predicate("p")
-                    ),
-                    Predicate("q"),
-                ),  # ((p->q)&q) -> q  (Modens Ponens, so a tautology)
+                Or(P, Q),  # P | Q
                 [
-                    ({"p": True, "q": True}, True),
-                    ({"p": True, "q": False}, True),
-                    ({"p": False, "q": True}, True),
-                    ({"p": False, "q": False}, True),
+                    {},
+                    {"R": True},
+                    {"P": True},  # tests short circuiting doesn't work
+                    {"Q": False},
                 ],
             ),
             (
-                Iff(
-                    Iff(Predicate("p"), Predicate("q")),
-                    And(
-                        Implies(Predicate("p"), Predicate("q")),
-                        Implies(Predicate("q"), Predicate("p")),
-                    ),
-                ),  # (p <-> q) <-> ((p -> q) & (q -> p))  (tautology)
+                Implies(P, Q),  # P -> Q
                 [
-                    ({"p": True, "q": True}, True),
-                    ({"p": True, "q": False}, True),
-                    ({"p": False, "q": True}, True),
-                    ({"p": False, "q": False}, True),
+                    {},
+                    {"R": True},
+                    {"P": False},  # tests short circuiting doesn't work
+                    {"Q": False},
                 ],
             ),
             (
-                Iff(
-                    Iff(Predicate("p"), Predicate("q")),
-                    Or(
-                        And(Predicate("p"), Predicate("q")),
-                        And(Not(Predicate("p")), Not(Predicate("q"))),
-                    ),
-                ),  # (p <-> q) <-> ((p & q) | (~p & ~q))  (tautology)
+                Iff(P, Q),  # P <-> Q
                 [
-                    ({"p": True, "q": True}, True),
-                    ({"p": True, "q": False}, True),
-                    ({"p": False, "q": True}, True),
-                    ({"p": False, "q": False}, True),
+                    {},
+                    {"R": True},
+                    {"P": True},
+                    {"Q": False},
+                ],
+            ),
+            (
+                Or(
+                    And(Not(P), Q),
+                    Implies(Iff(P, Q), Q),
+                ),  # (~P & Q) | ((P <-> Q) -> Q)
+                [
+                    {},
+                    {"R": True},
+                    {"P": True},
+                    {"Q": False},
                 ],
             ),
         ],
     )
-    def test_complex_cases(
-        self,
-        u: Proposition,
-        interp_expected_pairs: list[tuple[Interp, bool]],
+    def test_predicate_missing(
+        self, u: Proposition, interps: list[dict[str, bool]]
     ):
-        """Test cases with some nesting."""
-        for interp, expected in interp_expected_pairs:
-            assert self.interpret3(u, interp) is expected
-
-    @pytest.mark.xfail
-    @pytest.mark.parametrize(
-        "u,interp_expected_pairs",
-        [
-            (
-                And(
-                    Or(
-                        Implies(Predicate("p"), Predicate("p")),
-                        Iff(Predicate("p"), Predicate("p")),
-                    ),
-                    Not(Predicate("p")),
-                ),  # ((p -> p) | (p <-> p)) & ~p
-                [
-                    ({}, None),
-                    ({"x": True}, None),
-                ],
-            ),
-            # The following tests also try to test the "short circuiting"
-            # nature of interpreting.
-            (
-                Not(Predicate("p")),
-                [  # ~p
-                    ({}, None),
-                    ({"x": True}, None),
-                    ({"x": False}, None),
-                ],
-            ),
-            (
-                And(Predicate("p"), Predicate("q")),  # p & q
-                [
-                    ({}, None),
-                    ({"p": True}, None),
-                    ({"p": False}, False),
-                    ({"q": True}, None),
-                    ({"q": False}, None),
-                ],
-            ),
-            (
-                Or(Predicate("p"), Predicate("q")),  # p | q
-                [
-                    ({}, None),
-                    ({"p": True}, True),
-                    ({"p": False}, None),
-                    ({"q": True}, None),
-                    ({"q": False}, None),
-                ],
-            ),
-            (
-                Implies(Predicate("p"), Predicate("q")),  # p -> q (== ~p | q)
-                [
-                    ({}, None),
-                    ({"p": True}, None),
-                    ({"p": False}, True),
-                    ({"q": True}, None),
-                    ({"q": False}, None),
-                ],
-            ),
-            (
-                Iff(Predicate("p"), Predicate("q")),  # p <-> q
-                [
-                    ({}, None),
-                    ({"p": True}, None),
-                    ({"p": False}, None),
-                    ({"q": True}, None),
-                    ({"q": False}, None),
-                ],
-            ),
-        ],
-    )
-    def test_complex_atomic_missing(
-        self,
-        u: Proposition,
-        interp_expected_pairs: list[tuple[Interp, Optional[bool]]],
-    ):
-        """Test cases with some nesting when an atomic value is not assigned"""
-        for interp, expected in interp_expected_pairs:
-            if expected is None:
-                self.expect_interpret_fail(u, interp)
-            else:
-                assert self.interpret3(u, interp) is expected
+        for i in interps:
+            self.expect_interpret_value_error(u, i)
 
 
 class TestPropositionMiscSpecialMethods:
@@ -449,8 +432,8 @@ class TestMisc:
         [
             ("", ()),
             (" \t\f\r\n", ()),
-            ("P", (Predicate("P"),)),
-            ("P Q R", (Predicate("P"), Predicate("Q"), Predicate("R"))),
+            ("P", (P,)),
+            ("P Q R", (P, Predicate("Q"), Predicate("R"))),
             (
                 "apple pear banana",
                 (Predicate("apple"), Predicate("pear"), Predicate("banana")),

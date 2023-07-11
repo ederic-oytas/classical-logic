@@ -35,9 +35,9 @@ class Proposition(ABC):
     --------------|---------------------------------------------------
     `p[i]`        | Gets the `i`th immediate component of `p`.
     `iter(p)`     | Returns an iterator over the immediate components of `p`.
-    `~p`          | Returns [`Not(p)`](./#flogic.Not).
-    `p & q`       | Returns [`And(p, q)`](./#flogic.And).
-    `p | q`       | Returns [`Or(p, q)`](./#flogic.Or).
+    `~p`          | Returns [`Not(p)`][flogic.Not].
+    `p & q`       | Returns [`And(p, q)`][flogic.And].
+    `p | q`       | Returns [`Or(p, q)`][flogic.Or].
     `p(mapping)`  | [Interprets][1] `p`.
     `p(**kwargs)` | [Interprets][1] `p`.
     `p == q`      | Checks if `p` and `q` are structurally equal.

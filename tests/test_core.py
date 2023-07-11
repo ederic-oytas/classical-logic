@@ -31,6 +31,11 @@ simple6: list[Proposition] = [Predicate("p"), *simple5]
 P = Predicate("P")
 Q = Predicate("Q")
 
+atomic_test_cases: list[Predicate] = [
+    Predicate("p"),
+    Predicate("ANY_NamE"),
+]
+
 
 class TestPropositionComposition:
     """Tests for the five composition methods in the Proposition class."""
@@ -81,20 +86,6 @@ class TestPropositionComposition:
         for v in self.samples:
             assert u.iff(v) == Iff(u, v)
             assert v.iff(u) == Iff(v, u)
-
-
-class TestPropositionMiscSpecialMethods:
-    @pytest.mark.parametrize("u", simple6)
-    def test_bool(self, u):
-        """Tests that bool(u) raises TypeError"""
-        with pytest.raises(TypeError):
-            bool(u)
-
-
-atomic_test_cases: list[Predicate] = [
-    Predicate("p"),
-    Predicate("ANY_NamE"),
-]
 
 
 class TestInterpretation:
@@ -341,6 +332,14 @@ class TestInterpretation:
                 self.expect_interpret_fail(u, interp)
             else:
                 assert self.interpret3(u, interp) is expected
+
+
+class TestPropositionMiscSpecialMethods:
+    @pytest.mark.parametrize("u", simple6)
+    def test_bool(self, u):
+        """Tests that bool(u) raises TypeError"""
+        with pytest.raises(TypeError):
+            bool(u)
 
 
 class TestPredicateCreation:

@@ -19,6 +19,7 @@ Proposition
 from abc import abstractmethod, ABC
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
+import re
 from typing import overload, NoReturn, Union
 
 
@@ -378,6 +379,9 @@ class Proposition(ABC):
         )
 
 
+_ident_pattern: re.Pattern = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*")
+
+
 @dataclass(frozen=True, repr=False)
 class Predicate(Proposition):
     """Represents an [propositional variable][1]
@@ -389,6 +393,10 @@ class Predicate(Proposition):
     """
 
     name: str
+
+    def __post_init__(self):
+        if not _ident_pattern.fullmatch(self.name):
+            raise ValueError(f"Invalid predicate name: {self.name!r}")
 
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         if (truth_value := interpretation.get(self.name)) is not None:

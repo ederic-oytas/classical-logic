@@ -33,8 +33,8 @@ class Proposition(ABC):
 
     Operation     | Description
     --------------|---------------------------------------------------
-    `p[i]`        | Gets the `i`th immediate component of `p`.
-    `iter(p)`     | Returns an iterator over the immediate components of `p`.
+    `p[i]`        | Gets the component of `p` at index `i`.
+    `iter(p)`     | Returns an iterator over the components of `p`.
     `~p`          | Returns [`Not(p)`][flogic.Not].
     `p & q`       | Returns [`And(p, q)`][flogic.And].
     `p | q`       | Returns [`Or(p, q)`][flogic.Or].
@@ -43,8 +43,8 @@ class Proposition(ABC):
     `p == q`      | Checks if `p` and `q` are structurally equal.
     `p != q`      | Checks if `p` and `q` are not structurally equal.
     `hash(p)`     | Returns the hash value of `p`.
-    `str(p)`      | Returns a text representation of `p` (Ex: `P & Q`).
-    `repr(p)`     | Returns a text representation of `p` (Ex: `prop('P & Q')`).
+    `str(p)`      | See [string formatting](). TODO link formatting section
+    `repr(p)`     | See [string formatting](). TODO link formatting section
 
     **Note:** `bool(p)` is not supported as the truth value of a proposition is
     ambiguous.

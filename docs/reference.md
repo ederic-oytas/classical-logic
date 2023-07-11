@@ -9,6 +9,10 @@
 
 ----
 
+::: flogic.Predicate
+
+----
+
 ::: flogic.Not
 
 ----

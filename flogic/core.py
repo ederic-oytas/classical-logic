@@ -426,8 +426,8 @@ class Not(_Operation1):
         inner (Proposition): Inner operand.
     """
 
-    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return not self.inner._interpret(interpretation)
+    def _interpret(self, i: Mapping[str, bool], /) -> bool:
+        return not self.inner._interpret(i)
 
     def formal(self) -> str:
         return f"~{self.inner}"
@@ -462,10 +462,8 @@ class And(_Operation2):
         right (Proposition): Right conjunct.
     """
 
-    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return self.left._interpret(interpretation) & self.right._interpret(
-            interpretation
-        )
+    def _interpret(self, i: Mapping[str, bool], /) -> bool:
+        return self.left._interpret(i) & self.right._interpret(i)
 
     def formal(self) -> str:
         return f"({self.left} & {self.right})"
@@ -484,10 +482,8 @@ class Or(_Operation2):
         right (Proposition): Right disjunct.
     """
 
-    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return self.left._interpret(interpretation) | self.right._interpret(
-            interpretation
-        )
+    def _interpret(self, i: Mapping[str, bool], /) -> bool:
+        return self.left._interpret(i) | self.right._interpret(i)
 
     def formal(self) -> str:
         return f"({self.left} | {self.right})"
@@ -505,10 +501,8 @@ class Implies(_Operation2):
         right (Proposition): Consequent.
     """
 
-    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return not self.left._interpret(
-            interpretation
-        ) | self.right._interpret(interpretation)
+    def _interpret(self, i: Mapping[str, bool], /) -> bool:
+        return (not self.left._interpret(i)) | self.right._interpret(i)
 
     def formal(self) -> str:
         return f"({self.left} -> {self.right})"
@@ -526,10 +520,8 @@ class Iff(_Operation2):
         right (Proposition): Right operand.
     """
 
-    def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        return self.left._interpret(interpretation) is self.right._interpret(
-            interpretation
-        )
+    def _interpret(self, i: Mapping[str, bool], /) -> bool:
+        return self.left._interpret(i) is self.right._interpret(i)
 
     def formal(self) -> str:
         return f"({self.left} <-> {self.right})"

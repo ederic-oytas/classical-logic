@@ -323,10 +323,8 @@ class Proposition(ABC):
     #
 
     def __repr__(self) -> str:
-        """Returns a string representation of this proposition in the form
-        of `'prop(<str(self)>)'`.
-        """
-        return f"prop('{self!s}')"
+        """Returns the canonical string representation of this proposition."""
+        return f"prop({str(self)!r})"
 
     # TODO remove later, then replace put __str__ in subclass with new default
     # string formatting implementation

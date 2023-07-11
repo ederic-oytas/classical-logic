@@ -29,7 +29,7 @@ IMPLIES ::= "->"
 IFF     ::= "<->"
 LPARENS ::= "("
 RPARENS ::= ")"
-WS      ::= /[ \\t\\f\\r\\n]+/
+WS      ::= /[ \\t\\f\\r\\n]/
 ```
 
 [1]: https://docs.python.org/3/reference/introduction.html#notation
@@ -116,7 +116,7 @@ def _lex(text: str) -> Generator[tuple[_TokenType, str], None, None]:
     c: Optional[str] = next(it, None)
 
     while True:
-        if c is None:
+        if c is None:  # end of string
             return
 
         elif c == "~":

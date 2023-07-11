@@ -1,10 +1,9 @@
 """Unit Tests for flogic/prop.py"""
 
 from collections.abc import Mapping
-from itertools import product
 import pytest
 import string
-from typing import Iterator, Optional
+from typing import Iterator
 
 from flogic.core import (
     And,

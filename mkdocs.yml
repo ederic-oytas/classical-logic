@@ -38,6 +38,7 @@ plugins:
           import:
           - https://docs.python.org/3/objects.inv
           options:
+            show_bases: False
             show_source: False       # Hides source code
             show_root_heading: True
             show_signature_annotations: True

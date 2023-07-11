@@ -35,11 +35,14 @@ plugins:
       default_handler: python
       handlers:
         python:
+          import:
+          - https://docs.python.org/3/objects.inv
           options:
             show_source: False       # Hides source code
             show_root_heading: True
             show_signature_annotations: True
   - search  # Builtin plugin which adds a search bar
+  
 
 # Navigation buttons (tab on the left)
 # Format:

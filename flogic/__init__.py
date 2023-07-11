@@ -7,8 +7,6 @@ from .core import (
     Or,
     Implies,
     Iff,
-    _Operation1,
-    _Operation2,
     atomics,
 )
 from .parsing import prop, props

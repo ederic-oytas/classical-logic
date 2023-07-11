@@ -257,35 +257,42 @@ class Proposition(ABC):
 
     @abstractmethod
     def degree(self) -> int:
-        """Returns the number of immediate component propositions this
-        proposition contains.
+        """Returns the number of components this proposition contains.
 
-        For example, a negation (`~P`) has a degree of 1, while a conjunction
-        (`P & Q`) or a disjunction (`P | Q`) have degrees of 2. In addition,
-        since a predicate (`P`) doesn't contain any component propositions, its
-        degree is 0.
+        For example, a negation (`~P`) has a degree of `1` because it's a
+        unary (two-place) operation, which takes one operand.
+
+        A conjunction (`P & Q`) and a disjunction (`P | Q`) both have degrees
+        of `2`, because they are both binary (two-place) operations.
+
+        A predicate (`P`) has a degree of `0`, since it doesn't contain any
+        components.
 
         Example:
             ```python
+            import flogic as fl
+
 
             # Degree of a predicate is 0
-            assert prop('P').degree() == 0
+            assert fl.prop('P').degree() == 0
 
             # Degree of a negation is 1
-            assert prop('~P').degree() == 1
+            assert fl.prop('~P').degree() == 1
 
-            # The outermost operation determines the degree
-            assert prop('~~~P').degree() == 1
-            assert prop('~(~~P)').degree() == 1
+            # The outermost connective determines the degree
+            assert fl.prop('~~~P').degree() == 1
+            assert fl.prop('~(~~P)').degree() == 1
 
-            # Degree of a two-place operation is 2
-            assert prop('P & Q').degree() == 2
+            # Degree of a binary (two-place) operation is 2
+            assert fl.prop('P & Q').degree() == 2
 
-            # The outermost operation determines the degree
-            assert prop('(P & Q) | R').degree() == 2
-            assert prop('(P & Q) & R').degree() == 2
-            assert prop('P & Q & R').degree() == 2  # P & Q & R == (P & Q) & R
-            assert prop('~(P & Q & R)').degree() == 1
+            # The outermost connective determines the degree
+            assert fl.prop('~P & Q').degree() == 2
+            assert fl.prop('~(P & Q)').degree() == 1
+
+            # Remember: (P & Q) & R == P & Q & R
+            assert fl.prop('(P & Q) & R').degree() == 2
+            assert fl.prop('P & Q & R').degree() == 2
             ```
         """
         raise NotImplementedError(

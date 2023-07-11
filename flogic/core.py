@@ -33,6 +33,8 @@ class Proposition(ABC):
 
     Operation     | Description
     --------------|---------------------------------------------------
+    `p[i]`        | Gets the `i`th immediate component of `p`.
+    `iter(p)`     | Returns an iterator over the immediate components of `p`
     `~p`          | Returns [`Not(p)`](./#flogic.Not).
     `p & q`       | Returns [`And(p, q)`](./#flogic.And).
     `p | q`       | Returns [`Or(p, q)`](./#flogic.Or).
@@ -235,12 +237,16 @@ class Proposition(ABC):
 
     @abstractmethod
     def __getitem__(self, index: int, /) -> "Proposition":
+        """Returns the immediate component proposition indicated by the
+        index."""
         raise NotImplementedError(
             f"__getitem__ is not implemented for '{self.__class__.__name__}'"
         )
 
     @abstractmethod
     def __iter__(self, /) -> Iterator["Proposition"]:
+        """Iterates over this proposition's immediate component
+        propositions."""
         raise NotImplementedError(
             f"__iter__ is not implemented for '{self.__class__.__name__}'"
         )
@@ -251,6 +257,37 @@ class Proposition(ABC):
 
     @abstractmethod
     def degree(self) -> int:
+        """Returns the number of immediate component propositions this
+        proposition contains.
+
+        For example, a negation (`~P`) has a degree of 1, while a conjunction
+        (`P & Q`) or a disjunction (`P | Q`) have degrees of 2. In addition,
+        since a predicate (`P`) doesn't contain any component propositions, its
+        degree is 0.
+
+        Example:
+            ```python
+
+            # Degree of a predicate is 0
+            assert prop('P').degree() == 0
+
+            # Degree of a negation is 1
+            assert prop('~P').degree() == 1
+
+            # The outermost operation determines the degree
+            assert prop('~~~P').degree() == 1
+            assert prop('~(~~P)').degree() == 1
+
+            # Degree of a two-place operation is 2
+            assert prop('P & Q').degree() == 2
+
+            # The outermost operation determines the degree
+            assert prop('(P & Q) | R').degree() == 2
+            assert prop('(P & Q) & R').degree() == 2
+            assert prop('P & Q & R').degree() == 2  # P & Q & R == (P & Q) & R
+            assert prop('~(P & Q & R)').degree() == 1
+            ```
+        """
         raise NotImplementedError(
             f"__iter__ is not implemented for '{self.__class__.__name__}'"
         )

@@ -379,7 +379,7 @@ class Proposition(ABC):
 
 
 @dataclass(frozen=True, repr=False)
-class Predicate(Proposition):  # TODO rework docs and rename it
+class Predicate(Proposition):
     """Represents an [propositional variable][1]
 
     [1]: https://en.wikipedia.org/wiki/Propositional_variable
@@ -404,7 +404,7 @@ class Predicate(Proposition):  # TODO rework docs and rename it
 
 
 @dataclass(frozen=True, repr=False)
-class _Operation1(Proposition):
+class _LogicOp1(Proposition):
     """Represents a unary (one-place) operation using a
     [logical connective][1].
 
@@ -417,7 +417,7 @@ class _Operation1(Proposition):
     inner: Proposition
 
 
-class Not(_Operation1):
+class Not(_LogicOp1):
     """Represents a [logical negation][1].
 
     [1]: https://en.wikipedia.org/wiki/Negation
@@ -436,7 +436,7 @@ class Not(_Operation1):
 
 
 @dataclass(frozen=True, repr=False)
-class _Operation2(Proposition):
+class _LogicOp2(Proposition):
     """Represents a binary (two-place) operation using a
     [logical connective][1].
 
@@ -452,7 +452,7 @@ class _Operation2(Proposition):
 
 
 @dataclass(frozen=True, repr=False)
-class And(_Operation2):
+class And(_LogicOp2):
     """Represents a [logical conjunction][1].
 
     [1]: https://en.wikipedia.org/wiki/Logical_conjunction
@@ -472,7 +472,7 @@ class And(_Operation2):
 
 
 @dataclass(frozen=True, repr=False)
-class Or(_Operation2):
+class Or(_LogicOp2):
     """Represents a [logical disjunction][1].
 
     [1]: https://en.wikipedia.org/wiki/Disjunction_(logical_connective)
@@ -491,7 +491,7 @@ class Or(_Operation2):
     __str__ = formal
 
 
-class Implies(_Operation2):
+class Implies(_LogicOp2):
     """Represents a [logical material conditional][1].
 
     [1]: https://en.wikipedia.org/wiki/Material_conditional
@@ -510,7 +510,7 @@ class Implies(_Operation2):
     __str__ = formal
 
 
-class Iff(_Operation2):
+class Iff(_LogicOp2):
     """Represents a [logical biconditional][1].
 
     [1]: https://en.wikipedia.org/wiki/Logical_biconditional

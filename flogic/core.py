@@ -26,12 +26,12 @@ class Proposition(ABC):
     """Represents a logical proposition. This type serves as the base class
     for all proposition types in the `flogic` package.
 
-    ## Operation Summary
+    # Operation Summary
 
     The following table summarizes the special operations on this class:
 
     Operation     | Description
-    --------------|--------------------------------------
+    --------------|---------------------------------------------------
     `~p`          | Returns [`Not(p)`](./#flogic.Not).
     `p & q`       | Returns [`And(p, q)`](./#flogic.And).
     `p | q`       | Returns [`Or(p, q)`](./#flogic.Or).
@@ -40,6 +40,8 @@ class Proposition(ABC):
     `p == q`      | Checks if `p` and `q` are structurally equal.
     `p != q`      | Checks if `p` and `q` are not structurally equal.
     `hash(p)`     | Returns the hash value of `p`.
+    `str(p)`      | Returns a string repr. of `p`. (Ex: `P & Q`)
+    `repr(p)`     | Returns a string repr. of `p`. (Ex: `prop('P & Q')`)
 
     **Note:** `bool(p)` is not supported as the truth value of a proposition is
     ambiguous.
@@ -268,53 +270,19 @@ class Proposition(ABC):
 
     @overload
     def __call__(self, vals: Mapping[str, bool], /) -> bool:
-        """Returns the truth value of this proposition under the given
-        assignment of atomic names to truth values, otherwise known as
-        interpreting.
-
-        Note: This may use "short circuiting." If the truth value of a left
-            operand in a two-place connection determines the truth value of the
-            connection to be true or false regardless of the truth value of the
-            second operand, then the second operand is not interpreted. This
-            matters in the case of missing atomics. If the second operand
-            happens to contain an atomic which isn't included in the given
-            truth value mapping, then it wouldn't raise a ValueError.
-
-        Args:
-            vals: Mapping from atomic names to truth values.
-
-        Returns:
-            Truth value of this proposition under the given mapping.
-
-        Raises:
-            ValueError: At least one atomic was left unassigned in the mapping.
-        """
+        ...
 
     @overload
     def __call__(self, /, **vals: bool) -> bool:
-        """Returns the truth value of this proposition under the given
-        assignment of atomic names to truth values, otherwise known as
-        interpreting.
-
-        Note: This may use "short circuiting." If the truth value of a left
-            operand in a two-place connection determines the truth value of the
-            connection to be true or false regardless of the truth value of the
-            second operand, then the second operand is not interpreted. This
-            matters in the case of missing atomics. If the second operand
-            happens to contain an atomic which isn't included in the given
-            truth value mapping, then it wouldn't raise a ValueError.
-
-        Args:
-            vals: Assignments of atomic names to truth values.
-
-        Returns:
-            Truth value of this proposition under the given assignments.
-
-        Raises:
-            ValueError: At least one atomic was left unassigned.
-        """
+        ...
 
     def __call__(self, mapping=None, /, **kwargs) -> bool:
+        """Returns the truth value of this proposition under the given
+        interpretation.
+
+        Please see the Interpreting section in the documentation for more
+        information.
+        """
         if mapping is None:
             return self._interpret(kwargs)
         return self._interpret(mapping)

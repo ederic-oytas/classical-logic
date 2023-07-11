@@ -12,7 +12,7 @@ This grammar may be extended in the future.
 
 In the lexical analysis, the given string is split up into tokens. In this
 grammar, there are nine (9) tokens in total:
-- One (1) identifier token: `ATOMIC`
+- One (1) identifier token: `IDENT`
 - Five (5) operator tokens: `~`, `&`, `|`, `->`, and `<->`
 - Two (2) separator tokens: `(` and `)`
 - One (1) whitespace token: `WS`
@@ -91,7 +91,7 @@ def _unexp_token(token_value: str) -> str:
 
 
 class _TokenType(Enum):
-    ATOMIC = auto()
+    IDENT = auto()
     NOT = auto()
     AND = auto()
     OR = auto()
@@ -149,7 +149,7 @@ def _lex(text: str) -> Generator[tuple[_TokenType, str], None, None]:
             while c is not None and (c.isalnum() or c == "_"):
                 parts.append(c)
                 c = next(it, None)
-            yield (_TokenType.ATOMIC, "".join(parts))
+            yield (_TokenType.IDENT, "".join(parts))
             continue  # to skip advancing the iterator
 
         else:
@@ -234,7 +234,7 @@ class _Parser:
 
     def unit(self) -> Proposition:
         """Parses rule `unit`"""
-        if self._current_token_type is _TokenType.ATOMIC:
+        if self._current_token_type is _TokenType.IDENT:
             atomic = Predicate(self._current_token_value)
             self._advance()
             return atomic

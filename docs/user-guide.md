@@ -19,6 +19,13 @@ pip install flogic
 study of 
 
 
+## Interpreting
+
+TODO finish
+
+## Formatting
+
+TODO finish
 
 
 [1]: https://en.wikipedia.org/wiki/Propositional_calculus

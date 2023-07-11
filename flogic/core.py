@@ -280,8 +280,16 @@ class Proposition(ABC):
         """Returns the truth value of this proposition under the given
         interpretation.
 
-        Please see the Interpreting section in the documentation for more
-        information.
+        Please see the Interpreting section in the `flogic` documentation for
+        more information on how to use this operation.
+
+        Returns:
+            A boolean representing the truth value of this proposition with
+            respect to the given interpretation.
+
+        Raises:
+            ValueError: When one of the predicates is interpreted but isn't
+                assigned a truth value in the interpretation.
         """
         if mapping is None:
             return self._interpret(kwargs)
@@ -289,10 +297,12 @@ class Proposition(ABC):
 
     @abstractmethod
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
-        """Returns the truth value of this proposition under the given mapping
-        from atomic names to truth values.
+        """Returns the truth value of this proposition under the given
+        interpretation.
 
-        This is an abstract internal method which is delegated to by __call__.
+        This is an abstract internal method which is delegated to by
+        `__call__`. Subclasses must implement this method in order to fully
+        implement `__call__`.
         """
         raise NotImplementedError(
             f"'_interpret' is not implemented for '{self.__class__.__name__}'"

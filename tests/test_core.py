@@ -49,11 +49,11 @@ class TestPropositionComposition:
             assert v.__and__(u) == And(v, u)
             assert v & u == And(v, u)
         for x in [object(), True, False]:
-            assert u.__and__(x) == NotImplemented
+            assert u.__and__(x) is NotImplemented  # type: ignore
             with pytest.raises(TypeError):
-                r = u & x
+                u & x  # type: ignore
             with pytest.raises(TypeError):
-                r = x & u
+                x & u  # type: ignore
 
     @pytest.mark.parametrize("u", samples)
     def test_or(self, u: Proposition):
@@ -63,11 +63,11 @@ class TestPropositionComposition:
             assert v.__or__(u) == Or(v, u)
             assert v | u == Or(v, u)
         for x in [object(), True, False]:
-            assert u.__or__(x) == NotImplemented
+            assert u.__or__(x) is NotImplemented  # type: ignore
             with pytest.raises(TypeError):
-                r = u | x
+                u | x  # type: ignore
             with pytest.raises(TypeError):
-                r = x | u
+                x | u  # type: ignore
 
     @pytest.mark.parametrize("u", samples)
     def test_implies(self, u: Proposition):

@@ -29,6 +29,8 @@ theme:
 # Plugins to be used
 plugins:
 
+  - autorefs
+
   # Gives special syntax to generate documentation from docstrings. See
   # docs/reference.md for an example.
   - mkdocstrings:

@@ -59,10 +59,10 @@ class TestPropositionComposition:
     @pytest.mark.parametrize("u", samples)
     def test_or(self, u: Proposition):
         for v in self.samples:
-            assert u.__or__(v) == And(u, v)
-            assert u | v == And(u, v)
-            assert v.__or__(u) == And(v, u)
-            assert v | u == And(v, u)
+            assert u.__or__(v) == Or(u, v)
+            assert u | v == Or(u, v)
+            assert v.__or__(u) == Or(v, u)
+            assert v | u == Or(v, u)
         for x in [object(), True, False]:
             assert u.__or__(x) == NotImplemented
             with pytest.raises(TypeError):

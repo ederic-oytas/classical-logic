@@ -13,8 +13,6 @@ from flogic.parsing import (
     props,
 )
 
-# TODO finish testing for _lex, _lex_expect
-
 
 class TestLex:
     @pytest.mark.parametrize(

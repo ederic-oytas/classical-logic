@@ -419,6 +419,7 @@ class _LogicOp1(Proposition):
     inner: Proposition
 
 
+@dataclass(frozen=True, repr=False)
 class Not(_LogicOp1):
     """Represents a [logical negation][1].
 
@@ -493,6 +494,7 @@ class Or(_LogicOp2):
     __str__ = formal
 
 
+@dataclass(frozen=True, repr=False)
 class Implies(_LogicOp2):
     """Represents a [logical material conditional][1].
 
@@ -512,6 +514,7 @@ class Implies(_LogicOp2):
     __str__ = formal
 
 
+@dataclass(frozen=True, repr=False)
 class Iff(_LogicOp2):
     """Represents a [logical biconditional][1].
 

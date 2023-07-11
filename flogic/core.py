@@ -38,13 +38,13 @@ class Proposition(ABC):
     `~p`          | Returns [`Not(p)`][flogic.Not].
     `p & q`       | Returns [`And(p, q)`][flogic.And].
     `p | q`       | Returns [`Or(p, q)`][flogic.Or].
-    `p(mapping)`  | [Interprets]() `p`. The `mapping` argument must be of type [`Mapping[str, bool]`][collections.abc.Mapping].  TODO link interpreting section
-    `p(**kwargs)` | [Interprets]() `p`. The given keyword arguments must be of type [`bool`][bool]. TODO link interpreting section
+    `p(mapping)`  | Interprets `p`. The `mapping` argument must be of type [`Mapping[str, bool]`][collections.abc.Mapping]. See [Interpreting][interpreting] for more information.
+    `p(**kwargs)` | Interprets `p`. The given keyword arguments must be of type [`bool`][bool]. See [Interpreting][interpreting] for more information.
     `p == q`      | Checks if `p` and `q` are structurally equal.
     `p != q`      | Checks if `p` and `q` are not structurally equal.
     `hash(p)`     | Returns the hash value of `p`.
-    `str(p)`      | Returns a parsable string representation of `p`. See [string formatting]() for more information. TODO link formatting section
-    `repr(p)`     | Returns the canonical string representation of `p`. See [string formatting]() for more information. TODO link formatting section
+    `str(p)`      | Returns a parsable string representation of `p`. See [Formatting][formatting] for more information.
+    `repr(p)`     | Returns the canonical string representation of `p`. See [Formatting][formatting] for more information.
 
     **Note:** `bool(p)` is not supported as the truth value of a proposition is
     ambiguous.

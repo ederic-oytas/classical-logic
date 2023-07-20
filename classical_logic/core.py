@@ -227,7 +227,7 @@ class Proposition(ABC):
     [Interpreting](./#classical-logic.Proposition--interpreting-assigning-truth-values)
     section to learn how to assign truth values.
 
-    """
+    """  # noqa: E501
 
     #
     # Accessing Methods
@@ -306,8 +306,8 @@ class Proposition(ABC):
         return Not(self)
 
     def __and__(self, other: "Proposition", /) -> "And":
-        """Returns [`And(self, other)`](./#classical-logic.And) if the other operand is
-        a Proposition; otherwise [`NotImplemented`][1].
+        """Returns [`And(self, other)`](./#classical-logic.And) if the other
+        operand is a Proposition; otherwise [`NotImplemented`][1].
 
         [1]: https://docs.python.org/3/library/constants.html#NotImplemented
         """
@@ -316,8 +316,8 @@ class Proposition(ABC):
         return NotImplemented
 
     def __or__(self, other: "Proposition", /) -> "Or":
-        """Returns [`Or(self, other)`](./#classical-logic.Or) if the other operand is
-        a Proposition; otherwise [`NotImplemented`][1].
+        """Returns [`Or(self, other)`](./#classical-logic.Or) if the other
+        operand is a Proposition; otherwise [`NotImplemented`][1].
 
         [1]: https://docs.python.org/3/library/constants.html#NotImplemented
         """
@@ -349,8 +349,8 @@ class Proposition(ABC):
         """Returns the truth value of this proposition under the given
         interpretation.
 
-        Please see the Interpreting section in the `classical-logic` documentation for
-        more information on how to use this operation.
+        Please see the Interpreting section in the `classical-logic`
+        documentation for more information on how to use this operation.
 
         Returns:
             A boolean representing the truth value of this proposition with
@@ -426,9 +426,9 @@ class Proposition(ABC):
         ambiguous. Please use [interpreting][2] instead.
 
         [1]: https://docs.python.org/3/library/exceptions.html#TypeError
-        [2]: ./#classical-logic.Proposition--interpreting-assigning-truth-values
+        [2]: ./#classical_logic.Proposition--interpreting-assigning-truth-values
 
-        """
+        """  # noqa: E501
         raise TypeError(
             "The truth value of a Proposition is ambiguous. Consider using "
             "interpretation through p(**vals)"

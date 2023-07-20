@@ -2,9 +2,17 @@
 import pytest
 import re
 import string
-from classical-logic.core import And, Predicate, Iff, Implies, Not, Or, Proposition
+from classical_logic.core import (
+    And,
+    Predicate,
+    Iff,
+    Implies,
+    Not,
+    Or,
+    Proposition,
+)
 
-from classical-logic.parsing import (
+from classical_logic.parsing import (
     _lex,
     _lex_accept,
     _TokenType,

@@ -5,7 +5,7 @@ import pytest
 import string
 from typing import Iterator
 
-from classical-logic.core import (
+from classical_logic.core import (
     And,
     Predicate,
     Not,

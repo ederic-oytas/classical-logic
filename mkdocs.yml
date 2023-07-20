@@ -1,8 +1,8 @@
 # Some site and repo information
-site_name: Flogic Docs
-repo_url: https://github.com/ederic-oytas/flogic
-repo_name: ederic-oytas/flogic
-site_description: Documentation for the `flogic` Python package.
+site_name: classical-logic Docs
+repo_url: https://github.com/ederic-oytas/classical-logic
+repo_name: ederic-oytas/classical-logic
+site_description: Documentation for the `classical-logic` Python package.
 site_author: Ederic Oytas
 
 # Uses material theme
@@ -66,4 +66,4 @@ markdown_extensions:
 # If these extra files/folders are updated, then the website created by
 # `mkdocs serve` will be reloaded.
 watch:
-  - flogic
+  - classical-logic

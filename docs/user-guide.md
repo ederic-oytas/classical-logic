@@ -8,14 +8,14 @@
 Install the package using Pip:
 
 ```
-pip install flogic
+pip install classical-logic
 ```
 
 
 
 ## What is Propositional Logic?
 
-`flogic` is a Python package based on [Propositional Logic](1), which is the
+`classical-logic` is a Python package based on [Propositional Logic](1), which is the
 study of 
 
 

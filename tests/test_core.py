@@ -1,11 +1,11 @@
-"""Unit Tests for flogic/prop.py"""
+"""Unit Tests for classical-logic/prop.py"""
 
 from collections.abc import Mapping
 import pytest
 import string
 from typing import Iterator
 
-from flogic.core import (
+from classical-logic.core import (
     And,
     Predicate,
     Not,

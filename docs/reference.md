@@ -4,12 +4,12 @@
 ## Subclasses
 
 There are seven proposition classes in total, with
-[`Proposition`][flogic.Proposition] being the base class of all proposition
+[`Proposition`][classical-logic.Proposition] being the base class of all proposition
 types. Each subclass is a [dataclass][dataclasses] type, which means instances
 can be created and be treated like a regular dataclass type:
 
 ```python
-import flogic as fl
+import classical-logic as fl
 
 u = fl.And(fl.Predicate('P'), fl.Predicate('Q'))
 assert u == fl.prop('P & Q')
@@ -30,38 +30,38 @@ assert w.inner.name == 'P'
 The following table gives the subclass constructors and the operation it
 corresponds to:
 
-| Class Constructor                        | Operation               |
-| ---------------------------------------- | ----------------------- |
-| [`And(left, right)`][flogic.And]         | `P & Q`                 |
-| [`Iff(left, right)`][flogic.Iff]         | `P <-> Q`               |
-| [`Implies(left, right)`][flogic.Implies] | `P -> Q`                |
-| [`Not(inner)`][flogic.Not]               | `~P`                    |
-| [`Predicate(name)`][flogic.Predicate]    | `P`                     |
-| [`Or(left, right)`][flogic.Or]           | <code>P &#124; Q</code> |
+| Class Constructor                                 | Operation               |
+| ------------------------------------------------- | ----------------------- |
+| [`And(left, right)`][classical_logic.And]         | `P & Q`                 |
+| [`Iff(left, right)`][classical_logic.Iff]         | `P <-> Q`               |
+| [`Implies(left, right)`][classical_logic.Implies] | `P -> Q`                |
+| [`Not(inner)`][classical_logic.Not]               | `~P`                    |
+| [`Predicate(name)`][classical_logic.Predicate]    | `P`                     |
+| [`Or(left, right)`][classical_logic.Or]           | <code>P &#124; Q</code> |
 
 ----
 
-::: flogic.And
+::: classical-logic.And
 
 ----
 
-::: flogic.Iff
+::: classical-logic.Iff
 
 ----
 
-::: flogic.Implies
+::: classical-logic.Implies
 
 ----
 
-::: flogic.Not
+::: classical-logic.Not
 
 ----
 
-::: flogic.Predicate
+::: classical-logic.Predicate
 
 ----
 
-::: flogic.Proposition
+::: classical-logic.Proposition
     options:
       filters:
         - "!^_[^_]"
@@ -69,12 +69,12 @@ corresponds to:
 
 ----
 
-::: flogic.Or
+::: classical-logic.Or
 
 ----
 
-::: flogic.prop
+::: classical-logic.prop
 
 ----
 
-::: flogic.props
+::: classical-logic.props

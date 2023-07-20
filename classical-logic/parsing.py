@@ -3,7 +3,7 @@
 # Grammar Specification (DRAFT)
 
 This section specifies the grammar used to parse strings which represent
-propositions for `flogic`. This will cover both the lexical and syntactical
+propositions for `classical-logic`. This will cover both the lexical and syntactical
 analysis of the grammar.
 
 This grammar may be extended in the future.

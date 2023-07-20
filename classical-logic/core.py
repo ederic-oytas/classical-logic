@@ -25,7 +25,7 @@ from typing import overload, NoReturn, Union
 
 class Proposition(ABC):
     """Represents a logical proposition. This type serves as the base class
-    for all proposition types in the `flogic` package.
+    for all proposition types in the `classical-logic` package.
 
     # Operation Summary
 
@@ -35,9 +35,9 @@ class Proposition(ABC):
     --------------|---------------------------------------------------
     `p[i]`        | Gets the component at index `i` of `p`. Raises [`IndexError`][IndexError] if index is out of range.
     `iter(p)`     | Returns an iterator over the (immediate) components of `p`.
-    `~p`          | Returns [`Not(p)`][flogic.Not].
-    `p & q`       | Returns [`And(p, q)`][flogic.And].
-    `p | q`       | Returns [`Or(p, q)`][flogic.Or].
+    `~p`          | Returns [`Not(p)`][classical-logic.Not].
+    `p & q`       | Returns [`And(p, q)`][classical-logic.And].
+    `p | q`       | Returns [`Or(p, q)`][classical-logic.Or].
     `p(mapping)`  | Interprets `p`. The `mapping` argument must be of type [`Mapping[str, bool]`][collections.abc.Mapping]. See [Interpreting][interpreting] for more information.
     `p(**kwargs)` | Interprets `p`. The given keyword arguments must be of type [`bool`][bool]. See [Interpreting][interpreting] for more information.
     `p == q`      | Checks if `p` and `q` are structurally equal.
@@ -56,7 +56,7 @@ class Proposition(ABC):
 
     # Class Hierarchy
 
-    The following is the class hierarchy for the `flogic` package:
+    The following is the class hierarchy for the `classical-logic` package:
 
     ```txt
     Proposition
@@ -69,8 +69,8 @@ class Proposition(ABC):
             Iff
     ```
 
-    The [`Not`](./#flogic.Not), [`And`](./#flogic.And), [`Or`](./#flogic.Or),
-    [`Implies`](./#flogic.Implies), and [`Iff`](./#flogic.Iff) classes are all
+    The [`Not`](./#classical-logic.Not), [`And`](./#classical-logic.And), [`Or`](./#classical-logic.Or),
+    [`Implies`](./#classical-logic.Implies), and [`Iff`](./#classical-logic.Iff) classes are all
     data classes, whose instances are composed of propositions.
 
     A `Not` object represents a logical negation and can be created using a
@@ -80,8 +80,8 @@ class Proposition(ABC):
     operations and can be created using two propositions. For example:
     `And(left, right)`.
 
-    The [`UnaryConnection`](./#flogic.UnaryConnection) and
-    [`BinaryConnection`](./#flogic.BinaryConnection) classes act as the
+    The [`UnaryConnection`](./#classical-logic.UnaryConnection) and
+    [`BinaryConnection`](./#classical-logic.BinaryConnection) classes act as the
     abstract base classes for propositions constructed using unary and binary
     [logical connectives](https://en.wikipedia.org/wiki/Logical_connective).
 
@@ -93,23 +93,23 @@ class Proposition(ABC):
 
     ## `~p`
 
-    Returns [`Not(p)`](./#flogic.Not).
+    Returns [`Not(p)`](./#classical-logic.Not).
 
     ## `p & q`
 
-    Returns [`And(p, q)`](./#flogic.And).
+    Returns [`And(p, q)`](./#classical-logic.And).
 
     ## `p | q`
 
-    Returns [`Or(p, q)`](./#flogic.Or).
+    Returns [`Or(p, q)`](./#classical-logic.Or).
 
     ## `p.implies(q)`
 
-    Returns [`Implies(p, q)`](./#flogic.Implies).
+    Returns [`Implies(p, q)`](./#classical-logic.Implies).
 
     ## `p.iff(q)`
 
-    Returns [`Iff(p, q)`](./#flogic.Iff).
+    Returns [`Iff(p, q)`](./#classical-logic.Iff).
 
     Example:
         ```python
@@ -138,7 +138,7 @@ class Proposition(ABC):
     Example:
 
         ```python
-        import flogic as pl
+        import classical-logic as pl
 
         s = pl.prop('~P')
         assert s.inner == pl.prop('P')
@@ -161,7 +161,7 @@ class Proposition(ABC):
 
     Example:
         ```python
-        import flogic as pl
+        import classical-logic as pl
 
         u = pl.prop("p | q")
 
@@ -193,7 +193,7 @@ class Proposition(ABC):
         Example:
 
         ```python
-        import flogic as pl
+        import classical-logic as pl
 
         u = pl.prop("p | q")
         assert u(p=True) is True  # No error because `q` was never interpreted
@@ -224,7 +224,7 @@ class Proposition(ABC):
     ## `bool(p)`
 
     Not supported. This raises a `TypeError`. See the
-    [Interpreting](./#flogic.Proposition--interpreting-assigning-truth-values)
+    [Interpreting](./#classical-logic.Proposition--interpreting-assigning-truth-values)
     section to learn how to assign truth values.
 
     """
@@ -268,7 +268,7 @@ class Proposition(ABC):
 
         Example:
             ```python
-            import flogic as fl
+            import classical-logic as fl
 
 
             # Degree of a predicate is 0
@@ -302,11 +302,11 @@ class Proposition(ABC):
     #
 
     def __invert__(self, /) -> "Not":
-        """Returns [`Not(self)`](./#flogic.Not)."""
+        """Returns [`Not(self)`](./#classical-logic.Not)."""
         return Not(self)
 
     def __and__(self, other: "Proposition", /) -> "And":
-        """Returns [`And(self, other)`](./#flogic.And) if the other operand is
+        """Returns [`And(self, other)`](./#classical-logic.And) if the other operand is
         a Proposition; otherwise [`NotImplemented`][1].
 
         [1]: https://docs.python.org/3/library/constants.html#NotImplemented
@@ -316,7 +316,7 @@ class Proposition(ABC):
         return NotImplemented
 
     def __or__(self, other: "Proposition", /) -> "Or":
-        """Returns [`Or(self, other)`](./#flogic.Or) if the other operand is
+        """Returns [`Or(self, other)`](./#classical-logic.Or) if the other operand is
         a Proposition; otherwise [`NotImplemented`][1].
 
         [1]: https://docs.python.org/3/library/constants.html#NotImplemented
@@ -326,11 +326,11 @@ class Proposition(ABC):
         return NotImplemented
 
     def implies(self, other: "Proposition", /) -> "Implies":
-        """Returns [`Implies(self, other)`](./#flogic.Implies)."""
+        """Returns [`Implies(self, other)`](./#classical-logic.Implies)."""
         return Implies(self, other)
 
     def iff(self, other: "Proposition", /) -> "Iff":
-        """Returns [`Iff(self, other)`](./#flogic.Iff)."""
+        """Returns [`Iff(self, other)`](./#classical-logic.Iff)."""
         return Iff(self, other)
 
     #
@@ -349,7 +349,7 @@ class Proposition(ABC):
         """Returns the truth value of this proposition under the given
         interpretation.
 
-        Please see the Interpreting section in the `flogic` documentation for
+        Please see the Interpreting section in the `classical-logic` documentation for
         more information on how to use this operation.
 
         Returns:
@@ -406,7 +406,7 @@ class Proposition(ABC):
 
         Example:
             ```python
-            import flogic as pl
+            import classical-logic as pl
 
             s = pl.prop('P & Q & R')
             assert s.formal() == '((P & Q) & R)'
@@ -426,7 +426,7 @@ class Proposition(ABC):
         ambiguous. Please use [interpreting][2] instead.
 
         [1]: https://docs.python.org/3/library/exceptions.html#TypeError
-        [2]: ./#flogic.Proposition--interpreting-assigning-truth-values
+        [2]: ./#classical-logic.Proposition--interpreting-assigning-truth-values
 
         """
         raise TypeError(

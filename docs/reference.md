@@ -4,12 +4,12 @@
 ## Subclasses
 
 There are seven proposition classes in total, with
-[`Proposition`][classical-logic.Proposition] being the base class of all proposition
+[`Proposition`][classical_logic.Proposition] being the base class of all proposition
 types. Each subclass is a [dataclass][dataclasses] type, which means instances
 can be created and be treated like a regular dataclass type:
 
 ```python
-import classical-logic as fl
+import classical_logic as fl
 
 u = fl.And(fl.Predicate('P'), fl.Predicate('Q'))
 assert u == fl.prop('P & Q')
@@ -41,27 +41,27 @@ corresponds to:
 
 ----
 
-::: classical-logic.And
+::: classical_logic.And
 
 ----
 
-::: classical-logic.Iff
+::: classical_logic.Iff
 
 ----
 
-::: classical-logic.Implies
+::: classical_logic.Implies
 
 ----
 
-::: classical-logic.Not
+::: classical_logic.Not
 
 ----
 
-::: classical-logic.Predicate
+::: classical_logic.Predicate
 
 ----
 
-::: classical-logic.Proposition
+::: classical_logic.Proposition
     options:
       filters:
         - "!^_[^_]"
@@ -69,12 +69,12 @@ corresponds to:
 
 ----
 
-::: classical-logic.Or
+::: classical_logic.Or
 
 ----
 
-::: classical-logic.prop
+::: classical_logic.prop
 
 ----
 
-::: classical-logic.props
+::: classical_logic.props

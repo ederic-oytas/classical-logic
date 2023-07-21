@@ -172,8 +172,8 @@ class TestInterpreting:
             return len(self.data)
 
     def interpret(self, u: Proposition, interp: dict[str, bool]) -> bool:
-        """Interprets in all four ways and asserts that all values are equal,
-        and then returns the value.
+        """Interprets in every way, asserts that all values are equal, and then
+        returns the value.
         """
         a = u(interp)
         b = u(self.SampleMapping(interp))
@@ -185,8 +185,7 @@ class TestInterpreting:
     def expect_interpret_value_error(
         self, u: Proposition, interp: dict[str, bool]
     ) -> None:
-        """Asserts that all interpret will raise a ValueError in all three
-        ways."""
+        """Asserts that all interpret will raise a ValueError in every way."""
         with pytest.raises(ValueError):
             u(interp)
         with pytest.raises(ValueError):
@@ -198,27 +197,27 @@ class TestInterpreting:
 
     @pytest.mark.parametrize("p", [P, ALL_CHARS_PRED])
     def test_predicate_name_present(self, p: Predicate):
-        """Tests single predicate cases, when the predicate name is PRESENT in
-        the interpretation."""
+        """Tests single predicate cases for when the predicate name is PRESENT
+        in the interpretation."""
         assert self.interpret(p, {p.name: True}) is True
         assert self.interpret(p, {p.name: False}) is False
 
     @pytest.mark.parametrize("p", [P, ALL_CHARS_PRED])
     def test_predicate_name_missing(self, p: Predicate):
-        """Tests single predicate cases, when the predicate name is MISSING in
-        the interpretation."""
+        """Tests single predicate cases for when the predicate name is MISSING
+        in the interpretation."""
         self.expect_interpret_value_error(p, {})
         self.expect_interpret_value_error(p, {p.name + "2": True})
         self.expect_interpret_value_error(p, {p.name + "2": False})
 
     def test_not_truth_table(self):
-        """Tests truth table of ~P"""
+        """Tests truth table of ~P."""
         u = Not(P)
         assert self.interpret(u, {"P": True}) is False
         assert self.interpret(u, {"P": False}) is True
 
     def test_and_truth_table(self):
-        """Tests truth table of P&Q"""
+        """Tests truth table of P & Q."""
         u = And(P, Q)
         assert self.interpret(u, {"P": True, "Q": True}) is True
         assert self.interpret(u, {"P": True, "Q": False}) is False
@@ -226,7 +225,7 @@ class TestInterpreting:
         assert self.interpret(u, {"P": False, "Q": False}) is False
 
     def test_or_truth_table(self):
-        """Tests truth table of p|q"""
+        """Tests truth table of P | Q."""
         u = Or(P, Q)
         assert self.interpret(u, {"P": True, "Q": True}) is True
         assert self.interpret(u, {"P": True, "Q": False}) is True
@@ -234,7 +233,7 @@ class TestInterpreting:
         assert self.interpret(u, {"P": False, "Q": False}) is False
 
     def test_implies_truth_table(self):
-        """Tests truth table of p->q"""
+        """Tests truth table of P -> Q."""
         u = Implies(P, Q)
         assert self.interpret(u, {"P": True, "Q": True}) is True
         assert self.interpret(u, {"P": True, "Q": False}) is False
@@ -242,7 +241,7 @@ class TestInterpreting:
         assert self.interpret(u, {"P": False, "Q": False}) is True
 
     def test_iff_truth_table(self):
-        """Tests truth table of p<->q"""
+        """Tests truth table of P <-> Q"""
         u = Iff(P, Q)
         assert self.interpret(u, {"P": True, "Q": True}) is True
         assert self.interpret(u, {"P": True, "Q": False}) is False
@@ -375,6 +374,8 @@ class TestInterpreting:
     def test_predicate_missing(
         self, u: Proposition, interps: list[dict[str, bool]]
     ):
+        """Tests if a ValueError is raised when there is a unspecified
+        predicate."""
         for i in interps:
             self.expect_interpret_value_error(u, i)
 

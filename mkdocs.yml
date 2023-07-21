@@ -66,4 +66,4 @@ markdown_extensions:
 # If these extra files/folders are updated, then the website created by
 # `mkdocs serve` will be reloaded.
 watch:
-  - classical-logic
+  - classical_logic

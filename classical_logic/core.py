@@ -254,8 +254,20 @@ class Proposition(ABC):
 
     @abstractmethod
     def __iter__(self, /) -> Iterator["Proposition"]:
-        """Iterates over this proposition's immediate component
-        propositions."""
+        """Returns an iterator over this proposition's components.
+
+        Example:
+
+            ```python
+            import classical_logic as cl
+
+            p = cl.prop('P & Q')
+            it = iter(p)
+            assert next(it, None) == cl.prop('P')
+            assert next(it, None) == cl.prop('Q')
+            assert next(it, None) is None
+            ```
+        """
         raise NotImplementedError(
             f"__iter__ is not implemented for '{self.__class__.__name__}'"
         )

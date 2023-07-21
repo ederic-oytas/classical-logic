@@ -35,9 +35,9 @@ class Proposition(ABC):
     --------------|---------------------------------------------------
     `p[i]`        | Gets the component at index `i` of `p`. Raises [`IndexError`][IndexError] if index is out of range.
     `iter(p)`     | Returns an iterator over the (immediate) components of `p`.
-    `~p`          | Returns [`Not(p)`][classical-logic.Not].
-    `p & q`       | Returns [`And(p, q)`][classical-logic.And].
-    `p | q`       | Returns [`Or(p, q)`][classical-logic.Or].
+    `~p`          | Returns [`Not(p)`][classical_logic.Not].
+    `p & q`       | Returns [`And(p, q)`][classical_logic.And].
+    `p | q`       | Returns [`Or(p, q)`][classical_logic.Or].
     `p(mapping)`  | Interprets `p`. The `mapping` argument must be of type [`Mapping[str, bool]`][collections.abc.Mapping]. See [Interpreting][interpreting] for more information.
     `p(**kwargs)` | Interprets `p`. The given keyword arguments must be of type [`bool`][bool]. See [Interpreting][interpreting] for more information.
     `p == q`      | Checks if `p` and `q` are structurally equal.

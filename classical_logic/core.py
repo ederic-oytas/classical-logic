@@ -235,8 +235,19 @@ class Proposition(ABC):
 
     @abstractmethod
     def __getitem__(self, index: int, /) -> "Proposition":
-        """Returns the immediate component proposition indicated by the
-        index."""
+        """Returns this proposition's component at the given index. Raises
+        `IndexError` when index is out of range.
+
+        Example:
+
+            ```python
+            import classical_logic as cl
+
+            p = cl.prop('P & Q')
+            assert p[0] == cl.prop('P')
+            assert p[1] == cl.prop('Q')
+            ```
+        """
         raise NotImplementedError(
             f"__getitem__ is not implemented for '{self.__class__.__name__}'"
         )

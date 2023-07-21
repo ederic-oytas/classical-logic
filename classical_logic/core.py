@@ -278,7 +278,8 @@ class Proposition(ABC):
 
     @abstractmethod
     def degree(self) -> int:
-        """Returns the number of components this proposition contains.
+        """Returns the number of immediate component propositions this
+        proposition contains.
 
         For example, a negation (`~P`) has a degree of `1` because it's a
         unary (two-place) operation, which takes one operand.
@@ -291,29 +292,29 @@ class Proposition(ABC):
 
         Example:
             ```python
-            import classical-logic as fl
+            import classical_logic as cl
 
 
             # Degree of a predicate is 0
-            assert fl.prop('P').degree() == 0
+            assert cl.prop('P').degree() == 0
 
             # Degree of a negation is 1
-            assert fl.prop('~P').degree() == 1
+            assert cl.prop('~P').degree() == 1
 
             # The outermost connective determines the degree
-            assert fl.prop('~~~P').degree() == 1
-            assert fl.prop('~(~~P)').degree() == 1
+            assert cl.prop('~~~P').degree() == 1
+            assert cl.prop('~(~~P)').degree() == 1
 
             # Degree of a binary (two-place) operation is 2
-            assert fl.prop('P & Q').degree() == 2
+            assert cl.prop('P & Q').degree() == 2
 
             # The outermost connective determines the degree
-            assert fl.prop('~P & Q').degree() == 2
-            assert fl.prop('~(P & Q)').degree() == 1
+            assert cl.prop('~P & Q').degree() == 2
+            assert cl.prop('~(P & Q)').degree() == 1
 
             # Remember: (P & Q) & R == P & Q & R
-            assert fl.prop('(P & Q) & R').degree() == 2
-            assert fl.prop('P & Q & R').degree() == 2
+            assert cl.prop('(P & Q) & R').degree() == 2
+            assert cl.prop('P & Q & R').degree() == 2
             ```
         """
         raise NotImplementedError(

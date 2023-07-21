@@ -102,7 +102,7 @@ class TestDegree:
             assert cls(cls(P, Q), Not(R)).degree() == 2
 
 
-class TestPropositionComposition:
+class TestComposition:
     """Tests for the five composition methods in the Proposition class."""
 
     samples: list[Proposition] = [P, Not(P), And(P, Q)]

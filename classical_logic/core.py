@@ -277,7 +277,7 @@ class Proposition(ABC):
     #
 
     @abstractmethod
-    def degree(self) -> int:
+    def degree(self, /) -> int:
         """Returns the number of immediate component propositions this
         proposition contains.
 

@@ -235,7 +235,7 @@ class Proposition(ABC):
 
     @abstractmethod
     def __getitem__(self, index: int, /) -> "Proposition":
-        """Returns this proposition's component at the given index. Raises
+        """Returns the component proposition at the given index. Raises
         `IndexError` when index is out of range.
 
         Example:
@@ -254,7 +254,7 @@ class Proposition(ABC):
 
     @abstractmethod
     def __iter__(self, /) -> Iterator["Proposition"]:
-        """Returns an iterator over this proposition's components.
+        """Returns an iterator over the component propositions.
 
         Example:
 

@@ -370,8 +370,7 @@ class Proposition(ABC):
         ...
 
     def __call__(self, mapping=None, /, **kwargs) -> bool:
-        """Returns the truth value of this proposition under the given
-        interpretation.
+        """Interprets the proposition.
 
         Please see the Interpreting section in the `classical-logic`
         documentation for more information on how to use this operation.
@@ -381,8 +380,8 @@ class Proposition(ABC):
             respect to the given interpretation.
 
         Raises:
-            ValueError: When one of the predicates is interpreted but isn't
-                assigned a truth value in the interpretation.
+            ValueError: One of the predicates was not assigned a truth value in
+                the interpretation.
         """
         if mapping is None:
             return self._interpret(kwargs)
@@ -391,20 +390,14 @@ class Proposition(ABC):
     @abstractmethod
     def _interpret(self, interpretation: Mapping[str, bool], /) -> bool:
         """Returns the truth value of this proposition under the given
-        interpretation.
+        interpretation. Raises `ValueError` when one of the predicates in the
+        proposition is not specified, even if the predicate need not to be
+        evaluated (do not short circuit).
 
         This is an abstract internal method which is delegated to by
         `__call__`. Subclasses must implement this method in order to fully
         implement `__call__`.
 
-        If the interpretation does not assign every (nullary) predicate in this
-        proposition to a boolean, then a `ValueError` is raised. This also
-        applies in "short circuiting" cases where the second operand doesn't
-        need to be interpreted.
-
-        For example, if a interpretation assigns `P` to `True` and does not
-        assign `Q` to anything, then interpreting `P | Q` would still raise a
-        `ValueError` despite `Q` not needing to be evaluated.
         """
         raise NotImplementedError(
             f"'_interpret' is not implemented for '{self.__class__.__name__}'"

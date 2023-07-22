@@ -45,15 +45,13 @@ defined as follows:
 
 ```
 bic  ::= cond ("<->" cond)*
-cond ::= disj ("->" disj)?
+cond ::= disj ("->" disj)*
 disj ::= conj ("|" conj)*
 conj ::= unit ("&" unit)*
 unit ::= IDENT
          | "~" unit
          | "(" bic ")"
 ```
-
-Note that this grammar does not reflect the associativity of the operators.
 
 This concludes the grammar specification.
 

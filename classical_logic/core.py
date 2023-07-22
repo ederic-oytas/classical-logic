@@ -630,6 +630,13 @@ class _LogicOp2(Proposition):
         b = self.right._explicit_str()
         return f"({a} {self._operator} {b})"
 
+    # Overridden hash to account for the object type in computing a hash, for
+    # efficiency. This is done because under the default generated __hash__,
+    # objects such as Or(P, Q) and And(P, Q) would have the same hash despite
+    # being different classes.
+    def __hash__(self) -> int:
+        return hash((type(self), self.left, self.right))
+
 
 @dataclass(frozen=True, repr=False)
 class And(_LogicOp2):

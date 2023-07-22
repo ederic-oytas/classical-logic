@@ -20,7 +20,7 @@ from abc import abstractmethod, ABC
 from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass
 import re
-from typing import overload, Literal, NoReturn, Union
+from typing import ClassVar, overload, Literal, NoReturn, Union
 
 
 class Proposition(ABC):
@@ -411,11 +411,6 @@ class Proposition(ABC):
         """Returns the canonical string representation of this proposition."""
         return f"prop({str(self)!r})"
 
-    # TODO remove later, then replace put __str__ in subclass with new default
-    # string formatting implementation
-    def __str__(self) -> str:
-        return self._explicit_str()
-
     def __format__(self, format_spec: Literal["S", "X", ""], /) -> str:
         """Returns a string representation of this proposition formatted
         according to the given specification.
@@ -590,6 +585,16 @@ class _LogicOp2(Proposition):
     left: Proposition
     right: Proposition
 
+    @property
+    @abstractmethod
+    def _operator(self) -> str:
+        """Operator symbol for this binary operation."""
+
+    @property
+    @abstractmethod
+    def _associative(self) -> bool:
+        """True if this binary operation is associative, False otherwise."""
+
     def __getitem__(self, index: int, /) -> "Proposition":
         if index == 0:
             return self.left
@@ -603,19 +608,9 @@ class _LogicOp2(Proposition):
     def degree(self) -> int:
         return 2
 
-    def _simple_str(self, op: str, associative: bool) -> str:
-        """Returns the "simple" string representation of this binary operation.
-
-        Args:
-            op: String operator. Examples: '&', '|', '->'
-            associative: `True` if the operation is associative; `False`
-                otherwise.
-
-        Returns:
-            "Simple" string representation.
-        """
+    def __str__(self) -> str:
         a: str
-        if associative and type(self.left) is type(self):
+        if self._associative and type(self.left) is type(self):
             a = str(self.left)
         elif isinstance(self.left, _LogicOp2):
             a = f"({self.left})"
@@ -628,7 +623,12 @@ class _LogicOp2(Proposition):
         else:
             b = str(self.right)
 
-        return f"{a} {op} {b}"
+        return f"{a} {self._operator} {b}"
+
+    def _explicit_str(self) -> str:
+        a = self.left._explicit_str()
+        b = self.right._explicit_str()
+        return f"({a} {self._operator} {b})"
 
 
 @dataclass(frozen=True, repr=False)
@@ -642,13 +642,11 @@ class And(_LogicOp2):
         right (Proposition): Right conjunct.
     """
 
+    _associative: ClassVar[bool] = True
+    _operator: ClassVar[str] = "&"
+
     def _interpret(self, i: Mapping[str, bool], /) -> bool:
         return self.left._interpret(i) & self.right._interpret(i)
-
-    def _explicit_str(self) -> str:
-        return f"({self.left} & {self.right})"
-
-    __str__ = _explicit_str
 
 
 @dataclass(frozen=True, repr=False)
@@ -662,13 +660,11 @@ class Or(_LogicOp2):
         right (Proposition): Right disjunct.
     """
 
+    _associative: ClassVar[bool] = True
+    _operator: ClassVar[str] = "|"
+
     def _interpret(self, i: Mapping[str, bool], /) -> bool:
         return self.left._interpret(i) | self.right._interpret(i)
-
-    def _explicit_str(self) -> str:
-        return f"({self.left} | {self.right})"
-
-    __str__ = _explicit_str
 
 
 @dataclass(frozen=True, repr=False)
@@ -682,13 +678,11 @@ class Implies(_LogicOp2):
         right (Proposition): Consequent.
     """
 
+    _associative: ClassVar[bool] = False
+    _operator: ClassVar[str] = "->"
+
     def _interpret(self, i: Mapping[str, bool], /) -> bool:
         return (not self.left._interpret(i)) | self.right._interpret(i)
-
-    def _explicit_str(self) -> str:
-        return f"({self.left} -> {self.right})"
-
-    __str__ = _explicit_str
 
 
 @dataclass(frozen=True, repr=False)
@@ -702,11 +696,11 @@ class Iff(_LogicOp2):
         right (Proposition): Right operand.
     """
 
+    _associative: ClassVar[bool] = True
+    _operator: ClassVar[str] = "<->"
+
     def _interpret(self, i: Mapping[str, bool], /) -> bool:
         return self.left._interpret(i) is self.right._interpret(i)
-
-    def _explicit_str(self) -> str:
-        return f"({self.left} <-> {self.right})"
 
 
 @overload

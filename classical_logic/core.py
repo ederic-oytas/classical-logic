@@ -414,12 +414,12 @@ class Proposition(ABC):
     # TODO remove later, then replace put __str__ in subclass with new default
     # string formatting implementation
     def __str__(self) -> str:
-        return self.formal()
+        return self._explicit_str()
 
     @abstractmethod
-    def formal(self) -> str:
-        """Returns the "formal" representation of this proposition. Unlike
-        `str(p)`, every binary operation is surrounded with parentheses.
+    def _explicit_str(self) -> str:
+        """Returns the "explicit" representation of this proposition, in which
+        every binary operation is surrounded with parentheses, always.
 
         Example:
             ```python
@@ -495,10 +495,10 @@ class Predicate(Proposition):
             f"Predicate '{self.name}' not unassigned when interpreting"
         )
 
-    def formal(self) -> str:
+    def _explicit_str(self) -> str:
         return self.name
 
-    __str__ = formal
+    __str__ = _explicit_str
 
 
 @dataclass(frozen=True, repr=False)
@@ -539,10 +539,10 @@ class Not(_LogicOp1):
     def _interpret(self, i: Mapping[str, bool], /) -> bool:
         return not self.inner._interpret(i)
 
-    def formal(self) -> str:
+    def _explicit_str(self) -> str:
         return f"~{self.inner}"
 
-    __str__ = formal
+    __str__ = _explicit_str
 
 
 @dataclass(frozen=True, repr=False)
@@ -588,10 +588,10 @@ class And(_LogicOp2):
     def _interpret(self, i: Mapping[str, bool], /) -> bool:
         return self.left._interpret(i) & self.right._interpret(i)
 
-    def formal(self) -> str:
+    def _explicit_str(self) -> str:
         return f"({self.left} & {self.right})"
 
-    __str__ = formal
+    __str__ = _explicit_str
 
 
 @dataclass(frozen=True, repr=False)
@@ -608,10 +608,10 @@ class Or(_LogicOp2):
     def _interpret(self, i: Mapping[str, bool], /) -> bool:
         return self.left._interpret(i) | self.right._interpret(i)
 
-    def formal(self) -> str:
+    def _explicit_str(self) -> str:
         return f"({self.left} | {self.right})"
 
-    __str__ = formal
+    __str__ = _explicit_str
 
 
 @dataclass(frozen=True, repr=False)
@@ -628,10 +628,10 @@ class Implies(_LogicOp2):
     def _interpret(self, i: Mapping[str, bool], /) -> bool:
         return (not self.left._interpret(i)) | self.right._interpret(i)
 
-    def formal(self) -> str:
+    def _explicit_str(self) -> str:
         return f"({self.left} -> {self.right})"
 
-    __str__ = formal
+    __str__ = _explicit_str
 
 
 @dataclass(frozen=True, repr=False)
@@ -648,7 +648,7 @@ class Iff(_LogicOp2):
     def _interpret(self, i: Mapping[str, bool], /) -> bool:
         return self.left._interpret(i) is self.right._interpret(i)
 
-    def formal(self) -> str:
+    def _explicit_str(self) -> str:
         return f"({self.left} <-> {self.right})"
 
 

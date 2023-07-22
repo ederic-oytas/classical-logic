@@ -380,8 +380,10 @@ class TestInterpreting:
             self.expect_interpret_value_error(u, i)
 
 
-class TestPropositionMiscSpecialMethods:
-    @pytest.mark.parametrize("u", simple6)
+class TestBool:
+    """Tests bool(p)."""
+
+    @pytest.mark.parametrize("u", [P, Not(P), And(P, Q)])
     def test_bool(self, u):
         """Tests that bool(u) raises TypeError"""
         with pytest.raises(TypeError):

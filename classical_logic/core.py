@@ -603,6 +603,33 @@ class _LogicOp2(Proposition):
     def degree(self) -> int:
         return 2
 
+    def _simple_str(self, op: str, associative: bool) -> str:
+        """Returns the "simple" string representation of this binary operation.
+
+        Args:
+            op: String operator. Examples: '&', '|', '->'
+            associative: `True` if the operation is associative; `False`
+                otherwise.
+
+        Returns:
+            "Simple" string representation.
+        """
+        a: str
+        if associative and type(self.left) is type(self):
+            a = str(self.left)
+        elif isinstance(self.left, _LogicOp2):
+            a = f"({self.left})"
+        else:
+            a = str(self.left)
+
+        b: str
+        if isinstance(self.right, _LogicOp2):
+            b = f"({self.right})"
+        else:
+            b = str(self.right)
+
+        return f"{a} {op} {b}"
+
 
 @dataclass(frozen=True, repr=False)
 class And(_LogicOp2):

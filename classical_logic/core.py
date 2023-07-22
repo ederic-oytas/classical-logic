@@ -20,7 +20,7 @@ from abc import abstractmethod, ABC
 from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass
 import re
-from typing import overload, NoReturn, Union
+from typing import overload, Literal, NoReturn, Union
 
 
 class Proposition(ABC):
@@ -415,6 +415,36 @@ class Proposition(ABC):
     # string formatting implementation
     def __str__(self) -> str:
         return self._explicit_str()
+
+    def __format__(self, format_spec: Literal["S", "X", ""], /) -> str:
+        """Returns a string representation of this proposition formatted
+        according to the given specification.
+
+        Currently, this method accepts either 'S', 'X', or '' (empty string)
+        as the argument. The following describe the different arguments:
+
+        - 'S': Simple mode. All binary operations are surrounded with
+            parentheses, but are omitted in two cases:
+            - The binary operation is the outermost operation.
+            - The binary operation is associative and is the left operand of
+                a binary operation of the same type. For example, (P & Q) & R
+                is represented as 'P & Q & R'. However, it is not omitted in
+                P & (Q & R), because it represents a structurally different
+                proposition.
+
+        - 'X': Explicit mode. All binary operations are surrounded with
+            parentheses always.
+
+        - '': Default to 'S' (Simple mode)
+
+        This method raises `ValueError` upon receiving an incorrect format
+        spec.
+        """
+        if format_spec == "X":
+            return self._explicit_str()
+        elif format_spec in ("S", ""):
+            return str(self)
+        raise ValueError(f"Invalid format specification: {format_spec!r}")
 
     @abstractmethod
     def _explicit_str(self) -> str:

@@ -380,48 +380,6 @@ class TestInterpreting:
             self.expect_interpret_value_error(u, i)
 
 
-class TestBool:
-    """Tests bool(p)."""
-
-    @pytest.mark.parametrize("u", [P, Not(P), And(P, Q)])
-    def test_bool(self, u):
-        """Tests that bool(u) raises TypeError"""
-        with pytest.raises(TypeError):
-            bool(u)
-
-
-class TestPredicateCreation:
-    """Tests the creation of `Predicate` objects."""
-
-    @pytest.mark.parametrize(
-        "name",
-        [
-            "aName",
-            f"{string.ascii_letters}{string.digits}_",
-            "_____",
-        ],
-    )
-    def test_valid(self, name: str):
-        predicate = Predicate(name)
-        assert predicate.name == name
-
-    @pytest.mark.parametrize(
-        "name",
-        [
-            "",
-            "another-name",
-            "~P",
-            "P&Q|R->S<->T",
-            "123Cats",
-            "Has  Spaces",
-            "\uFFFF",
-        ],
-    )
-    def test_invalid(self, name: str):
-        with pytest.raises(ValueError):
-            Predicate(name)
-
-
 class TestStr:
     """Test the __str__ methods of the six subclasses."""
 
@@ -489,6 +447,48 @@ class TestStr:
     )
     def test_complex(self, u: Proposition, expected: str):
         assert str(u) == expected
+
+
+class TestBool:
+    """Tests bool(p)."""
+
+    @pytest.mark.parametrize("u", [P, Not(P), And(P, Q)])
+    def test_bool(self, u):
+        """Tests that bool(u) raises TypeError"""
+        with pytest.raises(TypeError):
+            bool(u)
+
+
+class TestPredicateCreation:
+    """Tests the creation of `Predicate` objects."""
+
+    @pytest.mark.parametrize(
+        "name",
+        [
+            "aName",
+            f"{string.ascii_letters}{string.digits}_",
+            "_____",
+        ],
+    )
+    def test_valid(self, name: str):
+        predicate = Predicate(name)
+        assert predicate.name == name
+
+    @pytest.mark.parametrize(
+        "name",
+        [
+            "",
+            "another-name",
+            "~P",
+            "P&Q|R->S<->T",
+            "123Cats",
+            "Has  Spaces",
+            "\uFFFF",
+        ],
+    )
+    def test_invalid(self, name: str):
+        with pytest.raises(ValueError):
+            Predicate(name)
 
 
 class TestMisc:

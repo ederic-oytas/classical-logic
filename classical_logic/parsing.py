@@ -32,8 +32,6 @@ RPARENS ::= ")"
 WS      ::= /[ \\t\\f\\r\\n]/
 ```
 
-[1]: https://docs.python.org/3/reference/introduction.html#notation
-
 Whitespace tokens (`WS`) are ignored, so they are not considered in the
 syntactical analysis.
 
@@ -58,6 +56,8 @@ unit ::= IDENT
 Note that this grammar does not reflect the associativity of the operators.
 
 This concludes the grammar specification.
+
+[1]: https://docs.python.org/3/reference/introduction.html#notation
 """
 from typing import Generator, Iterator, Optional
 from enum import Enum, auto

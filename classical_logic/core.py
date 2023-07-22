@@ -555,6 +555,13 @@ class _LogicOp1(Proposition):
 class Not(_LogicOp1):
     """Represents a [logical negation][1].
 
+    Truth table of `~P`:
+
+    | `P`   | `~P`  |
+    |-------|-------|
+    | **T** | *F*   |
+    | *F*   | **T** |
+
     [1]: https://en.wikipedia.org/wiki/Negation
 
     Attributes:
@@ -642,6 +649,15 @@ class _LogicOp2(Proposition):
 class And(_LogicOp2):
     """Represents a [logical conjunction][1].
 
+    Truth table of `P & Q`:
+
+    | `P`   | `Q`   | `P & Q` |
+    |-------|-------|---------|
+    | **T** | **T** | **T**   |
+    | **T** | *F*   | *F*     |
+    | *F*   | **T** | *F*     |
+    | *F*   | *F*   | *F*     |
+
     [1]: https://en.wikipedia.org/wiki/Logical_conjunction
 
     Attributes:
@@ -659,6 +675,15 @@ class And(_LogicOp2):
 @dataclass(frozen=True, repr=False)
 class Or(_LogicOp2):
     """Represents a [logical disjunction][1].
+
+    Truth table of `P | Q`:
+
+    | `P`   | `Q`   | `P | Q` |
+    |-------|-------|---------|
+    | **T** | **T** | **T**   |
+    | **T** | *F*   | **T**   |
+    | *F*   | **T** | **T**   |
+    | *F*   | *F*   | *F*     |
 
     [1]: https://en.wikipedia.org/wiki/Disjunction_(logical_connective)
 
@@ -678,6 +703,15 @@ class Or(_LogicOp2):
 class Implies(_LogicOp2):
     """Represents a [logical material conditional][1].
 
+    Truth table of `P -> Q`:
+
+    | `P`   | `Q`   | `P -> Q` |
+    |-------|-------|----------|
+    | **T** | **T** | **T**    |
+    | **T** | *F*   | *F*      |
+    | *F*   | **T** | **T**    |
+    | *F*   | *F*   | **T**    |
+
     [1]: https://en.wikipedia.org/wiki/Material_conditional
 
     Attributes:
@@ -695,6 +729,15 @@ class Implies(_LogicOp2):
 @dataclass(frozen=True, repr=False)
 class Iff(_LogicOp2):
     """Represents a [logical biconditional][1].
+
+    Truth table of `P & Q`:
+
+    | `P`   | `Q`   | `P <-> Q` |
+    |-------|-------|-----------|
+    | **T** | **T** | **T**     |
+    | **T** | *F*   | *F*       |
+    | *F*   | **T** | *F*       |
+    | *F*   | *F*   | **T**     |
 
     [1]: https://en.wikipedia.org/wiki/Logical_biconditional
 

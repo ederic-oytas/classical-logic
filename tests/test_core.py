@@ -32,6 +32,7 @@ simple6: list[Proposition] = [Predicate("p"), *simple5]
 P = Predicate("P")
 Q = Predicate("Q")
 R = Predicate("R")
+S = Predicate("S")
 ALL_CHARS_PRED = Predicate(f"_{string.ascii_letters}{string.digits}")
 
 atomic_test_cases: list[Predicate] = [
@@ -380,73 +381,134 @@ class TestInterpreting:
             self.expect_interpret_value_error(u, i)
 
 
-class TestStr:
-    """Test the __str__ methods of the six subclasses."""
+class TestStrReprAndFormat:
+    """Tests str(p), repr(p), and format(p, spec)."""
 
-    @pytest.mark.parametrize("atomic", atomic_test_cases)
-    def test_atomic(self, atomic: Predicate):
-        assert str(atomic) == atomic.name
+    def check_simple(self, u: Proposition, expected: str):
+        """Checks the simple represesentation of `u`."""
+        assert str(u) == expected
+        assert repr(u) == f"prop({expected!r})"
+        assert format(u) == expected
+        assert format(u, "") == expected
+        assert format(u, "S") == expected
 
-    @pytest.mark.parametrize("atomic", atomic_test_cases)
-    def test_not(self, atomic: Predicate):
-        assert str(Not(atomic)) == f"~{atomic}"
+    def check_explicit(self, u: Proposition, expected: str):
+        """Checks the explicit representation of `u`."""
+        assert format(u, "X") == expected
 
-    @pytest.mark.parametrize(
-        "cls,conn",
-        [
-            (And, "&"),
-            (Or, "|"),
-            (Implies, "->"),
-            (Iff, "<->"),
-        ],
-    )
-    @pytest.mark.parametrize("a", atomic_test_cases[1:])
-    @pytest.mark.parametrize("b", atomic_test_cases[2:])
-    def test_binary_conn(
-        self, cls: type, conn: str, a: Predicate, b: Predicate
-    ):
-        assert str(cls(a, b)) == f"({a.name} {conn} {b.name})"
+    @pytest.mark.parametrize("p", [P, ALL_CHARS_PRED])
+    def test_predicate_nullary(self, p: Predicate):
+        self.check_simple(p, p.name)
+        self.check_explicit(p, p.name)
+
+    @pytest.mark.parametrize("p", [P, ALL_CHARS_PRED])
+    def test_not(self, p: Predicate):
+        self.check_simple(Not(p), f"~{p}")
+        self.check_explicit(Not(p), f"~{p}")
+
+    @pytest.mark.parametrize("p", [P, ALL_CHARS_PRED])
+    def test_binary_explicit(self, p: Predicate):
+        self.check_explicit(And(p, p), f"({p} & {p})")
+        self.check_explicit(Or(p, p), f"({p} | {p})")
+        self.check_explicit(Implies(p, p), f"({p} -> {p})")
+        self.check_explicit(Iff(p, p), f"({p} <-> {p})")
 
     @pytest.mark.parametrize(
         "u,expected",
         [
-            (
-                Not(Not(Not(Not(Predicate("p"))))),
-                "~~~~p",
-            ),
+            (Not(Not(Not(Not(P)))), "~~~~P"),
             (
                 Implies(
-                    And(
-                        Implies(Predicate("p"), Predicate("q")), Predicate("p")
-                    ),
-                    Predicate("q"),
+                    And(Implies(P, Q), P),
+                    Q,
                 ),
-                "(((p -> q) & p) -> q)",
+                "(((P -> Q) & P) -> Q)",
             ),
             (
                 Iff(
-                    Iff(Predicate("p"), Predicate("q")),
-                    And(
-                        Implies(Predicate("p"), Predicate("q")),
-                        Implies(Predicate("q"), Predicate("p")),
-                    ),
+                    Iff(P, Q),
+                    And(Implies(P, Q), Implies(Q, P)),
                 ),
-                "((p <-> q) <-> ((p -> q) & (q -> p)))",
+                "((P <-> Q) <-> ((P -> Q) & (Q -> P)))",
             ),
             (
                 Iff(
-                    Iff(Predicate("p"), Predicate("q")),
-                    Or(
-                        And(Predicate("p"), Predicate("q")),
-                        And(Not(Predicate("p")), Not(Predicate("q"))),
-                    ),
+                    Iff(P, Q),
+                    Or(And(P, Q), And(Not(P), Not(Q))),
                 ),
-                "((p <-> q) <-> ((p & q) | (~p & ~q)))",
+                "((P <-> Q) <-> ((P & Q) | (~P & ~Q)))",
             ),
         ],
     )
-    def test_complex(self, u: Proposition, expected: str):
-        assert str(u) == expected
+    def test_complicated_explicit(self, u: Proposition, expected: str):
+        self.check_explicit(u, expected)
+
+    @pytest.mark.parametrize("cls,op", [(And, "&"), (Or, "|"), (Iff, "<->")])
+    def test_binary_associative_simple(self, cls: type, op: str):
+        self.check_simple(
+            cls(cls(P, Q), R),
+            f"P % Q % R".replace("%", op),
+        )
+        self.check_simple(
+            cls(P, cls(Q, R)),
+            f"P % (Q % R)".replace("%", op),
+        )
+        self.check_simple(
+            cls(cls(cls(P, Q), R), S),
+            f"P % Q % R % S".replace("%", op),
+        )
+        self.check_simple(
+            cls(P, cls(Q, cls(R, S))),
+            f"P % (Q % (R % S))".replace("%", op),
+        )
+        self.check_simple(
+            cls(P, cls(cls(Q, R), S)),
+            f"P % (Q % R % S)".replace("%", op),
+        )
+        self.check_simple(
+            cls(cls(P, cls(Q, R)), S),
+            f"P % (Q % R) % S".replace("%", op),
+        )
+
+    @pytest.mark.parametrize(
+        "u,expected",
+        [
+            (Not(Not(Not(Not(P)))), "~~~~P"),
+            (
+                Implies(
+                    And(Implies(P, Q), P),
+                    Q,
+                ),
+                "((P -> Q) & P) -> Q",
+            ),
+            (
+                Iff(
+                    Iff(P, Q),
+                    And(Implies(P, Q), Implies(Q, P)),
+                ),
+                "P <-> Q <-> ((P -> Q) & (Q -> P))",
+            ),
+            (
+                Iff(
+                    Iff(P, Q),
+                    Or(And(P, Q), And(Not(P), Not(Q))),
+                ),
+                "P <-> Q <-> ((P & Q) | (~P & ~Q))",
+            ),
+            (
+                Or(
+                    Or(
+                        And(And(Not(P), Q), R),
+                        And(And(Not(P), Not(Q)), R),
+                    ),
+                    And(P, And(Not(Q), R)),
+                ),
+                "(~P & Q & R) | (~P & ~Q & R) | (P & (~Q & R))",
+            ),
+        ],
+    )
+    def test_complicated_simple(self, u: Proposition, expected: str):
+        self.check_simple(u, expected)
 
 
 class TestBool:

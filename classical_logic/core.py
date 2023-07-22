@@ -553,7 +553,8 @@ class _LogicOp1(Proposition):
 
 @dataclass(frozen=True, repr=False)
 class Not(_LogicOp1):
-    """Represents a [logical negation][1].
+    """Represents a [logical negation][1], which is interpreted to be *true*
+    just in the case that its operand is *false*.
 
     Truth table of `~P`:
 
@@ -647,7 +648,8 @@ class _LogicOp2(Proposition):
 
 @dataclass(frozen=True, repr=False)
 class And(_LogicOp2):
-    """Represents a [logical conjunction][1].
+    """Represents a [logical conjunction][1], which is interpreted to be *true*
+    just in the case that *both of its operands are true*.
 
     Truth table of `P & Q`:
 
@@ -674,7 +676,8 @@ class And(_LogicOp2):
 
 @dataclass(frozen=True, repr=False)
 class Or(_LogicOp2):
-    """Represents a [logical disjunction][1].
+    """Represents a [logical disjunction][1], which is interpreted to be *true*
+    just in the case that *at least one of its operands is true*.
 
     Truth table of `P | Q`:
 
@@ -701,7 +704,9 @@ class Or(_LogicOp2):
 
 @dataclass(frozen=True, repr=False)
 class Implies(_LogicOp2):
-    """Represents a [logical material conditional][1].
+    """Represents a [logical material conditional][1], which is interpreted to
+    be *true* just in the case *its first operand is false or both of its
+    operands are true.*
 
     Truth table of `P -> Q`:
 
@@ -728,7 +733,9 @@ class Implies(_LogicOp2):
 
 @dataclass(frozen=True, repr=False)
 class Iff(_LogicOp2):
-    """Represents a [logical biconditional][1].
+    """Represents a [logical biconditional][1], which is interpreted to be
+    *true* just in the case that *both of its operands share the same truth
+    value*.
 
     Truth table of `P & Q`:
 

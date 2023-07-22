@@ -482,18 +482,18 @@ _ident_pattern: re.Pattern = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*")
 
 @dataclass(frozen=True, repr=False)
 class Predicate(Proposition):
-    """Represents an [predicate][1] in formal logic. Currently, this library
-    only supports nullary predicates, which are used to serve as
-    [propositional variables][2].
+    """Represents an [predicate][1] in formal logic. Currently,
+    `classical-logic` only supports nullary (0-argument) predicates, which are
+    used to serve as [propositional variables][2].
 
-    If the given name is not valid when creating a new instance, then a
-    `ValueError` is raised.
+    When creating a new instance, if the given name is not valid, a
+    [`ValueError`][ValueError] is raised.
 
     [1]: https://en.wikipedia.org/wiki/Predicate_(mathematical_logic)
     [2]: https://en.wikipedia.org/wiki/Propositional_variable
 
     Attributes:
-        name (str): The name of the formula.
+        name (str): The name of the predicate.
     """
 
     name: str

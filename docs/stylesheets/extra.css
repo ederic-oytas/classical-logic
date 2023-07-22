@@ -1,0 +1,16 @@
+h1 {
+    font-size: larger;
+}
+
+h2 {
+    font-size: larger;
+}
+
+.doc-class>.doc-heading>code {
+    font-size: larger;
+}
+
+.doc-contents {
+    padding-left: 20px;
+    border-left: 1pt solid var(--md-default-fg-color--lightest);
+}

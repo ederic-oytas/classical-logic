@@ -521,6 +521,21 @@ class TestBool:
             bool(u)
 
 
+class TestHash:
+    """Tests hash(p)."""
+
+    samples = [P, Not(P), And(P, Q), Or(Iff(P, Q), R), Implies(P, Not(Q))]
+
+    @pytest.mark.parametrize("u", samples)
+    @pytest.mark.parametrize("v", samples)
+    def test_eq_implies_hash_eq(self, u: Proposition, v: Proposition):
+        """Test that p == q implies hash(p) == q and its contrapositive."""
+        if u == v:
+            assert hash(u) == hash(v)
+        if hash(u) != hash(v):
+            assert u != v
+
+
 class TestPredicateCreation:
     """Tests the creation of `Predicate` objects."""
 

@@ -26,6 +26,9 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
 
+extra_css:
+  - stylesheets/extra.css
+
 # Plugins to be used
 plugins:
 
@@ -43,6 +46,7 @@ plugins:
             show_bases: False
             show_source: False       # Hides source code
             show_root_heading: True
+            show_root_full_path: False
             show_signature_annotations: True
   - search  # Builtin plugin which adds a search bar
   

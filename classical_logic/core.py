@@ -31,20 +31,20 @@ class Proposition(ABC):
 
     The following table summarizes the special operations on this class:
 
-    Operation     | Description
-    --------------|---------------------------------------------------
-    `p[i]`        | Gets the component at index `i` of `p`. Raises [`IndexError`][IndexError] if index is out of range.
-    `iter(p)`     | Returns an iterator over the (immediate) components of `p`.
-    `~p`          | Returns [`Not(p)`][classical_logic.Not].
-    `p & q`       | Returns [`And(p, q)`][classical_logic.And].
-    `p | q`       | Returns [`Or(p, q)`][classical_logic.Or].
-    `p(mapping)`  | Interprets `p`. The `mapping` argument must be of type [`Mapping[str, bool]`][collections.abc.Mapping]. See [Interpreting][interpreting] for more information.
-    `p(**kwargs)` | Interprets `p`. The given keyword arguments must be of type [`bool`][bool]. See [Interpreting][interpreting] for more information.
-    `p == q`      | Checks if `p` and `q` are structurally equal.
-    `p != q`      | Checks if `p` and `q` are not structurally equal.
-    `hash(p)`     | Returns the hash value of `p`.
-    `str(p)`      | Returns a parsable string representation of `p`. See [Formatting][formatting] for more information.
-    `repr(p)`     | Returns the canonical string representation of `p`. See [Formatting][formatting] for more information.
+    Operation          | Description
+    -------------------|---------------------------------------------------
+    `#!py p[i]`        | Gets the component at index `i` of `p`. Raises [`IndexError`][IndexError] if index is out of range.
+    `#!py iter(p)`     | Returns an iterator over the (immediate) components of `p`.
+    `#!py ~p`          | Returns [`Not(p)`][classical_logic.Not].
+    `#!py p & q`       | Returns [`And(p, q)`][classical_logic.And].
+    `#!py p | q`       | Returns [`Or(p, q)`][classical_logic.Or].
+    `#!py p(mapping)` <br> `#!py p(**kwargs)`  | Interprets `p`. See [Interpreting][interpreting] for more information.
+    `#!py p == q`      | Checks if `p` and `q` are structurally equal.
+    `#!py p != q`      | Checks if `p` and `q` are not structurally equal.
+    `#!py hash(p)`     | Returns the hash value of `p`.
+    `#!py str(p)`      | Returns a parsable string representation of `p`. See [Formatting][formatting] for more information.
+    `#!py repr(p)`     | Returns the canonical string representation of `p`. See [Formatting][formatting] for more information.
+    `#!py format(p, spec)` | Returns a formatted string representation of `p`. See [Formatting][formatting] for more information.
 
     **Note:** `bool(p)` is not supported as the truth value of a proposition is
     ambiguous.

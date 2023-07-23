@@ -258,8 +258,10 @@ class _Parser:
 
 
 def prop(text: str, /) -> Proposition:
+    """Parses a proposition."""
     return _Parser(text).bic()
 
 
 def props(text: str, /) -> tuple[Proposition, ...]:
+    """Parses multiple propositions, separated by commas."""
     return tuple(prop(s) for s in text.split(","))

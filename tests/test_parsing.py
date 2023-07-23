@@ -160,16 +160,15 @@ prop_test_cases: list[tuple[str, Proposition]] = [
     # Repeated negation cases:
     ("~~P", Not(Not(P))),
     ("~~~~~P", Not(Not(Not(Not(Not(P)))))),
-    # Left associativity cases:
+    # Associativity cases:
     ("P & Q & R", And(And(P, Q), R)),
     ("P & Q & R & S", And(And(And(P, Q), R), S)),
     ("P | Q | R", Or(Or(P, Q), R)),
     ("P | Q | R | S", Or(Or(Or(P, Q), R), S)),
-    # Right associativity cases
-    ("P -> Q -> R", Implies(P, Implies(Q, R))),
-    ("P -> Q -> R -> S", Implies(P, Implies(Q, Implies(R, S)))),
-    ("P <-> Q <-> R", Iff(P, Iff(Q, R))),
-    ("P <-> Q <-> R <-> S", Iff(P, Iff(Q, Iff(R, S)))),
+    ("P -> Q -> R", Implies(Implies(P, Q), R)),
+    ("P -> Q -> R -> S", Implies(Implies(Implies(P, Q), R), S)),
+    ("P <-> Q <-> R", Iff(Iff(P, Q), R)),
+    ("P <-> Q <-> R <-> S", Iff(Iff(Iff(P, Q), R), S)),
     # Precedence cases:
     ("~P & ~Q", And(Not(P), Not(Q))),
     ("~P | ~Q", Or(Not(P), Not(Q))),
@@ -232,21 +231,21 @@ prop_test_cases: list[tuple[str, Proposition]] = [
     (
         "P|Q|R -> P|Q|R -> P|Q|R",
         Implies(
-            Or(Or(P, Q), R),
             Implies(
                 Or(Or(P, Q), R),
                 Or(Or(P, Q), R),
             ),
+            Or(Or(P, Q), R),
         ),
     ),
     (
         "P->Q->R <-> P->Q->R <-> P->Q->R",
         Iff(
-            Implies(P, Implies(Q, R)),
             Iff(
-                Implies(P, Implies(Q, R)),
-                Implies(P, Implies(Q, R)),
+                Implies(Implies(P, Q), R),
+                Implies(Implies(P, Q), R),
             ),
+            Implies(Implies(P, Q), R),
         ),
     ),
     # Parentheses cases:
@@ -258,6 +257,8 @@ prop_test_cases: list[tuple[str, Proposition]] = [
     ("(P -> Q) -> R", Implies(Implies(P, Q), R)),
     ("P <-> (Q <-> R)", Iff(P, Iff(Q, R))),
     ("(P <-> Q) <-> R", Iff(Iff(P, Q), R)),
+    ("P & (Q <-> R)", And(P, Iff(Q, R))),
+    ("(P <-> Q) & R", And(Iff(P, Q), R)),
     ("P <-> (((((Q <-> R)))))", Iff(P, Iff(Q, R))),
     ("P <-> ((((( (((((Q <-> R))))) )))))", Iff(P, Iff(Q, R))),
 ]

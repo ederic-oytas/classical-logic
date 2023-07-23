@@ -193,35 +193,35 @@ class _Parser:
 
     def bic(self) -> Proposition:
         """Parses rule `bic`."""
-        left = self.cond()
-        if self._current_token_type is _TokenType.IFF:
+        out = self.cond()
+        while self._current_token_type is _TokenType.IFF:
             self._advance()
-            return Iff(left, self.bic())
-        return left
+            out = Iff(out, self.cond())
+        return out
 
     def cond(self) -> Proposition:
         """Parses rule `cond`."""
-        left = self.disj()
-        if self._current_token_type is _TokenType.IMPLIES:
+        out = self.disj()
+        while self._current_token_type is _TokenType.IMPLIES:
             self._advance()
-            return Implies(left, self.cond())
-        return left
+            out = Implies(out, self.disj())
+        return out
 
     def disj(self) -> Proposition:
         """Parses rule `disj`."""
-        current_prop = self.conj()
+        out = self.conj()
         while self._current_token_type is _TokenType.OR:
             self._advance()
-            current_prop = Or(current_prop, self.conj())
-        return current_prop
+            out = Or(out, self.conj())
+        return out
 
     def conj(self) -> Proposition:
         """Parses rule `conj`."""
-        current_prop = self.neg()
+        out = self.unit()
         while self._current_token_type is _TokenType.AND:
             self._advance()
-            current_prop = And(current_prop, self.neg())
-        return current_prop
+            out = And(out, self.unit())
+        return out
 
     def neg(self) -> Proposition:
         """Parses rule `neg`"""
@@ -233,9 +233,13 @@ class _Parser:
     def unit(self) -> Proposition:
         """Parses rule `unit`"""
         if self._current_token_type is _TokenType.IDENT:
-            atomic = Predicate(self._current_token_value)
+            p = Predicate(self._current_token_value)
             self._advance()
-            return atomic
+            return p
+
+        elif self._current_token_type is _TokenType.NOT:
+            self._advance()
+            return Not(self.unit())
 
         elif self._current_token_type is _TokenType.LPARENS:
             self._advance()
@@ -243,7 +247,7 @@ class _Parser:
             if self._current_token_type is _TokenType.RPARENS:
                 self._advance()
                 return prop
-            # falls through to raise end of string unexpected token
+            # falls through to raise error
 
         if self._current_token_type is None:
             raise ValueError(_UNEXP_END_OF_STR)

@@ -411,7 +411,7 @@ class Proposition(ABC):
         """Returns the canonical string representation of this proposition."""
         return f"prop({str(self)!r})"
 
-    def __format__(self, format_spec: Literal["S", "X", ""], /) -> str:
+    def __format__(self, format_spec: str, /) -> str:
         """Returns a string representation of this proposition formatted
         according to the given specification.
 

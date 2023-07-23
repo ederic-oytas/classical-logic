@@ -447,27 +447,27 @@ class TestStrReprAndFormat:
     def test_binary_associative_simple(self, cls: type, op: str):
         self.check_simple(
             cls(cls(P, Q), R),
-            f"P % Q % R".replace("%", op),
+            "P % Q % R".replace("%", op),
         )
         self.check_simple(
             cls(P, cls(Q, R)),
-            f"P % (Q % R)".replace("%", op),
+            "P % (Q % R)".replace("%", op),
         )
         self.check_simple(
             cls(cls(cls(P, Q), R), S),
-            f"P % Q % R % S".replace("%", op),
+            "P % Q % R % S".replace("%", op),
         )
         self.check_simple(
             cls(P, cls(Q, cls(R, S))),
-            f"P % (Q % (R % S))".replace("%", op),
+            "P % (Q % (R % S))".replace("%", op),
         )
         self.check_simple(
             cls(P, cls(cls(Q, R), S)),
-            f"P % (Q % R % S)".replace("%", op),
+            "P % (Q % R % S)".replace("%", op),
         )
         self.check_simple(
             cls(cls(P, cls(Q, R)), S),
-            f"P % (Q % R) % S".replace("%", op),
+            "P % (Q % R) % S".replace("%", op),
         )
 
     @pytest.mark.parametrize(

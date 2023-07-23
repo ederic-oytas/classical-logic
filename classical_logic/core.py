@@ -20,7 +20,7 @@ from abc import abstractmethod, ABC
 from collections.abc import Iterable, Iterator, Mapping
 from dataclasses import dataclass
 import re
-from typing import ClassVar, overload, Literal, NoReturn, Union
+from typing import ClassVar, overload, NoReturn, Union
 
 
 class Proposition(ABC):

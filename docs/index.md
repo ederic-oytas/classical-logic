@@ -1,17 +1,50 @@
-# Welcome to MkDocs
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+# `classical-logic` - Tools for Classical Logic.
 
-## Commands
+This package makes it easy to work with propositions in classical logic.
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+Here is an example:
 
-## Project layout
+```python
+import classical_logic as cl
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+
+p = cl.prop('(P & Q) | ~R')
+assert p(P=True, Q=True, R=True) is True
+assert p(P=False, Q=False, R=True) is False
+```
+
+Features:
+
+- Proposition objects.
+- Parser for classical logic.
+
+## Links
+
+[Github Repository](https://github.com/ederic-oytas/python-freezable)
+
+[PyPI Page](https://pypi.org/project/classical-logic/)
+
+## Installation
+
+This package can be installed using Pip:
+
+```bash
+pip install classical-logic
+```
+
+Please make sure you use a dash (-) instead of an underscore (_).
+
+## Bug Reports and Feature Requests.
+
+You can report a bug or suggest a feature on the Github repo.
+
+See the [Issues page on Github](
+https://github.com/ederic-oytas/classical-logic/issues/new/choose).
+
+## Contributions
+
+Contributions to this project are welcome. :)
+
+See the [pull requests page on Github](
+https://github.com/ederic-oytas/classical-logic/pulls).

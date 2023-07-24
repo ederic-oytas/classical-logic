@@ -262,10 +262,50 @@ class _Parser:
 
 
 def prop(text: str, /) -> Proposition:
-    """Parses a proposition."""
+    """Parses a proposition.
+
+    Raises a [`ValueError`][ValueError] if `text` contains invalid syntax.
+
+    Please see the prop() and props() section in the User Guide for more
+    details.
+
+    Example: Example Usage
+
+        ```python
+        import classical_logic as cl
+
+        u = cl.prop('P')
+        v = cl.prop('P & Q | R')
+        w = cl.prop('(P -> Q) <-> R')
+        ```
+    """
     return _Parser(text).bic()
 
 
 def props(text: str, /) -> tuple[Proposition, ...]:
-    """Parses multiple propositions, separated by commas."""
+    """Parses zero or more propositions, separated by commas. (Trailing commas
+    are not allowed.)
+
+    Raises a [`ValueError`][ValueError] if `text` contains invalid syntax.
+
+    Please see the prop() and props() section in the User Guide for more
+    details.
+
+    Example: Example Usage:
+
+        ```python
+        import classical_logic as cl
+
+        # Some use cases:
+        ps = cl.props('P, P -> Q, Q')  # Returns tuple of 3 propositions
+        p, q = cl.props('P, Q')  # Unpacks tuple into p and q
+        p, q, r, s = cl.props('P, Q, R, S')
+
+        # Trailing commas are not allowed, raises ValueError
+        #   p, q = cl.props('P, Q,')
+
+        # Empty/whitespace strings not allowed, raises ValueError
+        #   ps = cl.props('  ')
+        ```
+    """
     return tuple(prop(s) for s in text.split(","))

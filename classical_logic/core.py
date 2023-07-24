@@ -758,19 +758,3 @@ class Iff(_LogicOp2):
 
     def _interpret(self, i: Mapping[str, bool], /) -> bool:
         return self.left._interpret(i) is self.right._interpret(i)
-
-
-@overload
-def atomics(names_sep_by_spaces: str, /) -> tuple[Predicate, ...]:
-    ...
-
-
-@overload
-def atomics(name_iterable: Iterable[str], /) -> tuple[Predicate, ...]:
-    ...
-
-
-def atomics(arg: Union[str, Iterable[str]], /) -> tuple[Predicate, ...]:
-    if isinstance(arg, str):
-        arg = arg.split()
-    return tuple(Predicate(name) for name in arg)

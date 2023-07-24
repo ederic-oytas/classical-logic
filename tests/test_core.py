@@ -13,7 +13,6 @@ from classical_logic.core import (
     Or,
     Implies,
     Iff,
-    atomics,
 )
 
 
@@ -566,27 +565,3 @@ class TestPredicateCreation:
     def test_invalid(self, name: str):
         with pytest.raises(ValueError):
             Predicate(name)
-
-
-class TestMisc:
-    @pytest.mark.parametrize(
-        "text,expected",
-        [
-            ("", ()),
-            (" \t\f\r\n", ()),
-            ("P", (P,)),
-            ("P Q R", (P, Predicate("Q"), Predicate("R"))),
-            (
-                "apple pear banana",
-                (Predicate("apple"), Predicate("pear"), Predicate("banana")),
-            ),
-            (
-                ("apple", "pear", "banana"),
-                (Predicate("apple"), Predicate("pear"), Predicate("banana")),
-            ),
-        ],
-    )
-    def test_atomics_function(
-        self, text: str, expected: tuple[Predicate, ...]
-    ):
-        assert atomics(text) == expected

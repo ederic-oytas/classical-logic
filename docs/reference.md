@@ -27,10 +27,10 @@ assert w.inner == cl.prop('P')
 assert w.inner.name == 'P'
 ```
 
-The following table gives the subclass constructors and the operation it
+The following table gives the subclass constructors and the proposition it
 corresponds to:
 
-| Class Constructor                                 | Operation               |
+| Class Constructor                                 | Proposition             |
 | ------------------------------------------------- | ----------------------- |
 | [`And(left, right)`][classical_logic.And]         | `P & Q`                 |
 | [`Iff(left, right)`][classical_logic.Iff]         | `P <-> Q`               |

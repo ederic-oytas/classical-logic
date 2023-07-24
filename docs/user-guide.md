@@ -7,11 +7,9 @@
 
 Install the package using Pip:
 
-```
+```bash
 pip install classical-logic
 ```
-
-
 
 ## What is Propositional Logic?
 

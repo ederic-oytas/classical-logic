@@ -17,10 +17,10 @@ Proposition
 """
 
 from abc import abstractmethod, ABC
-from collections.abc import Iterable, Iterator, Mapping
+from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 import re
-from typing import ClassVar, overload, NoReturn, Union
+from typing import ClassVar, overload, NoReturn
 
 
 class Proposition(ABC):

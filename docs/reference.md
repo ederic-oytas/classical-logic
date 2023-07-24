@@ -9,21 +9,21 @@ types. Each subclass is a [dataclass][dataclasses] type, which means instances
 can be created and be treated like a regular dataclass type:
 
 ```python
-import classical_logic as fl
+import classical_logic as cl
 
-u = fl.And(fl.Predicate('P'), fl.Predicate('Q'))
-assert u == fl.prop('P & Q')
-assert u.left == prop('P')
-assert u.right == prop('Q')
+u = cl.And(cl.Predicate('P'), cl.Predicate('Q'))
+assert u == cl.prop('P & Q')
+assert u.left == cl.prop('P')
+assert u.right == cl.prop('Q')
 
-v = fl.Or(left=fl.Predicate(name='P'), right=fl.Predicate(name='Q'))
-assert v == fl.prop('P | Q')
-assert v.left == prop('P')
-assert v.right == prop('Q')
+v = cl.Or(left=cl.Predicate(name='P'), right=cl.Predicate(name='Q'))
+assert v == cl.prop('P | Q')
+assert v.left == cl.prop('P')
+assert v.right == cl.prop('Q')
 
-w = fl.Not(fl.Predicate('P'))
-assert w == fl.prop('~P')
-assert w.inner == fl.prop('P')
+w = cl.Not(cl.Predicate('P'))
+assert w == cl.prop('~P')
+assert w.inner == cl.prop('P')
 assert w.inner.name == 'P'
 ```
 

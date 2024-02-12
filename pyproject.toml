@@ -47,6 +47,7 @@ python = "^3.9"
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
 tox = "^4.6.3"
+pytest-cov = "^4.1.0"
 
 
 [tool.poetry.group.style.dependencies]

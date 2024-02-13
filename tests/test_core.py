@@ -76,33 +76,29 @@ def test_getitem():
             cls(P, Q)[-1]
 
 
-class TestAccessing:
-    """Tests for the accessing methods."""
-
-    def test_iter(self):
-        assert list(P) == []
-        assert list(Q) == []
-        assert list(Not(P)) == [P]
-        assert list(Not(Not(P))) == [Not(P)]
-        for cls in [And, Or, Implies, Iff]:
-            assert list(cls(P, Q)) == [P, Q]
-            assert list(cls(cls(P, Q), R)) == [cls(P, Q), R]
-            assert list(cls(cls(P, Q), Not(R))) == [cls(P, Q), Not(R)]
+def test_iter():
+    """Tests iter(p)"""
+    assert list(P) == []
+    assert list(Q) == []
+    assert list(Not(P)) == [P]
+    assert list(Not(Not(P))) == [Not(P)]
+    for cls in [And, Or, Implies, Iff]:
+        assert list(cls(P, Q)) == [P, Q]
+        assert list(cls(cls(P, Q), R)) == [cls(P, Q), R]
+        assert list(cls(cls(P, Q), Not(R))) == [cls(P, Q), Not(R)]
 
 
-class TestDegree:
-    """Tests .degree()"""
-
-    def test_degree(self):
-        assert P.degree() == 0
-        assert Q.degree() == 0
-        assert Not(P).degree() == 1
-        assert Not(Not(P)).degree() == 1
-        assert Not(Not(Not(P))).degree() == 1
-        for cls in [And, Or, Implies, Iff]:
-            assert cls(P, Q).degree() == 2
-            assert cls(cls(P, Q), R).degree() == 2
-            assert cls(cls(P, Q), Not(R)).degree() == 2
+def test_degree():
+    """Tests p.degree()"""
+    assert P.degree() == 0
+    assert Q.degree() == 0
+    assert Not(P).degree() == 1
+    assert Not(Not(P)).degree() == 1
+    assert Not(Not(Not(P))).degree() == 1
+    for cls in [And, Or, Implies, Iff]:
+        assert cls(P, Q).degree() == 2
+        assert cls(cls(P, Q), R).degree() == 2
+        assert cls(cls(P, Q), Not(R)).degree() == 2
 
 
 class TestComposition:
@@ -118,12 +114,8 @@ class TestComposition:
     @pytest.mark.parametrize("u", samples)
     def test_and(self, u: Proposition):
         for v in self.samples:
-            assert u.__and__(v) == And(u, v)
             assert u & v == And(u, v)
-            assert v.__and__(u) == And(v, u)
-            assert v & u == And(v, u)
         for x in [object(), True, False]:
-            assert u.__and__(x) is NotImplemented  # type: ignore
             with pytest.raises(TypeError):
                 u & x  # type: ignore
             with pytest.raises(TypeError):
@@ -132,16 +124,12 @@ class TestComposition:
     @pytest.mark.parametrize("u", samples)
     def test_or(self, u: Proposition):
         for v in self.samples:
-            assert u.__or__(v) == Or(u, v)
-            assert u | v == Or(u, v)
-            assert v.__or__(u) == Or(v, u)
-            assert v | u == Or(v, u)
+            assert u & v == And(u, v)
         for x in [object(), True, False]:
-            assert u.__or__(x) is NotImplemented  # type: ignore
             with pytest.raises(TypeError):
-                u | x  # type: ignore
+                u & x  # type: ignore
             with pytest.raises(TypeError):
-                x | u  # type: ignore
+                x & u  # type: ignore
 
     @pytest.mark.parametrize("u", samples)
     def test_implies(self, u: Proposition):

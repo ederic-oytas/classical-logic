@@ -52,6 +52,9 @@ def test_getitem():
     assert Iff(P, Q)[0] == P
     assert Iff(P, Q)[1] == Q
 
+    assert Iff(And(P, Q), Or(R, S))[0] == And(P, Q)
+    assert Iff(And(P, Q), Or(R, S))[1] == Or(R, S)
+
     with pytest.raises(IndexError):
         P[0]
     with pytest.raises(IndexError):

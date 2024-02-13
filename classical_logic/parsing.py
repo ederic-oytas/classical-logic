@@ -57,6 +57,7 @@ This concludes the grammar specification.
 
 [1]: https://docs.python.org/3/reference/introduction.html#notation
 """
+
 from typing import Generator, Iterator, Optional
 from enum import Enum, auto
 
@@ -191,6 +192,11 @@ class _Parser:
             self._token_stream, (None, "")
         )
 
+    def current_token(self) -> tuple[Optional[_TokenType], str]:
+        """Returns the current token this parser is on. Returns `(None, "")`
+        if there is no next token."""
+        return self._current_token_type, self._current_token_value
+
     def bic(self) -> Proposition:
         """Parses rule `bic`."""
         out = self.cond()
@@ -279,6 +285,11 @@ def prop(text: str, /) -> Proposition:
         w = cl.prop('(P -> Q) <-> R')
         ```
     """
+    parser = _Parser(text)
+    result = parser.bic()
+    token_type, token_value = parser.current_token()
+    if token_type is not None:  # if it didn't reach the end
+        raise ValueError(_unexp_token(token_value))
     return _Parser(text).bic()
 
 

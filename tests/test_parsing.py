@@ -1,4 +1,5 @@
 """Tests for classical-logic/parsing.py."""
+
 import pytest
 import re
 import string
@@ -269,6 +270,25 @@ class TestProp:
     def test_prop(self, text, expected):
         """Tests `prop`"""
         assert prop(text) == expected
+
+    @pytest.mark.parametrize(
+        "text",
+        [
+            "P Q",
+            "P - Q",
+            "P -< Q",
+            "P <- Q",
+            "P --> Q",
+            "P = Q",
+            "P == Q",
+            "P => Q",
+            "P ! Q",
+            "!P",
+        ],
+    )
+    def test_prop_fail(self, text: str):
+        with pytest.raises(ValueError):
+            prop(text)
 
     @pytest.mark.parametrize(
         "text,expected",

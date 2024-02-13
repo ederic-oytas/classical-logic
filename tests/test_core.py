@@ -40,41 +40,41 @@ atomic_test_cases: list[Predicate] = [
 ]
 
 
+def test_getitem():
+    """Tests p[index]"""
+    assert Not(P)[0] == P
+    assert And(P, Q)[0] == P
+    assert And(P, Q)[1] == Q
+    assert Or(P, Q)[0] == P
+    assert Or(P, Q)[1] == Q
+    assert Implies(P, Q)[0] == P
+    assert Implies(P, Q)[1] == Q
+    assert Iff(P, Q)[0] == P
+    assert Iff(P, Q)[1] == Q
+
+    with pytest.raises(IndexError):
+        P[0]
+    with pytest.raises(IndexError):
+        P[1]
+    with pytest.raises(IndexError):
+        P[-1]
+    with pytest.raises(IndexError):
+        Not(P)[1]
+    with pytest.raises(IndexError):
+        Not(P)[2]
+    with pytest.raises(IndexError):
+        Not(P)[-1]
+    for cls in [And, Or, Implies, Iff]:
+        with pytest.raises(IndexError):
+            cls(P, Q)[2]
+        with pytest.raises(IndexError):
+            cls(P, Q)[3]
+        with pytest.raises(IndexError):
+            cls(P, Q)[-1]
+
+
 class TestAccessing:
     """Tests for the accessing methods."""
-
-    def test_getitem_success(self):
-        """Tests p[index]"""
-        assert Not(P)[0] is P
-        assert And(P, Q)[0] is P
-        assert And(P, Q)[1] is Q
-        assert Or(P, Q)[0] is P
-        assert Or(P, Q)[1] is Q
-        assert Implies(P, Q)[0] is P
-        assert Implies(P, Q)[1] is Q
-        assert Iff(P, Q)[0] is P
-        assert Iff(P, Q)[1] is Q
-
-    def test_getitem_index_errors(self):
-        with pytest.raises(IndexError):
-            P[0]
-        with pytest.raises(IndexError):
-            P[1]
-        with pytest.raises(IndexError):
-            P[-1]
-        with pytest.raises(IndexError):
-            Not(P)[1]
-        with pytest.raises(IndexError):
-            Not(P)[2]
-        with pytest.raises(IndexError):
-            Not(P)[-1]
-        for cls in [And, Or, Implies, Iff]:
-            with pytest.raises(IndexError):
-                cls(P, Q)[2]
-            with pytest.raises(IndexError):
-                cls(P, Q)[3]
-            with pytest.raises(IndexError):
-                cls(P, Q)[-1]
 
     def test_iter(self):
         assert list(P) == []

@@ -239,27 +239,26 @@ class TestInterpreting:
         assert self.interpret(u, {"P": False, "Q": True}) is False
         assert self.interpret(u, {"P": False, "Q": False}) is True
 
-    @pytest.mark.parametrize(
-        "u",
-        [
-            Or(P, Not(P)),  # P | ~P
-            Implies(P, P),  # P -> P
-            Implies(And(Implies(P, Q), P), Q),  # ((P -> Q) & P) -> Q
-            Implies(Implies(Implies(P, Q), P), P),  # ((P -> Q) -> P) -> P
-            Iff(
-                Iff(P, Q),
-                And(Implies(P, Q), Implies(Q, P)),
-            ),  # (P <-> Q) <-> ((P -> Q) & (Q -> P))
-            Iff(
-                Iff(P, Q),
-                Or(And(P, Q), And(Not(P), Not(Q))),
-            ),  # (P <-> Q) <-> ((P & Q) | (~P & ~Q))
-            Implies(
-                And(Implies(P, Q), Implies(Not(P), Q)),
-                Q,
-            ),  # ((P -> Q) & (~P -> Q)) -> Q
-        ],
-    )
+    tautology_cases: list[Proposition] = [
+        Or(P, Not(P)),  # P | ~P
+        Implies(P, P),  # P -> P
+        Implies(And(Implies(P, Q), P), Q),  # ((P -> Q) & P) -> Q
+        Implies(Implies(Implies(P, Q), P), P),  # ((P -> Q) -> P) -> P
+        Iff(
+            Iff(P, Q),
+            And(Implies(P, Q), Implies(Q, P)),
+        ),  # (P <-> Q) <-> ((P -> Q) & (Q -> P))
+        Iff(
+            Iff(P, Q),
+            Or(And(P, Q), And(Not(P), Not(Q))),
+        ),  # (P <-> Q) <-> ((P & Q) | (~P & ~Q))
+        Implies(
+            And(Implies(P, Q), Implies(Not(P), Q)),
+            Q,
+        ),  # ((P -> Q) & (~P -> Q)) -> Q
+    ]
+
+    @pytest.mark.parametrize("u", tautology_cases)
     def test_tautology(self, u: Proposition):
         """Tests if the tautology holds true always."""
         for p in [True, False]:
@@ -267,26 +266,25 @@ class TestInterpreting:
                 i = {"P": p, "Q": q}
                 assert self.interpret(u, i) is True
 
-    @pytest.mark.parametrize(
-        "u",
-        [
-            And(P, Not(P)),  # P & ~P
-            Not(Or(P, Not(P))),  # ~(P | ~P)
-            Not(Implies(P, P)),  # ~(P -> P)
-            Not(
-                Iff(
-                    Iff(P, Q),
-                    And(Implies(P, Q), Implies(Q, P)),
-                )
-            ),  # ~( (P <-> Q) <-> ((P -> Q) & (Q -> P)) )
-            Not(
-                Iff(
-                    Iff(P, Q),
-                    Or(And(P, Q), And(Not(P), Not(Q))),
-                )
-            ),  # ~( (P <-> Q) <-> ((P & Q) | (~P & ~Q)) )
-        ],
-    )
+    contradiction_cases: list[Proposition] = [
+        And(P, Not(P)),  # P & ~P
+        Not(Or(P, Not(P))),  # ~(P | ~P)
+        Not(Implies(P, P)),  # ~(P -> P)
+        Not(
+            Iff(
+                Iff(P, Q),
+                And(Implies(P, Q), Implies(Q, P)),
+            )
+        ),  # ~( (P <-> Q) <-> ((P -> Q) & (Q -> P)) )
+        Not(
+            Iff(
+                Iff(P, Q),
+                Or(And(P, Q), And(Not(P), Not(Q))),
+            )
+        ),  # ~( (P <-> Q) <-> ((P & Q) | (~P & ~Q)) )
+    ]
+
+    @pytest.mark.parametrize("u", contradiction_cases)
     def test_contradiction(self, u: Proposition):
         """Tests if the contradiction holds false always."""
         for p in [True, False]:
@@ -294,74 +292,76 @@ class TestInterpreting:
                 i = {"P": p, "Q": q}
                 assert self.interpret(u, i) is False
 
-    @pytest.mark.parametrize(
-        "u,interps",
-        [
-            (
-                P,  # Q
-                [
-                    {},
-                    {"Q": True},
-                    {"Q": False, "R": True},
-                ],
-            ),
-            (
-                Not(P),  # ~P
-                [
-                    {},
-                    {"Q": True},
-                ],
-            ),
-            (
-                And(P, Q),  # P & Q
-                [
-                    {},
-                    {"R": True},
-                    {"P": False},  # tests short circuiting doesn't work
-                    {"Q": False},
-                ],
-            ),
-            (
-                Or(P, Q),  # P | Q
-                [
-                    {},
-                    {"R": True},
-                    {"P": True},  # tests short circuiting doesn't work
-                    {"Q": False},
-                ],
-            ),
-            (
-                Implies(P, Q),  # P -> Q
-                [
-                    {},
-                    {"R": True},
-                    {"P": False},  # tests short circuiting doesn't work
-                    {"Q": False},
-                ],
-            ),
-            (
-                Iff(P, Q),  # P <-> Q
-                [
-                    {},
-                    {"R": True},
-                    {"P": True},
-                    {"Q": False},
-                ],
-            ),
-            (
-                Or(
-                    And(Not(P), Q),
-                    Implies(Iff(P, Q), Q),
-                ),  # (~P & Q) | ((P <-> Q) -> Q)
-                [
-                    {},
-                    {"R": True},
-                    {"P": True},
-                    {"Q": False},
-                ],
-            ),
-        ],
-    )
+    predicate_missing_cases: list[
+        tuple[Proposition, list[dict[str, bool]]]
+    ] = [
+        # (<proposition-to-test-on>, <interpretations-to-test>)
+        (
+            P,  # P
+            [
+                {},
+                {"Q": True},
+                {"Q": False, "R": True},
+            ],
+        ),
+        (
+            Not(P),  # ~P
+            [
+                {},
+                {"Q": True},
+            ],
+        ),
+        (
+            And(P, Q),  # P & Q
+            [
+                {},
+                {"R": True},
+                {"P": False},  # tests short circuiting doesn't work
+                {"Q": False},
+            ],
+        ),
+        (
+            Or(P, Q),  # P | Q
+            [
+                {},
+                {"R": True},
+                {"P": True},  # tests short circuiting doesn't work
+                {"Q": False},
+            ],
+        ),
+        (
+            Implies(P, Q),  # P -> Q
+            [
+                {},
+                {"R": True},
+                {"P": False},  # tests short circuiting doesn't work
+                {"Q": False},
+            ],
+        ),
+        (
+            Iff(P, Q),  # P <-> Q
+            [
+                {},
+                {"R": True},
+                {"P": True},
+                {"Q": False},
+            ],
+        ),
+        (
+            Or(
+                And(Not(P), Q),
+                Implies(Iff(P, Q), Q),
+            ),  # (~P & Q) | ((P <-> Q) -> Q)
+            [
+                {},
+                {"R": True},
+                {"P": True},
+                {"Q": False},
+            ],
+        ),
+    ]
+
+    @pytest.mark.parametrize("u,interps", predicate_missing_cases)
     def test_predicate_missing(
         self, u: Proposition, interps: list[dict[str, bool]]
     ):

@@ -124,12 +124,12 @@ class TestComposition:
     @pytest.mark.parametrize("u", samples)
     def test_or(self, u: Proposition):
         for v in self.samples:
-            assert u & v == And(u, v)
+            assert u | v == Or(u, v)
         for x in [object(), True, False]:
             with pytest.raises(TypeError):
-                u & x  # type: ignore
+                u | x  # type: ignore
             with pytest.raises(TypeError):
-                x & u  # type: ignore
+                x | u  # type: ignore
 
     @pytest.mark.parametrize("u", samples)
     def test_implies(self, u: Proposition):

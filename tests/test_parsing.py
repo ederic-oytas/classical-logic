@@ -284,6 +284,8 @@ class TestProp:
             "P => Q",
             "P ! Q",
             "!P",
+            "(",
+            ")",
         ],
     )
     def test_prop_fail(self, text: str):

@@ -6,7 +6,7 @@
 </a>
 <a href="https://github.com/ederic-oytas/classical-logic/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/ederic-oytas/classical-logic"></a>
 
-classical-logic is a Python package that allows you to work with logical
+`classical-logic` is a Python package that allows you to work with logical
 propositions as Python objects.
 
 It's extremely simple to use:
@@ -96,7 +96,7 @@ pip install classical-logic
 
 Please make sure you use a dash (-) instead of an underscore (_).
 
-## Bug Reports and Feature Requests.
+## Bug Reports and Feature Requests
 
 You can report a bug or suggest a feature on the Github repo.
 

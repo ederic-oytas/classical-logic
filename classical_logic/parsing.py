@@ -1,6 +1,6 @@
 """Module for parsing.
 
-# Grammar Specification (DRAFT)
+# Grammar Specification
 
 This section specifies the grammar used to parse strings which represent
 propositions for `classical-logic`. This will cover both the lexical and

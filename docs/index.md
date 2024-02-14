@@ -1,25 +1,77 @@
 
-# `classical-logic` - Tools for Classical Logic.
+# classical-logic - Tools for Classical Logic
 
-This package makes it easy to work with propositions in classical logic.
+classical-logic is a Python package that allows you to work with logical
+propositions as Python objects.
 
-Here is an example:
+It's extremely simple to use:
 
 ```python
-import classical_logic as cl
+from classical_logic import prop
 
-
-p = cl.prop('(P & Q) | ~R')
-assert p(P=True, Q=True, R=True) is True
-assert p(P=False, Q=False, R=True) is False
+p = prop('P & Q')
+assert p(P=True, Q=True) is True
+assert p(P=True, Q=False) is False
 ```
 
-Features:
+## Features
 
-- Proposition objects.
-- Parser for classical logic.
+Parse proposition objects:
+
+```python
+from classical_logic import prop
+
+# Can parse simple propositions:
+p = prop('P | Q')
+# As well as complex ones!
+p = prop('P & (Q | (Q -> R)) <-> S')
+```
+
+Compose proposition objects:
+
+```python
+p = prop('P')
+q = prop('Q')
+
+# Create conjunctions and disjunctions with & and |:
+u = p & (q | p)   # P & (Q | P)
+
+# Create conditionals and biconditionals as well:
+u = p.implies(q)  # P -> Q
+u = p.iff(q)      # P <-> Q
+```
+
+Decompose propositions:
+
+```python
+u = prop('P & Q')
+
+# Use indexing to 
+assert u[0] == prop('P')
+assert u[1] == prop('Q')
+
+# You can also use Python's unpacking feature!
+p, q = u
+assert p == prop('P')
+assert q == prop('Q')
+```
+
+Interpret propositions (assign truth values):
+
+```python
+u = prop('P <-> Q')
+
+# Call the proposition like a function to interpret it
+assert u(P=True, Q=True) is True
+assert u(P=True, Q=False) is False
+assert u(P=False, Q=False) is True
+```
+
+**No dependencies.** This package doesn't use any dependencies.
 
 ## Links
+
+[Documentation @ ReadTheDocs](https://github.com/ederic-oytas/classical-logic)
 
 [Github Repository](https://github.com/ederic-oytas/python-freezable)
 

@@ -69,6 +69,8 @@ assert u(P=False, Q=False) is True
 
 **No dependencies.** This package doesn't use any dependencies.
 
+Want to learn more? See the [User Guide](./user-guide.md)
+
 ## Links
 
 [Documentation @ ReadTheDocs](https://github.com/ederic-oytas/classical-logic)

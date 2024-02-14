@@ -1,6 +1,11 @@
 
 # classical-logic - Tools for Classical Logic
 
+<a href='https://classical-logic.readthedocs.io/en/stable/?badge=stable'>
+    <img src='https://readthedocs.org/projects/classical-logic/badge/?version=stable' alt='Documentation Status' />
+</a>
+<a href="https://github.com/ederic-oytas/classical-logic/blob/main/LICENSE"><img alt="GitHub license" src="https://img.shields.io/github/license/ederic-oytas/classical-logic"></a>
+
 classical-logic is a Python package that allows you to work with logical
 propositions as Python objects.
 
@@ -70,7 +75,7 @@ assert u(P=False, Q=False) is True
 **No dependencies.** This package doesn't use any dependencies.
 
 Want to use this package? See the [documentation](
-https://github.com/ederic-oytas/classical-logic)!
+https://classical-logic.readthedocs.io/en/stable/)!
 
 ## Links
 

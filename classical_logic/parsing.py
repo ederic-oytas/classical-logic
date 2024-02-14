@@ -229,13 +229,6 @@ class _Parser:
             out = And(out, self.unit())
         return out
 
-    def neg(self) -> Proposition:
-        """Parses rule `neg`"""
-        if self._current_token_type is _TokenType.NOT:
-            self._advance()
-            return Not(self.neg())
-        return self.unit()
-
     def unit(self) -> Proposition:
         """Parses rule `unit`"""
         if self._current_token_type is _TokenType.IDENT:

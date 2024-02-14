@@ -385,6 +385,8 @@ class TestRepresentationAndFormatting:
         Iff(P, Q),
         Iff(And(P, Q), Or(Not(P), Q)),
         And(Iff(P, Not(Q)), Implies(Not(P), Q)),
+        And(And(P, Q), R),
+        And(P, And(Q, R)),
     ]
 
     @pytest.mark.parametrize("u", cases)

@@ -353,10 +353,36 @@ class Proposition(ABC):
     #
 
     @overload
-    def __call__(self, vals: Mapping[str, bool], /) -> bool: ...
+    def __call__(self, vals: Mapping[str, bool], /) -> bool:
+        """Interprets the proposition.
+
+        Please see the Interpreting section in the `classical-logic`
+        documentation for more information on how to use this operation.
+
+        Returns:
+            A boolean representing the truth value of this proposition with
+            respect to the given interpretation.
+
+        Raises:
+            ValueError: One of the predicates was not assigned a truth value in
+                the interpretation.
+        """
 
     @overload
-    def __call__(self, /, **vals: bool) -> bool: ...
+    def __call__(self, /, **vals: bool) -> bool:
+        """Interprets the proposition.
+
+        Please see the Interpreting section in the `classical-logic`
+        documentation for more information on how to use this operation.
+
+        Returns:
+            A boolean representing the truth value of this proposition with
+            respect to the given interpretation.
+
+        Raises:
+            ValueError: One of the predicates was not assigned a truth value in
+                the interpretation.
+        """
 
     def __call__(self, mapping=None, /, **kwargs) -> bool:
         """Interprets the proposition.

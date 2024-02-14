@@ -375,6 +375,7 @@ class TestInterpreting:
 
 
 class TestRepresentationAndFormatting:
+    """Tests str(), repr(), and format()"""
 
     cases: list[Proposition] = [
         P,

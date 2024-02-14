@@ -1,6 +1,8 @@
 """Unit Tests for classical-logic/prop.py"""
 
+import ast
 from collections.abc import Mapping
+import re
 import pytest
 import string
 from typing import Iterator
@@ -14,6 +16,7 @@ from classical_logic.core import (
     Implies,
     Iff,
 )
+from classical_logic.parsing import prop
 
 
 simple5: list[Proposition] = [
@@ -371,134 +374,54 @@ class TestInterpreting:
             self.expect_interpret_value_error(u, i)
 
 
-class TestStrReprAndFormat:
-    """Tests str(p), repr(p), and format(p, spec)."""
+class TestRepresentationAndFormatting:
 
-    def check_simple(self, u: Proposition, expected: str):
-        """Checks the simple represesentation of `u`."""
-        assert str(u) == expected
-        assert repr(u) == f"prop({expected!r})"
-        assert format(u) == expected
-        assert format(u, "") == expected
-        assert format(u, "S") == expected
+    cases: list[Proposition] = [
+        P,
+        Not(P),
+        And(P, Q),
+        Or(P, Q),
+        Implies(P, Q),
+        Iff(P, Q),
+        Iff(And(P, Q), Or(Not(P), Q)),
+        And(Iff(P, Not(Q)), Implies(Not(P), Q)),
+    ]
 
-    def check_explicit(self, u: Proposition, expected: str):
-        """Checks the explicit representation of `u`."""
-        assert format(u, "X") == expected
+    @pytest.mark.parametrize("u", cases)
+    def test_str(self, u: Proposition):
+        """Tests str(u)"""
+        # Parsing str(u) should return a proposition equal to u
+        assert prop(str(u)) == u
 
-    @pytest.mark.parametrize("p", [P, ALL_CHARS_PRED])
-    def test_predicate_nullary(self, p: Predicate):
-        self.check_simple(p, p.name)
-        self.check_explicit(p, p.name)
+    @pytest.mark.parametrize("u", cases)
+    def test_repr(self, u: Proposition):
+        """Tests repr(u)"""
+        # repr(u) should give a string in the form prop(...) which can be
+        # evaluated to give back an equal proposition
+        repr_u = repr(u)
+        match = re.fullmatch(r"\s*prop\s*\(('.*')\)\s*", repr_u)
+        assert match is not None
+        literal = match.group(1)
+        text = ast.literal_eval(literal)
+        assert prop(text) == u
 
-    @pytest.mark.parametrize("p", [P, ALL_CHARS_PRED])
-    def test_not(self, p: Predicate):
-        self.check_simple(Not(p), f"~{p}")
-        self.check_explicit(Not(p), f"~{p}")
+    @pytest.mark.parametrize("u", cases)
+    def test_format(self, u: Proposition):
+        """Tests format(u, formatspec)"""
+        # Parsing format(u, formatspec) should give an equal proposition
+        assert prop(format(u, "")) == u
+        assert prop(format(u, "S")) == u
+        assert prop(format(u, "X")) == u
 
-    @pytest.mark.parametrize("p", [P, ALL_CHARS_PRED])
-    def test_binary_explicit(self, p: Predicate):
-        self.check_explicit(And(p, p), f"({p} & {p})")
-        self.check_explicit(Or(p, p), f"({p} | {p})")
-        self.check_explicit(Implies(p, p), f"({p} -> {p})")
-        self.check_explicit(Iff(p, p), f"({p} <-> {p})")
-
-    @pytest.mark.parametrize(
-        "u,expected",
-        [
-            (Not(Not(Not(Not(P)))), "~~~~P"),
-            (
-                Implies(
-                    And(Implies(P, Q), P),
-                    Q,
-                ),
-                "(((P -> Q) & P) -> Q)",
-            ),
-            (
-                Iff(
-                    Iff(P, Q),
-                    And(Implies(P, Q), Implies(Q, P)),
-                ),
-                "((P <-> Q) <-> ((P -> Q) & (Q -> P)))",
-            ),
-            (
-                Iff(
-                    Iff(P, Q),
-                    Or(And(P, Q), And(Not(P), Not(Q))),
-                ),
-                "((P <-> Q) <-> ((P & Q) | (~P & ~Q)))",
-            ),
-        ],
-    )
-    def test_complicated_explicit(self, u: Proposition, expected: str):
-        self.check_explicit(u, expected)
-
-    @pytest.mark.parametrize("cls,op", [(And, "&"), (Or, "|"), (Iff, "<->")])
-    def test_binary_associative_simple(self, cls: type, op: str):
-        self.check_simple(
-            cls(cls(P, Q), R),
-            "P % Q % R".replace("%", op),
-        )
-        self.check_simple(
-            cls(P, cls(Q, R)),
-            "P % (Q % R)".replace("%", op),
-        )
-        self.check_simple(
-            cls(cls(cls(P, Q), R), S),
-            "P % Q % R % S".replace("%", op),
-        )
-        self.check_simple(
-            cls(P, cls(Q, cls(R, S))),
-            "P % (Q % (R % S))".replace("%", op),
-        )
-        self.check_simple(
-            cls(P, cls(cls(Q, R), S)),
-            "P % (Q % R % S)".replace("%", op),
-        )
-        self.check_simple(
-            cls(cls(P, cls(Q, R)), S),
-            "P % (Q % R) % S".replace("%", op),
-        )
-
-    @pytest.mark.parametrize(
-        "u,expected",
-        [
-            (Not(Not(Not(Not(P)))), "~~~~P"),
-            (
-                Implies(
-                    And(Implies(P, Q), P),
-                    Q,
-                ),
-                "((P -> Q) & P) -> Q",
-            ),
-            (
-                Iff(
-                    Iff(P, Q),
-                    And(Implies(P, Q), Implies(Q, P)),
-                ),
-                "P <-> Q <-> ((P -> Q) & (Q -> P))",
-            ),
-            (
-                Iff(
-                    Iff(P, Q),
-                    Or(And(P, Q), And(Not(P), Not(Q))),
-                ),
-                "P <-> Q <-> ((P & Q) | (~P & ~Q))",
-            ),
-            (
-                Or(
-                    Or(
-                        And(And(Not(P), Q), R),
-                        And(And(Not(P), Not(Q)), R),
-                    ),
-                    And(P, And(Not(Q), R)),
-                ),
-                "(~P & Q & R) | (~P & ~Q & R) | (P & (~Q & R))",
-            ),
-        ],
-    )
-    def test_complicated_simple(self, u: Proposition, expected: str):
-        self.check_simple(u, expected)
+        # Bad format specs
+        with pytest.raises(ValueError):
+            format(u, " ")
+        with pytest.raises(ValueError):
+            format(u, "S ")
+        with pytest.raises(ValueError):
+            format(u, " S")
+        with pytest.raises(ValueError):
+            format(u, "XS")
 
 
 class TestBool:

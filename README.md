@@ -74,9 +74,10 @@ https://github.com/ederic-oytas/classical-logic)!
 
 ## Links
 
-[Documentation @ ReadTheDocs](https://github.com/ederic-oytas/classical-logic)
+[Documentation @ ReadTheDocs](
+https://classical-logic.readthedocs.io/en/stable/)
 
-[Github Repository](https://github.com/ederic-oytas/python-freezable)
+[Github Repository](https://github.com/ederic-oytas/classical-logic)
 
 [PyPI Page](https://pypi.org/project/classical-logic/)
 

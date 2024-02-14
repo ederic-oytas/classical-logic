@@ -248,9 +248,6 @@ class Proposition(ABC):
             assert p[1] == cl.prop('Q')
             ```
         """
-        raise NotImplementedError(
-            f"__getitem__ is not implemented for '{self.__class__.__name__}'"
-        )
 
     @abstractmethod
     def __iter__(self, /) -> Iterator["Proposition"]:
@@ -268,9 +265,6 @@ class Proposition(ABC):
             assert next(it, None) is None
             ```
         """
-        raise NotImplementedError(
-            f"__iter__ is not implemented for '{self.__class__.__name__}'"
-        )
 
     #
     # Degree method
@@ -317,9 +311,6 @@ class Proposition(ABC):
             assert cl.prop('P & Q & R').degree() == 2
             ```
         """
-        raise NotImplementedError(
-            f"__iter__ is not implemented for '{self.__class__.__name__}'"
-        )
 
     #
     # Proposition Composition Methods
@@ -362,12 +353,10 @@ class Proposition(ABC):
     #
 
     @overload
-    def __call__(self, vals: Mapping[str, bool], /) -> bool:
-        ...
+    def __call__(self, vals: Mapping[str, bool], /) -> bool: ...
 
     @overload
-    def __call__(self, /, **vals: bool) -> bool:
-        ...
+    def __call__(self, /, **vals: bool) -> bool: ...
 
     def __call__(self, mapping=None, /, **kwargs) -> bool:
         """Interprets the proposition.
@@ -399,9 +388,6 @@ class Proposition(ABC):
         implement `__call__`.
 
         """
-        raise NotImplementedError(
-            f"'_interpret' is not implemented for '{self.__class__.__name__}'"
-        )
 
     #
     # String Formatting Methods
@@ -455,9 +441,6 @@ class Proposition(ABC):
             assert str(s) == 'P & Q & R'
             ```
         """
-        raise NotImplementedError(
-            f"formal() is not implemented for '{self.__class__.__name__}'"
-        )
 
     #
     # Miscellaneous special methods

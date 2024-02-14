@@ -283,7 +283,7 @@ def prop(text: str, /) -> Proposition:
     token_type, token_value = parser.current_token()
     if token_type is not None:  # if it didn't reach the end
         raise ValueError(_unexp_token(token_value))
-    return _Parser(text).bic()
+    return result
 
 
 def props(text: str, /) -> tuple[Proposition, ...]:

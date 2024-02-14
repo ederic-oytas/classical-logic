@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "classical-logic"
-version = "0.1.0"
+version = "0.1.1"
 description = "Python package for propositional logic."
 authors = ["Ederic <edericoytas@gmail.com>"]
 license = "MIT"
